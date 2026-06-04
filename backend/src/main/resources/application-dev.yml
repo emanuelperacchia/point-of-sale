@@ -1,0 +1,28 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  error:
+    include-message: always
+
+cors:
+  allowed-origins: http://localhost:5173
+
+security:
+  rate-limit:
+    login-attempts: 10
+    lockout-duration: 900000
+
+logging:
+  level:
+    com.pos.system: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

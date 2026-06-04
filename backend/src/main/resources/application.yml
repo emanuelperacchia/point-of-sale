@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: POS System
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pos_db
+    username: pos_user
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    open-in-view: false
+
+  devtools:
+    restart:
+      enabled: true
+
+server:
+  port: 8080
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+    include-exception: false
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 900000
+  refresh-expiration: 604800000
+
+cors:
+  allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+
+security:
+  rate-limit:
+    login-attempts: 5
+    lockout-duration: 900000
+
+fiscal:
+  mode: mock
+  retry:
+    max-attempts: 3
+    interval-ms: 30000
+  mock:
+    success-rate: 0.95
+    delay-ms: 300
+  pdf:
+    output-dir: ./invoices
+  email:
+    enabled: false
+
+returns:
+  auto-approve-limit: 5000
+
+logging:
+  level:
+    com.pos.system: INFO
+    org.hibernate.SQL: WARN
