@@ -22,14 +22,21 @@ export default function LoyaltyWidget({ clientId, onRedeem, disabled }: Props) {
 
   useEffect(() => {
     if (!clientId) {
-      setData(null);
-      return;
+      return; // data already initialized as null
     }
-    setLoading(true);
-    loyaltyApi.getPoints(clientId)
-      .then(({ data }) => setData(data))
-      .catch(() => setData(null))
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const { data } = await loyaltyApi.getPoints(clientId);
+        if (!cancelled) setData(data);
+      } catch {
+        if (!cancelled) setData(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [clientId]);
 
   if (!clientId) return null;

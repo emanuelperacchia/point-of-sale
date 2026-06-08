@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, startTransition } from 'react';
 import { returnApi, saleApi } from '../../services/api';
 import type { SaleResponse, SaleReturnResponse } from '../../types';
 
@@ -27,13 +27,15 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
   // Reset al abrir
   useEffect(() => {
     if (open) {
-      setSaleId('');
-      setSale(null);
-      setQuantities({});
-      setMotivo('');
-      setResult(null);
-      setSubmitError('');
-      setSearchError('');
+      startTransition(() => {
+        setSaleId('');
+        setSale(null);
+        setQuantities({});
+        setMotivo('');
+        setResult(null);
+        setSubmitError('');
+        setSearchError('');
+      });
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [open]);
@@ -71,7 +73,7 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
     setSubmitError('');
 
     const items = Object.entries(quantities)
-      .filter(([_, qty]) => qty > 0)
+      .filter(([, qty]) => qty > 0)
       .map(([saleItemId, cantidad]) => ({
         saleItemId: Number(saleItemId),
         cantidad,

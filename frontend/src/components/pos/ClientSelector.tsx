@@ -14,18 +14,15 @@ export default function ClientSelector({ client, onChange }: Props) {
   const [results, setResults] = useState<ClientSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Debounced search
   useEffect(() => {
     if (!query.trim() || query.length < 2) {
-      setResults([]);
-      return;
+      return; // results already initialized as []
     }
-    setLoading(true);
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(async () => {
+    const timer = setTimeout(async () => {
+      setLoading(true);
       try {
         const { data } = await clientApi.search(query);
         setResults(data);
@@ -36,7 +33,7 @@ export default function ClientSelector({ client, onChange }: Props) {
         setLoading(false);
       }
     }, DEBOUNCE_MS);
-    return () => clearTimeout(timerRef.current);
+    return () => clearTimeout(timer);
   }, [query]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {

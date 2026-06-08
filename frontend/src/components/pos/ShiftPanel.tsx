@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, startTransition } from 'react';
 import { shiftApi } from '../../services/api';
 import type { ShiftResponse, ShiftReportResponse } from '../../types';
 
@@ -44,7 +44,7 @@ export default function ShiftPanel() {
   }, []);
 
   useEffect(() => {
-    loadActiveShift();
+    startTransition(() => { loadActiveShift(); });
   }, [loadActiveShift]);
 
   // ── Abrir turno ────────────────────────────────
@@ -145,11 +145,13 @@ export default function ShiftPanel() {
   }, [shift]);
 
   useEffect(() => {
-    if (shift?.estado === 'CERRADO') {
-      loadReport();
-    } else {
-      setReport(null);
-    }
+    startTransition(() => {
+      if (shift?.estado === 'CERRADO') {
+        loadReport();
+      } else {
+        setReport(null);
+      }
+    });
   }, [shift, loadReport]);
 
   // ── Render ────────────────────────────────────

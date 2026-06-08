@@ -301,3 +301,99 @@ export interface PointsResponse {
   tier: ClientTier;
   historial: PointsTransactionItem[];
 }
+
+// ──────────────────────────────────────────────
+// Reportes (Sprint 9)
+// ──────────────────────────────────────────────
+
+export interface SalesBookRow {
+  fecha: string;
+  tipoComprobante: string;
+  puntoVenta: number;
+  numero: number;
+  cuitReceptor: string | null;
+  razonSocial: string | null;
+  netoGravado: number;
+  iva: number;
+  otrosImpuestos: number;
+  total: number;
+  estado: string;
+}
+
+export interface SalesBookTotals {
+  totalNeto: number;
+  totalIva: number;
+  totalComprobantes: number;
+  cantidad: number;
+}
+
+export interface SalesBookResponse {
+  filas: SalesBookRow[];
+  totales: SalesBookTotals;
+  saltosEncontrados: number[];
+  pagina: number;
+  tamanioPagina: number;
+  totalElementos: number;
+  totalPaginas: number;
+}
+
+export interface ExpenseResponse {
+  id: number;
+  monto: number;
+  fecha: string;
+  categoria: string;
+  proveedorId: number | null;
+  descripcion: string;
+  estado: string;
+  comprobanteUrl: string | null;
+  recurrente: boolean;
+  frecuencia: string | null;
+  proximaFecha: string | null;
+}
+
+export interface ExpenseSummaryResponse {
+  desde: string;
+  hasta: string;
+  categorias: { categoria: string; total: number }[];
+  total: number;
+}
+
+export interface CashFlowDayRow {
+  fecha: string;
+  ingresos: number;
+  egresos: number;
+  saldoDia: number;
+  saldoAcumulado: number;
+  esProyectado: boolean;
+}
+
+export interface CashFlowResponse {
+  dias: CashFlowDayRow[];
+  alertaSaldoNegativo: boolean;
+  primerDiaSaldoNegativo: string | null;
+}
+
+export type ExpenseCategory =
+  | 'ALQUILER' | 'SERVICIOS' | 'SUELDOS' | 'COMPRAS_MERCADERIA'
+  | 'IMPUESTOS' | 'MANTENIMIENTO' | 'MARKETING' | 'OTROS';
+
+export interface ExpenseRequest {
+  monto: number;
+  fecha: string;
+  categoria: string;
+  proveedorId?: number;
+  descripcion: string;
+  recurrente?: boolean;
+  frecuencia?: string;
+}
+
+export const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
+  ALQUILER: 'Alquiler',
+  SERVICIOS: 'Servicios',
+  SUELDOS: 'Sueldos',
+  COMPRAS_MERCADERIA: 'Compras / Mercadería',
+  IMPUESTOS: 'Impuestos',
+  MANTENIMIENTO: 'Mantenimiento',
+  MARKETING: 'Marketing',
+  OTROS: 'Otros',
+};

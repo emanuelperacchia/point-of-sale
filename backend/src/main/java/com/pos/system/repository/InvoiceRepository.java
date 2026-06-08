@@ -56,4 +56,43 @@ public interface InvoiceRepository extends JpaRepository<InvoiceDocument, Long> 
             @Param("desde") LocalDateTime desde,
             @Param("hasta") LocalDateTime hasta,
             @Param("saleId") Long saleId);
+
+    /**
+     * Query nativa para libro de ventas con JOIN a sales y clients.
+     * Retorna Object[] por fila con: i.created_at, i.tipo_comprobante, i.punto_venta,
+     * i.numero, c.document_number, c.business_name, s.subtotal, s.discount, s.tax_amount, s.total, i.estado
+     */
+    @Query(value = """
+            SELECT i.created_at, i.tipo_comprobante, i.punto_venta, i.numero,
+                   c.document_number, COALESCE(c.business_name, c.name),
+                   s.subtotal, s.discount, s.tax_amount, s.total, i.estado
+            FROM invoice_documents i
+            JOIN sales s ON s.id = i.sale_id
+            LEFT JOIN clients c ON c.id = s.client_id
+            WHERE (:tipo IS NULL OR i.tipo_comprobante = :tipo)
+              AND i.created_at >= :desde
+              AND i.created_at < :hasta
+            ORDER BY i.tipo_comprobante, i.numero
+            """, nativeQuery = true)
+    List<Object[]> findSalesBookRaw(
+            @Param("tipo") String tipo,
+            @Param("desde") LocalDateTime desde,
+            @Param("hasta") LocalDateTime hasta);
+
+    /**
+     * Retorna todos los números de comprobante de un tipo en un rango de fechas,
+     * para detectar saltos en la numeración.
+     */
+    @Query(value = """
+            SELECT i.numero
+            FROM invoice_documents i
+            WHERE i.tipo_comprobante = :tipo
+              AND i.created_at >= :desde
+              AND i.created_at < :hasta
+            ORDER BY i.numero
+            """, nativeQuery = true)
+    List<Long> findNumerosByTipoAndPeriodo(
+            @Param("tipo") String tipo,
+            @Param("desde") LocalDateTime desde,
+            @Param("hasta") LocalDateTime hasta);
 }

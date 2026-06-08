@@ -19,6 +19,11 @@ import type {
   DiscountResult,
   ValidateCartDiscountsRequest,
   PointsResponse,
+  SalesBookResponse,
+  CashFlowResponse,
+  ExpenseResponse,
+  ExpenseSummaryResponse,
+  ExpenseRequest,
 } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -254,6 +259,93 @@ export const couponApi = {
 export const loyaltyApi = {
   getPoints: (clientId: number) =>
     api.get<PointsResponse>(`/clients/${clientId}/points`),
+};
+
+// ---------------------------------------------------------------------------
+// Reportes (Sprint 9)
+// ---------------------------------------------------------------------------
+
+export const reportApi = {
+  getSalesBook: (params: {
+    desde: string;
+    hasta: string;
+    tipo?: string;
+    page?: number;
+    size?: number;
+  }) => api.get<SalesBookResponse>('/reports/sales-book', { params }),
+
+  exportSalesBook: (params: {
+    desde: string;
+    hasta: string;
+    tipo?: string;
+    format: 'xlsx' | 'csv';
+  }) => api.get('/reports/sales-book/export', {
+    params,
+    responseType: 'blob',
+  }),
+
+  getCashFlow: (params: {
+    desde: string;
+    hasta: string;
+    incluirProyeccion?: boolean;
+    diasProyeccion?: number;
+  }) => api.get<CashFlowResponse>('/reports/cash-flow', { params }),
+
+  exportCashFlow: (params: {
+    desde: string;
+    hasta: string;
+    incluirProyeccion?: boolean;
+    diasProyeccion?: number;
+  }) => api.get('/reports/cash-flow/export', {
+    params,
+    responseType: 'blob',
+  }),
+};
+
+// ---------------------------------------------------------------------------
+// Gastos (Sprint 9)
+// ---------------------------------------------------------------------------
+
+export const expenseApi = {
+  getAll: (params?: {
+    categoria?: string;
+    estado?: string;
+    desde?: string;
+    hasta?: string;
+    proveedorId?: number;
+  }) => api.get<ExpenseResponse[]>('/expenses', { params }),
+
+  getById: (id: number) =>
+    api.get<ExpenseResponse>(`/expenses/${id}`),
+
+  create: (data: ExpenseRequest, comprobante?: File) => {
+    const form = new FormData();
+    form.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+    if (comprobante) form.append('comprobante', comprobante);
+    return api.post<ExpenseResponse>('/expenses', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  update: (id: number, data: ExpenseRequest, comprobante?: File) => {
+    const form = new FormData();
+    form.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+    if (comprobante) form.append('comprobante', comprobante);
+    return api.put<ExpenseResponse>(`/expenses/${id}`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  delete: (id: number) =>
+    api.delete(`/expenses/${id}`),
+
+  marcarPagado: (id: number) =>
+    api.patch(`/expenses/${id}/pagar`),
+
+  getSummary: (params: {
+    desde: string;
+    hasta: string;
+  }) => api.get<ExpenseSummaryResponse>('/expenses/summary', { params }),
 };
 
 export default api;

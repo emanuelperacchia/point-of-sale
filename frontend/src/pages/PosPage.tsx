@@ -10,6 +10,7 @@ import ShiftPanel from '../components/pos/ShiftPanel';
 import ReturnModal from '../components/pos/ReturnModal';
 import CouponInput from '../components/pos/CouponInput';
 import LoyaltyWidget from '../components/pos/LoyaltyWidget';
+import CashFlowChart from '../components/pos/CashFlowChart';
 import PaymentModal from '../components/pos/PaymentModal';
 import { saleApi } from '../services/api';
 import type { ProductSearchResult, ClientSearchResult, PaymentMethod, SaleItemRequest, CouponValidationResponse } from '../types';
@@ -192,6 +193,8 @@ export default function PosPage() {
               <ReceptorForm client={client} onUpdate={(updated) => setClient(updated)} />
             </>
           )}
+
+          <CashFlowChart />
 
           <section className="rounded-lg bg-white p-4 shadow-sm" aria-label="Pago">
             <h2 className="mb-1 font-semibold text-gray-700">Pago</h2>

@@ -23,6 +23,7 @@
 		<pdfbox.version>3.0.3</pdfbox.version>
 		<bouncycastle.version>1.78.1</bouncycastle.version>
 		<zxing.version>3.5.3</zxing.version>
+		<poi.version>5.2.5</poi.version>
 	</properties>
 
 	<dependencies>
@@ -152,6 +153,18 @@
 			<groupId>com.google.zxing</groupId>
 			<artifactId>javase</artifactId>
 			<version>${zxing.version}</version>
+		</dependency>
+
+		<!-- Apache POI (Excel export) -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${poi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${poi.version}</version>
 		</dependency>
 	</dependencies>
 

@@ -58,6 +58,9 @@ fiscal:
 returns:
   auto-approve-limit: 5000
 
+file-storage:
+  upload-dir: ./uploads
+
 logging:
   level:
     com.pos.system: INFO
