@@ -26,6 +26,7 @@ public class CashFlowService {
 
     private final SaleRepository saleRepository;
     private final ExpenseRepository expenseRepository;
+    private final PayableService payableService;
 
     /**
      * Obtiene el flujo de caja para un período, con proyección opcional.
@@ -67,9 +68,13 @@ public class CashFlowService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add)
                     .divide(BigDecimal.valueOf(diasHist), 2, RoundingMode.HALF_UP);
 
-            // Gastos recurrentes futuros conocidos
+            // Gastos recurrentes futuros conocidos (Sprint 9)
             List<Object[]> futuros = expenseRepository.findDailyExpenseTotals(
                     hasta.plusDays(1), hasta.plusDays(diasProyeccion + 1));
+
+            // Cuentas por pagar futuras (Sprint 10)
+            LocalDate finProyeccion = hasta.plusDays(diasProyeccion);
+            BigDecimal payablesTotal = payableService.totalPendienteEntreFechas(hasta.plusDays(1), finProyeccion);
 
             for (int i = 1; i <= diasProyeccion; i++) {
                 LocalDate fecha = hasta.plusDays(i);
@@ -83,6 +88,15 @@ public class CashFlowService {
                         egr = (BigDecimal) row[1];
                         break;
                     }
+                }
+
+                // Distribuir payables uniformemente en los días proyectados
+                // Como no tenemos la fecha exacta de cada payable, distribuimos el total
+                // entre los días del período proyectado como egreso adicional
+                if (payablesTotal.compareTo(BigDecimal.ZERO) > 0 && diasProyeccion > 0) {
+                    BigDecimal payableDiario = payablesTotal.divide(
+                            BigDecimal.valueOf(diasProyeccion), 2, RoundingMode.HALF_UP);
+                    egr = egr.add(payableDiario);
                 }
 
                 saldoAcumulado = saldoAcumulado.add(ing).subtract(egr);

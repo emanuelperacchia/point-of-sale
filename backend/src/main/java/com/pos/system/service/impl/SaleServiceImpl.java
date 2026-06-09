@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +53,9 @@ public class SaleServiceImpl implements SaleService {
 
     @Autowired(required = false)
     private LoyaltyService loyaltyService;
+
+    @Autowired(required = false)
+    private ReceivableService receivableService;
 
     @Override
     @Transactional
@@ -179,8 +183,10 @@ public class SaleServiceImpl implements SaleService {
         // Ensure total is never negative
         if (total.compareTo(BigDecimal.ZERO) < 0) total = BigDecimal.ZERO;
 
-        // 7. Validate payments match total
+        // 7. Validate payments match total + CUENTA_CORRIENTE validations
         BigDecimal paymentTotal = BigDecimal.ZERO;
+        boolean hasCuentaCorriente = false;
+        BigDecimal cuentaCorrienteTotal = BigDecimal.ZERO;
         List<Payment> payments = new ArrayList<>();
         for (SaleRequest.PaymentRequest payReq : request.getPayments()) {
             PaymentMethod method;
@@ -188,6 +194,11 @@ public class SaleServiceImpl implements SaleService {
                 method = PaymentMethod.valueOf(payReq.getPaymentMethod());
             } catch (IllegalArgumentException e) {
                 throw new BadRequestException("Método de pago inválido: " + payReq.getPaymentMethod());
+            }
+
+            if (method == PaymentMethod.CUENTA_CORRIENTE) {
+                hasCuentaCorriente = true;
+                cuentaCorrienteTotal = cuentaCorrienteTotal.add(payReq.getAmount());
             }
 
             Payment payment = Payment.builder()
@@ -204,6 +215,14 @@ public class SaleServiceImpl implements SaleService {
             throw new BadRequestException(
                     "El total de pagos (" + paymentTotal + ") no coincide con el total de la venta (" + total + ")"
             );
+        }
+
+        // Validate client credit if using CUENTA_CORRIENTE
+        if (hasCuentaCorriente && receivableService != null) {
+            if (client == null) {
+                throw new BadRequestException("Debe seleccionar un cliente para usar cuenta corriente");
+            }
+            receivableService.validarClienteParaCredito(client.getId());
         }
 
         // 8. Vincular pagos en efectivo al turno activo del cajero
@@ -270,7 +289,14 @@ public class SaleServiceImpl implements SaleService {
             loyaltyService.acumularPuntos(client.getId(), sale.getId(), total);
         }
 
-        // 14. Emitir comprobante electrónico (asíncrono, no bloquea la respuesta)
+        // 14. Crear cuenta por cobrar si hay pago en CUENTA_CORRIENTE
+        if (hasCuentaCorriente && receivableService != null && client != null) {
+            // Vencimiento: 30 días desde hoy (configurable en el futuro)
+            LocalDate vencimiento = LocalDate.now().plusDays(30);
+            receivableService.createReceivable(client.getId(), sale.getId(), cuentaCorrienteTotal, vencimiento);
+        }
+
+        // 15. Emitir comprobante electrónico (asíncrono, no bloquea la respuesta)
         eventPublisher.publishEvent(new SaleCompletedEvent(sale.getId()));
 
         return mapToResponse(sale);

@@ -24,6 +24,18 @@ import type {
   ExpenseResponse,
   ExpenseSummaryResponse,
   ExpenseRequest,
+  ReceivableResponse,
+  ReceivablePaymentResponse,
+  ReceivablePaymentRequest,
+  AgingReportResponse,
+  PayableResponse,
+  PayablePaymentResponse,
+  PayablePaymentRequest,
+  PayableRequest,
+  BankReconciliationResponse,
+  BankStatementResponse,
+  ManualMatchRequest,
+  CreateExpenseFromStatementRequest,
 } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -346,6 +358,96 @@ export const expenseApi = {
     desde: string;
     hasta: string;
   }) => api.get<ExpenseSummaryResponse>('/expenses/summary', { params }),
+};
+
+// ---------------------------------------------------------------------------
+// Cuentas por Cobrar (Sprint 10 — US-025)
+// ---------------------------------------------------------------------------
+
+export const receivableApi = {
+  getAll: (params?: {
+    clientId?: number;
+    estado?: string;
+    page?: number;
+    size?: number;
+  }) => api.get<{ content: ReceivableResponse[]; totalElements: number; totalPages: number }>('/receivables', { params }),
+
+  getById: (id: number) =>
+    api.get<ReceivableResponse>(`/receivables/${id}`),
+
+  getPayments: (id: number) =>
+    api.get<ReceivablePaymentResponse[]>(`/receivables/${id}/payments`),
+
+  registerPayment: (id: number, data: ReceivablePaymentRequest) =>
+    api.post<ReceivablePaymentResponse>(`/receivables/${id}/payments`, data),
+
+  getAgingReport: () =>
+    api.get<AgingReportResponse>('/receivables/aging-report'),
+
+  exportAgingReport: () =>
+    api.get('/receivables/aging-report/export', { responseType: 'blob' }),
+};
+
+// ---------------------------------------------------------------------------
+// Cuentas por Pagar (Sprint 10 — US-026)
+// ---------------------------------------------------------------------------
+
+export const payableApi = {
+  getAll: (params?: {
+    supplierId?: number;
+    estado?: string;
+    purchaseOrderId?: number;
+  }) => api.get<PayableResponse[]>('/payables', { params }),
+
+  getById: (id: number) =>
+    api.get<PayableResponse>(`/payables/${id}`),
+
+  getPayments: (id: number) =>
+    api.get<PayablePaymentResponse[]>(`/payables/${id}/payments`),
+
+  registerPayment: (id: number, data: PayablePaymentRequest) =>
+    api.post<PayablePaymentResponse>(`/payables/${id}/payments`, data),
+
+  create: (data: PayableRequest) =>
+    api.post<PayableResponse>('/payables', data),
+
+  getUpcoming: (dias: number = 30) =>
+    api.get<PayableResponse[]>('/payables/upcoming', { params: { dias } }),
+};
+
+// ---------------------------------------------------------------------------
+// Conciliación Bancaria (Sprint 10 — US-028)
+// ---------------------------------------------------------------------------
+
+export const bankReconciliationApi = {
+  importCsv: (file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return api.post<BankReconciliationResponse>('/bank-reconciliation/import', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  getSummary: (periodo: string) =>
+    api.get<BankReconciliationResponse>('/bank-reconciliation/summary', { params: { periodo } }),
+
+  getStatements: (id: number) =>
+    api.get<BankStatementResponse[]>(`/bank-reconciliation/${id}/statements`),
+
+  autoMatch: (id: number) =>
+    api.post<{ matched: number }>(`/bank-reconciliation/${id}/auto-match`),
+
+  manualMatch: (data: ManualMatchRequest) =>
+    api.post<BankStatementResponse>('/bank-reconciliation/statements/manual-match', data),
+
+  createExpense: (data: CreateExpenseFromStatementRequest) =>
+    api.post<ExpenseResponse>('/bank-reconciliation/statements/create-expense', data),
+
+  exportSummary: (periodo: string) =>
+    api.get('/bank-reconciliation/summary/export', {
+      params: { periodo },
+      responseType: 'blob',
+    }),
 };
 
 export default api;

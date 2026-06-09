@@ -24,6 +24,7 @@ class CashFlowServiceTest {
 
     @Mock private SaleRepository saleRepository;
     @Mock private ExpenseRepository expenseRepository;
+    @Mock private PayableService payableService;
 
     private CashFlowService cashFlowService;
 
@@ -32,7 +33,7 @@ class CashFlowServiceTest {
 
     @BeforeEach
     void setUp() {
-        cashFlowService = new CashFlowService(saleRepository, expenseRepository);
+        cashFlowService = new CashFlowService(saleRepository, expenseRepository, payableService);
     }
 
     @Test
@@ -75,6 +76,7 @@ class CashFlowServiceTest {
 
         stubIngresosHistoricos(inicioPromedio, desde, BigDecimal.valueOf(1000));
         stubEgresosHistoricos(inicioPromedio, desde, BigDecimal.valueOf(500));
+        stubPayables();
 
         stubIngresosReales(List.of());
         stubEgresosReales(List.of());
@@ -99,6 +101,7 @@ class CashFlowServiceTest {
 
         stubIngresosHistoricos(desde.minusDays(90), desde, BigDecimal.ZERO);
         stubEgresosHistoricos(desde.minusDays(90), desde, BigDecimal.ZERO);
+        stubPayables();
 
         stubIngresosReales(List.of());
         stubEgresosReales(Collections.singletonList(
@@ -122,6 +125,7 @@ class CashFlowServiceTest {
 
         stubIngresosHistoricos(inicioPromedio, desde, BigDecimal.valueOf(500));
         stubEgresosHistoricos(inicioPromedio, desde, BigDecimal.valueOf(1000));
+        stubPayables();
 
         stubIngresosReales(List.of());
         stubEgresosReales(List.of());
@@ -145,6 +149,7 @@ class CashFlowServiceTest {
 
         stubIngresosHistoricos(inicioPromedio, desde, BigDecimal.valueOf(5000));
         stubEgresosHistoricos(inicioPromedio, desde, BigDecimal.ZERO);
+        stubPayables();
 
         stubIngresosReales(List.of());
         stubEgresosReales(List.of());
@@ -170,6 +175,7 @@ class CashFlowServiceTest {
 
         when(saleRepository.findDailySalesTotals(any(), any())).thenReturn(List.of());
         when(expenseRepository.findDailyExpenseTotals(any(), any())).thenReturn(List.of());
+        when(payableService.totalPendienteEntreFechas(any(), any())).thenReturn(BigDecimal.ZERO);
 
         CashFlowResponse response = cashFlowService.getCashFlow(hasta, invertedDesde, true, diasProyeccion);
 
@@ -215,6 +221,10 @@ class CashFlowServiceTest {
         when(expenseRepository.findDailyExpenseTotals(
                 hastaRef.plusDays(1), hastaRef.plusDays(diasProyeccion + 1)))
                 .thenReturn(data);
+    }
+
+    private void stubPayables() {
+        when(payableService.totalPendienteEntreFechas(any(), any())).thenReturn(BigDecimal.ZERO);
     }
 
     private Object[] row(java.sql.Date fecha, BigDecimal total) {

@@ -51,7 +51,7 @@ export interface PaymentRequest {
   reference?: string;
 }
 
-export type PaymentMethod = 'CASH' | 'DEBIT_CARD' | 'CREDIT_CARD' | 'TRANSFER';
+export type PaymentMethod = 'CASH' | 'DEBIT_CARD' | 'CREDIT_CARD' | 'TRANSFER' | 'CUENTA_CORRIENTE';
 
 export interface SaleRequest {
   clientId?: number;
@@ -397,3 +397,149 @@ export const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
   MARKETING: 'Marketing',
   OTROS: 'Otros',
 };
+
+// ──────────────────────────────────────────────
+// Cuentas por Cobrar (Sprint 10 — US-025)
+// ──────────────────────────────────────────────
+
+export type ReceivableEstado = 'PENDIENTE' | 'PARCIAL' | 'COBRADA' | 'VENCIDA' | 'INCOBRABLE';
+
+export interface ReceivableResponse {
+  id: number;
+  clientId: number;
+  clientName: string | null;
+  clientDocument: string | null;
+  saleId: number;
+  montoOriginal: number;
+  saldoPendiente: number;
+  fechaEmision: string;
+  fechaVencimiento: string;
+  estado: ReceivableEstado;
+  interesesAcumulados: number;
+}
+
+export interface ReceivablePaymentResponse {
+  id: number;
+  receivableId: number;
+  monto: number;
+  metodoPago: string;
+  fecha: string;
+  registradoPor: number;
+}
+
+export interface ReceivablePaymentRequest {
+  monto: number;
+  metodoPago: string;
+}
+
+// ──────────────────────────────────────────────
+// Reporte de Antigüedad (Sprint 10 — US-025)
+// ──────────────────────────────────────────────
+
+export interface AgingReportResponse {
+  resumenGeneral: {
+    corriente: number;
+    tramo1a30: number;
+    tramo31a60: number;
+    tramo61a90: number;
+    masDe90: number;
+    total: number;
+  };
+  porCliente: {
+    clientId: number;
+    clientName: string;
+    clientDocument: string | null;
+    corriente: number;
+    tramo1a30: number;
+    tramo31a60: number;
+    tramo61a90: number;
+    masDe90: number;
+    total: number;
+  }[];
+}
+
+// ──────────────────────────────────────────────
+// Cuentas por Pagar (Sprint 10 — US-026)
+// ──────────────────────────────────────────────
+
+export type PayableEstado = 'PENDIENTE' | 'PARCIAL' | 'PAGADA' | 'VENCIDA';
+
+export interface PayableResponse {
+  id: number;
+  supplierId: number;
+  supplierName: string | null;
+  purchaseOrderId: number | null;
+  montoOriginal: number;
+  saldoPendiente: number;
+  fechaEmision: string;
+  fechaVencimiento: string;
+  estado: PayableEstado;
+  referenciaBancaria: string | null;
+}
+
+export interface PayablePaymentResponse {
+  id: number;
+  payableId: number;
+  monto: number;
+  metodoPago: string;
+  referenciaBancaria: string | null;
+  fecha: string;
+  registradoPor: number;
+}
+
+export interface PayablePaymentRequest {
+  monto: number;
+  metodoPago: string;
+  referenciaBancaria?: string;
+}
+
+export interface PayableRequest {
+  supplierId: number;
+  purchaseOrderId?: number;
+  montoOriginal: number;
+  fechaEmision: string;
+  fechaVencimiento: string;
+  referenciaBancaria?: string;
+}
+
+// ──────────────────────────────────────────────
+// Conciliación Bancaria (Sprint 10 — US-028)
+// ──────────────────────────────────────────────
+
+export interface BankReconciliationResponse {
+  id?: number;
+  periodo: string;
+  totalExtracto: number;
+  totalSistema: number;
+  diferencia: number;
+  estado: string;
+  totalLineas: number;
+  conciliadas: number;
+  pendientes: number;
+}
+
+export interface BankStatementResponse {
+  id: number;
+  reconciliationId: number;
+  fecha: string;
+  descripcion: string;
+  monto: number;
+  tipo: 'CREDITO' | 'DEBITO';
+  estado: 'PENDIENTE' | 'CONCILIADO' | 'AJUSTE_MANUAL';
+  paymentId: number | null;
+  observacion: string | null;
+}
+
+export interface ManualMatchRequest {
+  statementId: number;
+  paymentId: number;
+  tipo: 'RECEIVABLE_PAYMENT' | 'PAYABLE_PAYMENT';
+}
+
+export interface CreateExpenseFromStatementRequest {
+  statementId: number;
+  monto: number;
+  categoria: string;
+  descripcion: string;
+  fecha?: string;
+}
