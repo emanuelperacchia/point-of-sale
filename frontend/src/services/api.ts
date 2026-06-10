@@ -36,6 +36,28 @@ import type {
   BankStatementResponse,
   ManualMatchRequest,
   CreateExpenseFromStatementRequest,
+  // Sprint 11 — RRHH
+  EmployeeRequest,
+  EmployeeResponse,
+  EmployeeHistoryResponse,
+  CheckInRequest,
+  CheckOutRequest,
+  AttendanceResponse,
+  AbsenceRequest,
+  AbsenceResponse,
+  AttendanceSummaryResponse,
+  ShiftDefinitionRequest,
+  ShiftDefinitionResponse,
+  ShiftAssignmentRequest,
+  ShiftAssignmentResponse,
+  ShiftScheduleResponse,
+  ShiftChangeRequestDto,
+  ShiftChangeRequestResponse,
+  NotificationResponse,
+  EvaluationTemplateRequest,
+  EvaluationTemplateResponse,
+  CreateEvaluationRequest,
+  PerformanceEvaluationResponse,
 } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -448,6 +470,117 @@ export const bankReconciliationApi = {
       params: { periodo },
       responseType: 'blob',
     }),
+};
+
+// ---------------------------------------------------------------------------
+// Recursos Humanos — Sprint 11
+// ---------------------------------------------------------------------------
+
+export const employeeApi = {
+  getAll: (params?: { departamento?: string; cargo?: string; sucursalId?: number; activo?: boolean }) =>
+    api.get<EmployeeResponse[]>('/employees', { params }),
+
+  getById: (id: number) =>
+    api.get<EmployeeResponse>(`/employees/${id}`),
+
+  create: (data: EmployeeRequest) =>
+    api.post<EmployeeResponse>('/employees', data),
+
+  update: (id: number, data: EmployeeRequest) =>
+    api.put<EmployeeResponse>(`/employees/${id}`, data),
+
+  deactivate: (id: number) =>
+    api.delete(`/employees/${id}`),
+
+  getHistory: (id: number) =>
+    api.get<EmployeeHistoryResponse[]>(`/employees/${id}/history`),
+
+  uploadDocument: (id: number, file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return api.post<EmployeeResponse>(`/employees/${id}/document`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+};
+
+export const attendanceApi = {
+  checkIn: (data: CheckInRequest) =>
+    api.post<AttendanceResponse>('/attendance/check-in', data),
+
+  checkOut: (data: CheckOutRequest) =>
+    api.post<AttendanceResponse>('/attendance/check-out', data),
+
+  registerAbsence: (data: AbsenceRequest) =>
+    api.post<AbsenceResponse>('/attendance/ausencias', data),
+
+  getAll: (params: { employeeId?: number; desde: string; hasta: string }) =>
+    api.get<AttendanceResponse[]>('/attendance', { params }),
+
+  getSummary: (params: { employeeId: number; mes: number; anio: number }) =>
+    api.get<AttendanceSummaryResponse>('/attendance/summary', { params }),
+};
+
+export const shiftApi = {
+  getDefinitions: () =>
+    api.get<ShiftDefinitionResponse[]>('/shifts/definitions'),
+
+  createDefinition: (data: ShiftDefinitionRequest) =>
+    api.post<ShiftDefinitionResponse>('/shifts/definitions', data),
+
+  assign: (data: ShiftAssignmentRequest) =>
+    api.post<ShiftAssignmentResponse>('/shifts/assignments', data),
+
+  getSchedule: (params: { semana: string; sucursalId?: number }) =>
+    api.get<ShiftScheduleResponse>('/shifts/schedule', { params }),
+
+  getEmployeeShifts: (employeeId: number, semana: string) =>
+    api.get<ShiftAssignmentResponse[]>(`/shifts/employees/${employeeId}`, { params: { semana } }),
+
+  requestChange: (data: ShiftChangeRequestDto) =>
+    api.post<ShiftChangeRequestResponse>('/shifts/change-requests', data),
+
+  getPendingRequests: () =>
+    api.get<ShiftChangeRequestResponse[]>('/shifts/change-requests/pending'),
+
+  resolveRequest: (id: number, aprobado: boolean) =>
+    api.put<ShiftChangeRequestResponse>(`/shifts/change-requests/${id}/resolve`, null, {
+      params: { aprobado },
+    }),
+};
+
+export const notificationApi = {
+  getAll: () =>
+    api.get<NotificationResponse[]>('/notifications'),
+
+  getUnread: () =>
+    api.get<NotificationResponse[]>('/notifications/unread'),
+
+  getCount: () =>
+    api.get<{ count: number }>('/notifications/count'),
+
+  markRead: (id: number) =>
+    api.put(`/notifications/${id}/read`),
+};
+
+export const evaluationApi = {
+  getTemplates: () =>
+    api.get<EvaluationTemplateResponse[]>('/evaluations/templates'),
+
+  createTemplate: (data: EvaluationTemplateRequest) =>
+    api.post<EvaluationTemplateResponse>('/evaluations/templates', data),
+
+  create: (data: CreateEvaluationRequest) =>
+    api.post<PerformanceEvaluationResponse>('/evaluations', data),
+
+  finalize: (id: number) =>
+    api.put<PerformanceEvaluationResponse>(`/evaluations/${id}/finalize`),
+
+  getByEmployee: (employeeId: number) =>
+    api.get<PerformanceEvaluationResponse[]>(`/evaluations/employees/${employeeId}`),
+
+  calculateScore: (id: number) =>
+    api.get<{ puntuacionFinal: number }>(`/evaluations/${id}/calculate`),
 };
 
 export default api;

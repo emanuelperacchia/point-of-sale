@@ -543,3 +543,265 @@ export interface CreateExpenseFromStatementRequest {
   descripcion: string;
   fecha?: string;
 }
+
+// ── Sprint 11: RRHH ──────────────────────────────────────────────
+
+export type ModalidadContrato = 'FULL_TIME' | 'PART_TIME' | 'CONTRATO';
+
+export interface EmployeeRequest {
+  nombre: string;
+  apellido: string;
+  dni: string;
+  cuil?: string;
+  fechaNacimiento: string;
+  fechaIngreso: string;
+  cargo: string;
+  departamento: string;
+  sucursalId?: number;
+  salarioBase: number;
+  modalidadContrato: ModalidadContrato;
+  userId?: number;
+}
+
+export interface EmployeeResponse {
+  id: number;
+  nombre: string;
+  apellido: string;
+  dni: string;
+  cuil: string | null;
+  fechaNacimiento: string;
+  fechaIngreso: string;
+  fechaBaja: string | null;
+  cargo: string;
+  departamento: string;
+  sucursalId: number | null;
+  salarioBase: number;
+  modalidadContrato: ModalidadContrato;
+  userId: number | null;
+  activo: boolean;
+  documentoUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EmployeeHistoryResponse {
+  id: number;
+  employeeId: number;
+  campo: 'CARGO' | 'SALARIO' | 'DEPARTAMENTO';
+  valorAnterior: string;
+  valorNuevo: string;
+  fecha: string;
+  modificadoPor: number | null;
+}
+
+export interface CheckInRequest {
+  employeeId: number;
+  timestamp: string;
+  observacion?: string;
+}
+
+export interface CheckOutRequest {
+  employeeId: number;
+  timestamp: string;
+}
+
+export type AttendanceEstado = 'COMPLETO' | 'INCOMPLETO' | 'AUSENCIA';
+
+export interface AttendanceResponse {
+  id: number;
+  employeeId: number;
+  fecha: string;
+  horaEntrada: string;
+  horaSalida: string | null;
+  horasTrabajadasMinutos: number | null;
+  horasExtraMinutos: number | null;
+  estado: AttendanceEstado;
+  observacion: string | null;
+  createdAt: string;
+}
+
+export type AusenciaTipo = 'JUSTIFICADA' | 'INJUSTIFICADA' | 'LICENCIA' | 'VACACIONES';
+
+export interface AbsenceRequest {
+  employeeId: number;
+  fecha: string;
+  tipo: AusenciaTipo;
+  descripcion?: string;
+}
+
+export interface AbsenceResponse {
+  id: number;
+  employeeId: number;
+  fecha: string;
+  tipo: AusenciaTipo;
+  descripcion: string | null;
+  aprobadoPor: number | null;
+  createdAt: string;
+}
+
+export interface AttendanceSummaryResponse {
+  employeeId: number;
+  mes: number;
+  anio: number;
+  diasTrabajados: number;
+  horasTotalesMinutos: number;
+  horasExtraMinutos: number;
+  ausenciasJustificadas: number;
+  ausenciasInjustificadas: number;
+  licencias: number;
+  vacaciones: number;
+}
+
+export interface ShiftDefinitionRequest {
+  nombre: string;
+  horaInicio: string;
+  horaFin: string;
+  diasSemana: number;
+  color?: string;
+}
+
+export interface ShiftDefinitionResponse {
+  id: number;
+  nombre: string;
+  horaInicio: string;
+  horaFin: string;
+  diasSemana: number;
+  color: string | null;
+  activo: boolean;
+}
+
+export interface ShiftAssignmentRequest {
+  employeeId: number;
+  shiftDefinitionId: number;
+  semana: string;
+  diasActivos: number[];
+  sucursalId?: number;
+}
+
+export interface ShiftAssignmentResponse {
+  id: number;
+  employeeId: number;
+  employeeName: string;
+  shiftDefinitionId: number;
+  shiftName: string;
+  horaInicio: string;
+  horaFin: string;
+  semana: string;
+  diasActivos: number[];
+  sucursalId: number | null;
+}
+
+export interface ShiftScheduleResponse {
+  semana: string;
+  sucursalId: number | null;
+  empleados: EmployeeSchedule[];
+}
+
+export interface EmployeeSchedule {
+  employeeId: number;
+  employeeName: string;
+  turnos: Record<number, ShiftInfo[]>;
+}
+
+export interface ShiftInfo {
+  assignmentId: number;
+  shiftDefinitionId: number;
+  shiftName: string;
+  horaInicio: string;
+  horaFin: string;
+  color: string | null;
+}
+
+export interface ShiftChangeRequestDto {
+  assignmentId: number;
+  fechaOriginal: string;
+  motivo: string;
+}
+
+export type ShiftChangeEstado = 'PENDIENTE' | 'APROBADO' | 'RECHAZADO';
+
+export interface ShiftChangeRequestResponse {
+  id: number;
+  employeeId: number;
+  assignmentId: number;
+  fechaOriginal: string;
+  motivo: string;
+  estado: ShiftChangeEstado;
+  revisadoPor: number | null;
+  fechaRevision: string | null;
+  createdAt: string;
+}
+
+export interface NotificationResponse {
+  id: number;
+  userId: number;
+  titulo: string;
+  mensaje: string;
+  leido: boolean;
+  creadoEn: string;
+}
+
+export type PeriodoEvaluacion = 'MENSUAL' | 'TRIMESTRAL' | 'SEMESTRAL' | 'ANUAL';
+
+export interface EvaluationTemplateRequest {
+  nombre: string;
+  periodo: PeriodoEvaluacion;
+  criterios: CriterionRequest[];
+}
+
+export interface CriterionRequest {
+  nombre: string;
+  peso: number;
+}
+
+export interface EvaluationTemplateResponse {
+  id: number;
+  nombre: string;
+  periodo: PeriodoEvaluacion;
+  activo: boolean;
+  criterios: CriterionResponse[];
+}
+
+export interface CriterionResponse {
+  id: number;
+  nombre: string;
+  peso: number;
+}
+
+export interface CreateEvaluationRequest {
+  employeeId: number;
+  templateId: number;
+  periodo: string;
+  fechaEvaluacion: string;
+  observaciones?: string;
+  scores: ScoreRequest[];
+}
+
+export interface ScoreRequest {
+  criterionId: number;
+  puntuacion: number;
+}
+
+export type EvaluationEstado = 'BORRADOR' | 'FINALIZADA';
+
+export interface PerformanceEvaluationResponse {
+  id: number;
+  employeeId: number;
+  templateId: number;
+  templateName: string;
+  periodo: string;
+  fechaEvaluacion: string;
+  puntuacionFinal: number | null;
+  observaciones: string | null;
+  estado: EvaluationEstado;
+  evaluadoPor: number | null;
+  scores: ScoreResponse[];
+  createdAt: string;
+}
+
+export interface ScoreResponse {
+  id: number;
+  criterionId: number;
+  criterionName: string;
+  puntuacion: number;
+}
