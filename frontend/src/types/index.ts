@@ -805,3 +805,70 @@ export interface ScoreResponse {
   criterionName: string;
   puntuacion: number;
 }
+
+// ── Sprint 12: Comisiones ─────────────────────────────────────────
+
+export interface CommissionSchemeRequest {
+  nombre: string;
+  tipo: 'PORCENTAJE_VENTA' | 'ESCALONADO';
+  valor?: number;
+}
+
+export interface CommissionSchemeResponse {
+  id: number;
+  nombre: string;
+  tipo: string;
+  valor: number;
+  activo: boolean;
+  createdAt: string;
+}
+
+export interface CommissionResultResponse {
+  id: number;
+  employeeId: number;
+  mes: number;
+  anio: number;
+  totalVentas: number;
+  comisionCalculada: number;
+  metaAlcanzada: boolean;
+  bonoAplicado: number;
+  esquemaUsado: string;
+}
+
+// ── Sprint 12: Nómina ─────────────────────────────────────────────
+
+export interface PayrollResponse {
+  id: number;
+  employeeId: number;
+  mes: number;
+  anio: number;
+  diasTrabajados: number;
+  horasNormalesMinutos: number;
+  horasExtraMinutos: number;
+  sueldoBasico: number;
+  plusHorasExtra: number;
+  comisiones: number;
+  bonoDesempeno: number;
+  totalHaberes: number;
+  descJubilacion: number;
+  descObraSocial: number;
+  descAnses: number;
+  descAusencias: number;
+  descEmbargos: number;
+  totalDescuentos: number;
+  netoApagar: number;
+  estado: 'BORRADOR' | 'APROBADA';
+  aprobadoPor: number | null;
+  fechaAprobacion: string | null;
+  createdAt: string;
+}
+
+export interface PayrollAdjustmentResponse {
+  id: number;
+  payrollId: number;
+  concepto: string;
+  monto: number;
+  justificacion: string | null;
+  creadoPor: number;
+  createdAt: string;
+}

@@ -3,6 +3,9 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import PosPage from './pages/PosPage';
+import CommissionPage from './pages/CommissionPage';
+import PayrollListPage from './pages/PayrollListPage';
+import PayrollDetailPage from './pages/PayrollDetailPage';
 
 export default function App() {
   return (
@@ -15,6 +18,30 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <PosPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/commissions"
+            element={
+              <ProtectedRoute>
+                <CommissionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payroll"
+            element={
+              <ProtectedRoute>
+                <PayrollListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payroll/:id"
+            element={
+              <ProtectedRoute>
+                <PayrollDetailPage />
               </ProtectedRoute>
             }
           />

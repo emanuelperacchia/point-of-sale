@@ -39,4 +39,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     List<Object[]> findDailySalesTotals(
             @Param("desde") LocalDateTime desde,
             @Param("hasta") LocalDateTime hasta);
+
+    @Query("SELECT COALESCE(SUM(s.total), 0) FROM Sale s WHERE s.user.id = :userId AND s.status = 'COMPLETED' AND s.createdAt >= :desde AND s.createdAt < :hasta")
+    BigDecimal sumTotalByUserAndDateRange(@Param("userId") Long userId, @Param("desde") LocalDateTime desde, @Param("hasta") LocalDateTime hasta);
 }

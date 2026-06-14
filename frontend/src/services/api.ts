@@ -583,4 +583,66 @@ export const evaluationApi = {
     api.get<{ puntuacionFinal: number }>(`/evaluations/${id}/calculate`),
 };
 
+// ── Sprint 12: Comisiones ──────────────────────────────────────────
+
+export const commissionApi = {
+  listSchemes: () =>
+    api.get<CommissionSchemeResponse[]>('/commissions/schemes'),
+
+  createScheme: (data: CommissionSchemeRequest) =>
+    api.post<CommissionSchemeResponse>('/commissions/schemes', data),
+
+  calculate: (employeeId: number, mes: number, anio: number) =>
+    api.post<CommissionResultResponse>(`/commissions/calculate`, null, {
+      params: { employeeId, mes, anio },
+    }),
+
+  summary: (employeeId: number, mes: number, anio: number) =>
+    api.get<CommissionResultResponse>('/commissions/summary', {
+      params: { employeeId, mes, anio },
+    }),
+
+  ranking: (mes: number, anio: number) =>
+    api.get<CommissionResultResponse[]>('/commissions/ranking', {
+      params: { mes, anio },
+    }),
+};
+
+// ── Sprint 12: Nómina ─────────────────────────────────────────────
+
+export const payrollApi = {
+  calculateAndSave: (employeeId: number, mes: number, anio: number) =>
+    api.post<PayrollResponse>(`/payroll/calculate/${employeeId}`, null, {
+      params: { mes, anio },
+    }),
+
+  getById: (id: number) =>
+    api.get<PayrollResponse>(`/payroll/${id}`),
+
+  list: (params?: { mes?: number; anio?: number; employeeId?: number }) =>
+    api.get<PayrollResponse[]>('/payroll', { params }),
+
+  approve: (id: number, aprobadoPor: number) =>
+    api.post<PayrollResponse>(`/payroll/${id}/approve`, null, {
+      params: { aprobadoPor },
+    }),
+
+  addAdjustment: (payrollId: number, concepto: string, monto: number, creadoPor: number, justificacion?: string) =>
+    api.post<PayrollAdjustmentResponse>(`/payroll/${payrollId}/adjustments`, null, {
+      params: { concepto, monto, creadoPor, justificacion },
+    }),
+
+  listAdjustments: (payrollId: number) =>
+    api.get<PayrollAdjustmentResponse[]>(`/payroll/${payrollId}/adjustments`),
+
+  generatePdf: (id: number) =>
+    api.get(`/payroll/${id}/pdf`, { responseType: 'blob' }),
+
+  exportCsv: (mes: number, anio: number) =>
+    api.post(`/payroll/export/csv`, null, {
+      params: { mes, anio },
+      responseType: 'blob',
+    }),
+};
+
 export default api;
