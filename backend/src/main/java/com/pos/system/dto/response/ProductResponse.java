@@ -20,6 +20,9 @@ public class ProductResponse {
     private String description;
     private BigDecimal price;
     private Integer stock;
+    private String tipo;
+    private BigDecimal costoProduccion;
+    private Integer stockReservado;
     private CategoryResponse category;
     private Boolean active;
     private LocalDateTime createdAt;

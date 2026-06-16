@@ -166,6 +166,9 @@ export const authApi = {
 export const productApi = {
   search: (q: string, limit = 10) =>
     api.get<ProductSearchResult[]>('/products/search', { params: { q, limit } }),
+
+  getAll: (page = 0, size = 10, sortBy = 'createdAt', sortDir = 'desc', search?: string, tipo?: string) =>
+    api.get<any>('/products', { params: { page, size, sortBy, sortDir, search, tipo } }),
 };
 
 // ---------------------------------------------------------------------------
@@ -643,6 +646,65 @@ export const payrollApi = {
       params: { mes, anio },
       responseType: 'blob',
     }),
+};
+
+// ── Sprint 13: Produccion ──────────────────────────────────────────
+
+export const recipeApi = {
+  list: () => api.get<RecipeResponse[]>('/recipes'),
+
+  getById: (id: number) => api.get<RecipeResponse>(`/recipes/${id}`),
+
+  create: (data: RecipeRequest) =>
+    api.post<RecipeResponse>('/recipes', data),
+
+  update: (id: number, data: RecipeRequest) =>
+    api.put<RecipeResponse>(`/recipes/${id}`, data),
+
+  delete: (id: number) => api.delete(`/recipes/${id}`),
+
+  getBomExplosion: (id: number, cantidad = 1) =>
+    api.get<BomExplosionResponse>(`/recipes/${id}/bom-explosion`, {
+      params: { cantidad },
+    }),
+
+  getCostEstimate: (id: number, cantidad = 1) =>
+    api.get<CostEstimateResponse>(`/recipes/${id}/cost-estimate`, {
+      params: { cantidad },
+    }),
+};
+
+export const productionOrderApi = {
+  list: (estado?: string) =>
+    api.get<ProductionOrderResponse[]>('/production-orders', {
+      params: estado ? { estado } : {},
+    }),
+
+  getById: (id: number) =>
+    api.get<ProductionOrderResponse>(`/production-orders/${id}`),
+
+  create: (data: ProductionOrderRequest) =>
+    api.post<ProductionOrderResponse>('/production-orders', data),
+
+  start: (id: number) =>
+    api.post<ProductionOrderResponse>(`/production-orders/${id}/start`),
+
+  complete: (id: number, cantidadProducida: number, mermaEntries?: any[]) =>
+    api.post<ProductionOrderResponse>(
+      `/production-orders/${id}/complete?cantidadProducida=${cantidadProducida}`,
+      mermaEntries || [],
+    ),
+
+  cancel: (id: number) =>
+    api.post<ProductionOrderResponse>(`/production-orders/${id}/cancel`),
+
+  getCostAnalysis: (id: number) =>
+    api.get<CostAnalysisResponse>(`/production-orders/${id}/cost-analysis`),
+};
+
+export const lotApi = {
+  getTraceability: (loteId: string) =>
+    api.get<LoteTraceabilityResponse>(`/lots/${loteId}/traceability`),
 };
 
 export default api;

@@ -19,6 +19,10 @@ import java.util.Set;
 @Builder
 public class Product {
 
+    public enum Tipo {
+        MATERIA_PRIMA, PRODUCTO_TERMINADO, INSUMO
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,6 +41,18 @@ public class Product {
 
     @Column(nullable = false)
     private Integer stock;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    @Builder.Default
+    private Tipo tipo = Tipo.PRODUCTO_TERMINADO;
+
+    @Column(name = "costo_produccion", precision = 12, scale = 2)
+    private BigDecimal costoProduccion;
+
+    @Column(name = "stock_reservado", nullable = false)
+    @Builder.Default
+    private Integer stockReservado = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

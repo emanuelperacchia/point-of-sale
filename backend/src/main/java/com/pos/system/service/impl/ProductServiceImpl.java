@@ -44,17 +44,30 @@ public class ProductServiceImpl implements ProductService {
                     .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
         }
 
+        Product.Tipo tipo = request.getTipo() != null
+                ? Product.Tipo.valueOf(request.getTipo())
+                : Product.Tipo.PRODUCTO_TERMINADO;
+
         Product product = Product.builder()
                 .name(request.getName())
                 .sku(request.getSku())
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .stock(request.getStock())
+                .tipo(tipo)
+                .costoProduccion(request.getCostoProduccion())
                 .category(category)
                 .active(true)
                 .build();
 
         return mapToResponse(productRepository.save(product));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getByTipo(String tipo, Pageable pageable) {
+        return productRepository.findByActiveTrueAndTipo(Product.Tipo.valueOf(tipo), pageable)
+                .map(this::mapToResponse);
     }
 
     @Override
@@ -99,6 +112,12 @@ public class ProductServiceImpl implements ProductService {
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
+        if (request.getTipo() != null) {
+            product.setTipo(Product.Tipo.valueOf(request.getTipo()));
+        }
+        if (request.getCostoProduccion() != null) {
+            product.setCostoProduccion(request.getCostoProduccion());
+        }
 
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
@@ -165,6 +184,9 @@ public class ProductServiceImpl implements ProductService {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .stock(product.getStock())
+                .tipo(product.getTipo() != null ? product.getTipo().name() : null)
+                .costoProduccion(product.getCostoProduccion())
+                .stockReservado(product.getStockReservado())
                 .active(product.getActive())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())

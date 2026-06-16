@@ -1,0 +1,5 @@
+ALTER TABLE products ADD COLUMN tipo VARCHAR(30) NOT NULL DEFAULT 'PRODUCTO_TERMINADO';
+ALTER TABLE products ADD COLUMN costo_produccion DECIMAL(12,2);
+ALTER TABLE products ADD COLUMN stock_reservado INT NOT NULL DEFAULT 0;
+
+CREATE INDEX idx_products_tipo ON products(tipo);

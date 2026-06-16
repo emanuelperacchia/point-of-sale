@@ -24,6 +24,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     boolean existsBySku(String sku);
 
+    Page<Product> findByActiveTrueAndTipo(Product.Tipo tipo, Pageable pageable);
+
+    List<Product> findByActiveTrueAndTipo(Product.Tipo tipo);
+
     // POS search: by name, SKU, or category name
     @Query("SELECT p FROM Product p LEFT JOIN p.category c " +
            "WHERE p.active = true AND (" +

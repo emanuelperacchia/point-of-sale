@@ -872,3 +872,166 @@ export interface PayrollAdjustmentResponse {
   creadoPor: number;
   createdAt: string;
 }
+
+// ── Sprint 13: Produccion ─────────────────────────────────────────
+
+export interface RecipeRequest {
+  nombre: string;
+  descripcion?: string;
+  productoTerminadoId: number;
+  cantidadProducida: number;
+  unidadMedida: string;
+  tiempoProduccionMinutos?: number;
+  componentes?: BomComponentRequest[];
+}
+
+export interface BomComponentRequest {
+  componenteId: number;
+  cantidad: number;
+  unidadMedida: string;
+  esMermaEsperada?: boolean;
+  porcentajeMermaEsperado?: number;
+}
+
+export interface RecipeResponse {
+  id: number;
+  nombre: string;
+  descripcion: string | null;
+  productoTerminadoId: number;
+  productoTerminadoNombre: string | null;
+  cantidadProducida: number;
+  unidadMedida: string;
+  tiempoProduccionMinutos: number | null;
+  activa: boolean;
+  costoEstimado: number;
+  componentes: BomComponentResponse[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BomComponentResponse {
+  id: number;
+  componenteId: number;
+  componenteNombre: string | null;
+  componenteSku: string | null;
+  componenteTipo: string | null;
+  cantidad: number;
+  unidadMedida: string;
+  esMermaEsperada: boolean;
+  porcentajeMermaEsperado: number | null;
+}
+
+export interface BomExplosionResponse {
+  recipeId: number;
+  recipeNombre: string;
+  cantidadAProducir: number;
+  materiales: BomExplosionItem[];
+}
+
+export interface BomExplosionItem {
+  productoId: number;
+  productoNombre: string;
+  productoSku: string;
+  tipo: string;
+  cantidadTotal: number;
+  unidadMedida: string;
+  precioPromedio: number;
+  costoTotal: number;
+  stockSuficiente: boolean;
+  stockActual: number;
+  stockFaltante: number;
+}
+
+export interface CostEstimateResponse {
+  recipeId: number;
+  recipeNombre: string;
+  cantidadAProducir: number;
+  costoTotalEstimado: number;
+  costoUnitarioEstimado: number;
+  items: CostItem[];
+}
+
+export interface CostItem {
+  productoId: number;
+  productoNombre: string;
+  cantidad: number;
+  precioUnitario: number;
+  costoTotal: number;
+}
+
+export interface ProductionOrderRequest {
+  recipeId: number;
+  cantidadPlanificada: number;
+  fechaPlanificada: string;
+  responsableId: number;
+  sucursalId?: number;
+  observaciones?: string;
+}
+
+export interface ProductionOrderResponse {
+  id: number;
+  recipeId: number;
+  recipeNombre: string | null;
+  productoTerminadoNombre: string | null;
+  cantidadPlanificada: number;
+  cantidadProducida: number | null;
+  fechaPlanificada: string;
+  responsableId: number;
+  responsableNombre: string | null;
+  sucursalId: number | null;
+  estado: string;
+  observaciones: string | null;
+  componentes: ProductionOrderComponentResponse[];
+  numeroLote: string | null;
+  createdAt: string;
+}
+
+export interface ProductionOrderComponentResponse {
+  id: number;
+  componenteId: number | null;
+  componenteNombre: string | null;
+  cantidadPlanificada: number;
+  cantidadConsumida: number | null;
+  mermaReal: number | null;
+  motivoMerma: string | null;
+}
+
+export interface CostAnalysisResponse {
+  productionOrderId: number;
+  recipeId: number;
+  recipeNombre: string;
+  cantidadProducida: number;
+  costoEstimadoTotal: number;
+  costoRealTotal: number;
+  desviacion: number;
+  costoUnitarioEstimado: number;
+  costoUnitarioReal: number;
+  componentes: CostDeviationItem[];
+}
+
+export interface CostDeviationItem {
+  componenteNombre: string;
+  cantidadPlanificada: number;
+  cantidadConsumida: number;
+  precioUnitario: number;
+  costoEstimado: number;
+  costoReal: number;
+  desviacion: number;
+}
+
+export interface LoteTraceabilityResponse {
+  numeroLote: string;
+  fechaProduccion: string;
+  cantidad: number;
+  productoTerminadoNombre: string | null;
+  productionOrderId: number;
+  materiasPrimas: MateriaPrimaUsada[];
+}
+
+export interface MateriaPrimaUsada {
+  productoNombre: string;
+  productoSku: string;
+  cantidad: number;
+  loteCompra: string;
+  proveedor: string;
+}
