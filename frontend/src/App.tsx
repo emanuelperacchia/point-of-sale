@@ -6,6 +6,9 @@ import PosPage from './pages/PosPage';
 import CommissionPage from './pages/CommissionPage';
 import PayrollListPage from './pages/PayrollListPage';
 import PayrollDetailPage from './pages/PayrollDetailPage';
+import RecipePage from './pages/RecipePage';
+import ProductionOrderPage from './pages/ProductionOrderPage';
+import ProductionOrderDetailPage from './pages/ProductionOrderDetailPage';
 
 export default function App() {
   return (
@@ -42,6 +45,30 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <PayrollDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipes"
+            element={
+              <ProtectedRoute>
+                <RecipePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/production-orders"
+            element={
+              <ProtectedRoute>
+                <ProductionOrderPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/production-orders/:id"
+            element={
+              <ProtectedRoute>
+                <ProductionOrderDetailPage />
               </ProtectedRoute>
             }
           />

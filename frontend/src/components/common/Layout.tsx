@@ -10,6 +10,8 @@ const navItems = [
   { to: '/pos', label: 'POS' },
   { to: '/commissions', label: 'Comisiones' },
   { to: '/payroll', label: 'Nomina' },
+  { to: '/recipes', label: 'Recetas' },
+  { to: '/production-orders', label: 'Produccion' },
 ];
 
 export default function Layout({ children, title }: LayoutProps) {

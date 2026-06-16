@@ -11,17 +11,19 @@ import java.util.List;
 public interface ProductService {
     
     ProductResponse create(ProductRequest request);
-    
+
     Page<ProductResponse> getAll(Pageable pageable);
-    
+
+    Page<ProductResponse> getByTipo(String tipo, Pageable pageable);
+
     Page<ProductResponse> search(String search, Pageable pageable);
-    
+
     ProductResponse getById(Long id);
-    
+
     ProductResponse update(Long id, ProductRequest request);
-    
+
     void delete(Long id);
-    
+
     void updateStock(Long id, Integer quantity);
 
     // POS lightweight search

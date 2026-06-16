@@ -43,7 +43,8 @@ public class ProductController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir,
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String tipo) {
         
         Sort sort = sortDir.equalsIgnoreCase("asc") 
                 ? Sort.by(sortBy).ascending() 
@@ -51,7 +52,9 @@ public class ProductController {
         Pageable pageable = PageRequest.of(page, size, sort);
         
         Page<ProductResponse> products;
-        if (search != null && !search.isBlank()) {
+        if (tipo != null && !tipo.isBlank()) {
+            products = productService.getByTipo(tipo, pageable);
+        } else if (search != null && !search.isBlank()) {
             products = productService.search(search, pageable);
         } else {
             products = productService.getAll(pageable);
