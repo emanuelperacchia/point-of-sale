@@ -1,36 +1,55 @@
 # Point of Sale — POS System
 
 Sistema de punto de venta completo con backend Spring Boot + frontend React (TypeScript).
-Incluye facturación electrónica, turnos de caja, devoluciones, motor de promociones y programa de fidelización.
+Incluye facturación electrónica AFIP-style, motor de promociones, fidelización, RRHH (asistencia, turnos, evaluaciones), comisiones, nómina, y gestión de materia prima y producción.
+
+---
 
 ## Stack
 
 | Capa | Tecnología |
 |------|-----------|
-| **Backend** | Java 17, Spring Boot 3, Spring Security, Spring Data JPA, Flyway, PostgreSQL |
-| **Frontend** | React 19, TypeScript, Vite, Axios, Tailwind CSS |
-| **Build** | Maven (backend), pnpm (frontend) |
+| **Backend** | Java 17, Spring Boot 3.3, Spring Security, Spring Data JPA, Flyway, PostgreSQL |
+| **Frontend** | React 19, TypeScript 5, Vite, Axios, Tailwind CSS 4 |
+| **Build** | Maven Wrapper (backend), pnpm (frontend) |
 | **Testing** | JUnit 5, Mockito, Spring MockMvc |
+| **Auth** | JWT (access 15 min + refresh 7 días) |
 
 ## Estructura
 
 ```
 point-of-sale/
-├── backend/          → API REST (Spring Boot)
+├── backend/           → API REST (Spring Boot)
 │   ├── src/
+│   │   ├── main/java/com/pos/system/
+│   │   │   ├── controller/     → 38 endpoints REST
+│   │   │   ├── service/        → 57 servicios + subpaquetes
+│   │   │   ├── repository/     → 30+ repositorios JPA
+│   │   │   ├── entity/         → 81 entidades JPA
+│   │   │   ├── dto/            → request/response DTOs
+│   │   │   ├── config/         → seguridad, CORS, etc.
+│   │   │   └── exception/      → manejo de errores
+│   │   ├── main/resources/
+│   │   │   └── db/migration/   → 23 migrations Flyway (V6–V28)
+│   │   └── test/               → 461 tests unitarios
 │   ├── pom.xml
-│   └── ...
-├── frontend/         → SPA (React + Vite)
+│   └── HELP.md
+├── frontend/          → SPA (React + Vite)
 │   ├── src/
+│   │   ├── pages/              → 8 páginas
+│   │   ├── components/         → 13 componentes (POS + comunes)
+│   │   ├── services/           → 24 módulos API (Axios)
+│   │   ├── types/              → 93 interfaces + 16 type aliases
+│   │   └── context/            → AuthContext (JWT)
 │   ├── package.json
-│   └── ...
+│   └── vite.config.ts
 ├── .gitignore
 └── README.md
 ```
 
 ## Requisitos
 
-- **Java 17+**
+- **Java 17+** (OpenJDK recomendado)
 - **Node.js 18+** y **pnpm** (`npm install -g pnpm`)
 - **PostgreSQL 15+**
 - **Maven** (o usar `./mvnw` incluido)
@@ -52,11 +71,11 @@ cd backend
 $env:JWT_SECRET="tu-secreto-jwt"
 $env:DB_PASSWORD="tu-contraseña"
 
-# Iniciar
+# Iniciar (con Flyway: ddl-auto=validate)
 ./mvnw spring-boot:run
 ```
 
-La API corre en `http://localhost:8080`. Swagger UI en `http://localhost:8080/swagger-ui.html`.
+La API corre en `http://localhost:8080`.
 
 ### 3. Frontend
 
@@ -66,34 +85,41 @@ pnpm install
 pnpm dev
 ```
 
-El frontend corre en `http://localhost:5173` con proxy automático al backend.
+El frontend corre en `http://localhost:5173` con proxy automático al backend (`/api → localhost:8080`).
 
 ## Variables de Entorno
 
-| Variable | Descripción |
-|----------|-------------|
-| `JWT_SECRET` | Clave secreta para firmar tokens JWT |
-| `DB_PASSWORD` | Contraseña de PostgreSQL |
-| `CORS_ORIGINS` | Orígenes permitidos (default: `http://localhost:5173`) |
+| Variable | Obligatoria | Default | Descripción |
+|----------|------------|---------|-------------|
+| `JWT_SECRET` | ✅ | — | Clave secreta para firmar tokens JWT |
+| `DB_PASSWORD` | ✅ | — | Contraseña de PostgreSQL |
+| `CORS_ORIGINS` | ❌ | `http://localhost:5173` | Orígenes CORS permitidos |
 
 ## Roles del Sistema
 
 | Rol | Acceso |
 |-----|--------|
-| `ADMIN` | Administración completa |
-| `GERENTE` | CRUD promociones, reportes, aprobar devoluciones |
-| `CAJERO` | POS, cobros, devoluciones |
-| `VENDEDOR` | Consultas, clientes |
+| `ADMIN` | Administración completa del sistema |
+| `GERENTE` | Reportes, promociones, aprobar devoluciones, RRHH |
+| `CAJERO` | POS, cobros, devoluciones, turnos de caja |
+| `VENDEDOR` | Consultas, clientes, comisiones |
+| `INVENTARIO` | Gestión de stock, productos, recetas, producción |
+| `CONTADOR` | Reportes fiscales, libro IVA, cuentas contables |
 
-## Sprints implementados
+## Funcionalidades por Sprint
 
-| Sprint | Feature |
-|--------|---------|
-| 1–4 | Fundación, compras, proveedores, gestión de stock |
-| 5 | POS core (carrito, cobro, cliente, turno) |
-| 6 | Facturación electrónica (AFIP-style, PDF) |
-| 7 | Turnos de caja, devoluciones |
-| 8 | **Promociones automáticas, cupones, fidelización (puntos + tiers)** |
+| Sprint | Features | Entidades principales |
+|--------|----------|----------------------|
+| **1–4** | Fundación: auth JWT, productos, categorías, proveedores, compras, recepción de mercadería, stock, kárdex | User, Role, Product, Category, Supplier, PurchaseOrder, GoodsReceipt, StockMovement |
+| **5** | POS core: carrito, cobro multipago, selección de cliente, cálculo de IVA, facturación electrónica AFIP-style (PDF + QR), turno de caja | Sale, SaleItem, Payment, InvoiceDocument, CashShift |
+| **6** | Facturación: Factura A/B/C y Boleta, CAE mock, PDF, QR, XML AFIP, certificados digitales, reintentos | InvoiceDocument, DigitalCertificate, Tax |
+| **7** | Turnos de caja (apertura/cierre, movimientos, diferencia), devoluciones (auto-aprobación ≤$5000, aprobación manual) | ShiftMovement, SaleReturn, ReturnItem |
+| **8** | Promociones automáticas (% fijo, monto fijo, 2x1, 3x2, compra X lleva Y), cupones descuento, fidelización (puntos + tiers BRONCE/PLATA/ORO) | Promotion, Coupon, CouponUsage, PointsTransaction, ClientTier |
+| **9** | Reportes fiscales: libro IVA ventas, flujo de caja, gastos, exportación Excel | SalesBookReport, Expense, CashFlow |
+| **10** | Cuentas por cobrar (intereses, vencimiento), cuentas por pagar, conciliación bancaria, reporte de antigüedad | Receivable, Payable, BankReconciliation |
+| **11** | RRHH: empleados, asistencia, turnos (solapamiento), solicitudes de cambio, evaluaciones de desempeño | Employee, AttendanceRecord, ShiftAssignment, ShiftChangeRequest, PerformanceEvaluation |
+| **12** | Comisiones por venta (porcentaje/escalonado), nómina (cálculo con descuentos, ajustes, PDF recibo, exportación bancaria) | CommissionScheme, CommissionTier, CommissionResult, Payroll, PayrollAdjustment |
+| **13** | Materia prima y producción: recetas con BOM, explosión recursiva de materiales, detección de ciclos, órdenes de producción (planificar/iniciar/completar/cancelar), reserva y consumo de stock, cálculo de costos (estimado vs real), trazabilidad por lote | Recipe, BomComponent, ProductionOrder, ProductionOrderComponent, LoteProduccion |
 
 ## Licencia
 
