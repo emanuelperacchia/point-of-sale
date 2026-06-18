@@ -45,8 +45,16 @@ public interface ProductStockRepository extends JpaRepository<ProductStock, Long
            "AND ps.warehouse.active = true")
     List<ProductStock> findProductsWithoutStock();
     
-    // Valorización total del inventario
+    // Valorización total del inventario por bodega
     @Query("SELECT SUM(ps.totalValue) FROM ProductStock ps " +
            "WHERE ps.warehouse.id = :warehouseId")
     BigDecimal getTotalInventoryValue(@Param("warehouseId") Long warehouseId);
+
+    // Valorización total global
+    @Query("SELECT COALESCE(SUM(ps.totalValue), 0) FROM ProductStock ps WHERE ps.warehouse.active = true")
+    BigDecimal getTotalInventoryValueGlobal();
+
+    // Cantidad de productos bajo stock mínimo
+    @Query("SELECT COUNT(DISTINCT ps.product.id) FROM ProductStock ps WHERE ps.currentStock < ps.minimumStock AND ps.warehouse.active = true")
+    long countProductsBelowMinimum();
 }

@@ -23,4 +23,15 @@ public interface AttendanceRecordRepository extends JpaRepository<AttendanceReco
 
     @Query("SELECT COALESCE(SUM(a.horasExtraMinutos), 0) FROM AttendanceRecord a WHERE a.employeeId = :employeeId AND YEAR(a.fecha) = :anio AND MONTH(a.fecha) = :mes")
     int totalMinutosExtra(@Param("employeeId") Long employeeId, @Param("mes") int mes, @Param("anio") int anio);
+
+    // ── Dashboard ──────────────────────────────────────────────────
+
+    @Query("SELECT COUNT(a) FROM AttendanceRecord a WHERE a.estado = 'AUSENCIA' AND a.fecha >= :desde AND a.fecha <= :hasta")
+    long countAusenciasByPeriod(@Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
+
+    @Query("SELECT COUNT(DISTINCT a.employeeId) FROM AttendanceRecord a WHERE a.fecha >= :desde AND a.fecha <= :hasta")
+    long countDistinctEmployeeWithAttendance(@Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
+
+    @Query("SELECT COALESCE(SUM(a.horasTrabajadasMinutos), 0) FROM AttendanceRecord a WHERE a.fecha >= :desde AND a.fecha <= :hasta")
+    long totalMinutosTrabajadosByPeriod(@Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
 }

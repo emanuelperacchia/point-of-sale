@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,4 +35,7 @@ public interface ReceivableRepository extends JpaRepository<Receivable, Long> {
     List<Receivable> findAllActive();
 
     boolean existsByClientIdAndEstadoIn(Long clientId, List<Receivable.Estado> estados);
+
+    @Query("SELECT COALESCE(SUM(r.saldoPendiente), 0) FROM Receivable r WHERE r.estado IN ('PENDIENTE', 'PARCIAL', 'VENCIDA')")
+    BigDecimal sumOverdueReceivables();
 }

@@ -9,6 +9,12 @@ import PayrollDetailPage from './pages/PayrollDetailPage';
 import RecipePage from './pages/RecipePage';
 import ProductionOrderPage from './pages/ProductionOrderPage';
 import ProductionOrderDetailPage from './pages/ProductionOrderDetailPage';
+import DashboardPage from './pages/DashboardPage';
+import SalesAdvancedReportPage from './pages/SalesAdvancedReportPage';
+import ProductAnalysisPage from './pages/ProductAnalysisPage';
+import InventoryReportPage from './pages/InventoryReportPage';
+import ProfitabilityPage from './pages/ProfitabilityPage';
+import HRReportPage from './pages/HRReportPage';
 
 export default function App() {
   return (
@@ -69,6 +75,54 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ProductionOrderDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reports/sales-advanced"
+            element={
+              <ProtectedRoute>
+                <SalesAdvancedReportPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analysis/products"
+            element={
+              <ProtectedRoute>
+                <ProductAnalysisPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analysis/inventory"
+            element={
+              <ProtectedRoute>
+                <InventoryReportPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/analysis/profitability"
+            element={
+              <ProtectedRoute>
+                <ProfitabilityPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/hr/report"
+            element={
+              <ProtectedRoute>
+                <HRReportPage />
               </ProtectedRoute>
             }
           />

@@ -1,7 +1,7 @@
 # Point of Sale — POS System
 
 Sistema de punto de venta completo con backend Spring Boot + frontend React (TypeScript).
-Incluye facturación electrónica AFIP-style, motor de promociones, fidelización, RRHH (asistencia, turnos, evaluaciones), comisiones, nómina, y gestión de materia prima y producción.
+Incluye facturación electrónica AFIP-style, motor de promociones, fidelización, RRHH (asistencia, turnos, evaluaciones), comisiones, nómina, gestión de materia prima y producción, y dashboards analíticos (ventas, rentabilidad, ABC de productos, inventario).
 
 ---
 
@@ -22,8 +22,8 @@ point-of-sale/
 ├── backend/           → API REST (Spring Boot)
 │   ├── src/
 │   │   ├── main/java/com/pos/system/
-│   │   │   ├── controller/     → 38 endpoints REST
-│   │   │   ├── service/        → 57 servicios + subpaquetes
+│   │   │   ├── controller/     → 44 endpoints REST
+│   │   │   ├── service/        → 63 servicios + subpaquetes
 │   │   │   ├── repository/     → 30+ repositorios JPA
 │   │   │   ├── entity/         → 81 entidades JPA
 │   │   │   ├── dto/            → request/response DTOs
@@ -31,14 +31,14 @@ point-of-sale/
 │   │   │   └── exception/      → manejo de errores
 │   │   ├── main/resources/
 │   │   │   └── db/migration/   → 23 migrations Flyway (V6–V28)
-│   │   └── test/               → 461 tests unitarios
+│   │   └── test/               → 484 tests unitarios
 │   ├── pom.xml
 │   └── HELP.md
 ├── frontend/          → SPA (React + Vite)
 │   ├── src/
-│   │   ├── pages/              → 8 páginas
-│   │   ├── components/         → 13 componentes (POS + comunes)
-│   │   ├── services/           → 24 módulos API (Axios)
+│   │   ├── pages/              → 14 páginas
+│   │   ├── components/         → 17 componentes (POS + comunes + dashboards)
+│   │   ├── services/           → 25 módulos API (Axios)
 │   │   ├── types/              → 93 interfaces + 16 type aliases
 │   │   └── context/            → AuthContext (JWT)
 │   ├── package.json
@@ -120,6 +120,7 @@ El frontend corre en `http://localhost:5173` con proxy automático al backend (`
 | **11** | RRHH: empleados, asistencia, turnos (solapamiento), solicitudes de cambio, evaluaciones de desempeño | Employee, AttendanceRecord, ShiftAssignment, ShiftChangeRequest, PerformanceEvaluation |
 | **12** | Comisiones por venta (porcentaje/escalonado), nómina (cálculo con descuentos, ajustes, PDF recibo, exportación bancaria) | CommissionScheme, CommissionTier, CommissionResult, Payroll, PayrollAdjustment |
 | **13** | Materia prima y producción: recetas con BOM, explosión recursiva de materiales, detección de ciclos, órdenes de producción (planificar/iniciar/completar/cancelar), reserva y consumo de stock, cálculo de costos (estimado vs real), trazabilidad por lote | Recipe, BomComponent, ProductionOrder, ProductionOrderComponent, LoteProduccion |
+| **14** | Analytics: dashboard ejecutivo (CompletableFuture + @Cacheable), reportes avanzados de ventas (comparativa período anterior, por hora/día/pago), análisis ABC con Pareto 80/20 dinámico, reporte de inventario (valorización + movimientos), rentabilidad (márgenes + punto equilibrio), RRHH (ausentismo + productividad vendedores). Frontend con Recharts. | DashboardService, SalesReportService, ProductAnalysisService, InventoryReportService, ProfitabilityService, HRReportService |
 
 ## Licencia
 

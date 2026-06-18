@@ -74,4 +74,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
     List<Object[]> findTotalsByCategoria(
             @Param("desde") LocalDate desde,
             @Param("hasta") LocalDate hasta);
+
+    @Query("SELECT COALESCE(SUM(e.monto), 0) FROM Expense e WHERE e.estado = 'PAGADO' AND e.fecha >= :desde AND e.fecha <= :hasta")
+    BigDecimal sumExpensesByPeriod(@Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
 }

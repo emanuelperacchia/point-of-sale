@@ -5,9 +5,11 @@ import com.pos.system.dto.response.SalesBookResponse;
 import com.pos.system.dto.response.SalesBookRow;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import com.pos.system.dto.response.SalesReportResponse;
 import com.pos.system.service.CashFlowService;
 import com.pos.system.service.ExcelExportService;
 import com.pos.system.service.SalesBookReportService;
+import com.pos.system.service.SalesReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +35,7 @@ public class ReportController {
     private final SalesBookReportService salesBookReportService;
     private final CashFlowService cashFlowService;
     private final ExcelExportService excelExportService;
+    private final SalesReportService salesReportService;
 
     // ── US-022: Libro de Ventas ────────────────────────────────────────
 
@@ -136,6 +139,17 @@ public class ReportController {
             @RequestParam(defaultValue = "false") boolean incluirProyeccion,
             @RequestParam(defaultValue = "30") int diasProyeccion) {
         return ResponseEntity.ok(cashFlowService.getCashFlow(desde, hasta, incluirProyeccion, diasProyeccion));
+    }
+
+    // ── US-036: Reportes de Ventas Avanzados ──────────────────────────
+
+    @GetMapping("/sales-advanced")
+    @PreAuthorize("hasAnyRole('ADMIN', 'GERENTE', 'CONTADOR')")
+    @Operation(summary = "Reporte avanzado de ventas con métricas desglosadas y comparativa")
+    public ResponseEntity<SalesReportResponse> getSalesAdvanced(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
+        return ResponseEntity.ok(salesReportService.advancedReport(desde, hasta));
     }
 
     @GetMapping("/cash-flow/export")

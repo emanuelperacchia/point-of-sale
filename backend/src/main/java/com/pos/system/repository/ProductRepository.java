@@ -28,6 +28,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByActiveTrueAndTipo(Product.Tipo tipo);
 
+    long countByActiveTrue();
+
     // POS search: by name, SKU, or category name
     @Query("SELECT p FROM Product p LEFT JOIN p.category c " +
            "WHERE p.active = true AND (" +
