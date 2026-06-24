@@ -1,14 +1,17 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { User } from '../types';
-import { authApi } from '../services/api';
+import type { User, BranchInfo } from '../types';
+import api, { authApi } from '../services/api';
 
 interface AuthContextType {
   user: User | null;
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  branchId: number | null;
+  branches: BranchInfo[];
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  switchBranch: (branchId: number) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -18,6 +21,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(
     () => localStorage.getItem('accessToken'),
   );
+  const [branchId, setBranchId] = useState<number | null>(
+    () => { const v = localStorage.getItem('branchId'); return v ? Number(v) : null; }
+  );
+  const [branches, setBranches] = useState<BranchInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const login = useCallback(async (email: string, password: string) => {
@@ -26,11 +33,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data } = await authApi.login({ email, password });
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
+      if (data.branchId != null) localStorage.setItem('branchId', String(data.branchId));
       setAccessToken(data.accessToken);
+      setBranchId(data.branchId);
+      setBranches(data.branches || []);
       setUser({ id: data.userId, email: data.email, fullName: data.fullName } as User);
     } finally {
       setIsLoading(false);
     }
+  }, []);
+
+  const switchBranch = useCallback(async (newBranchId: number) => {
+    const { data } = await api.post('/auth/switch-branch', { branchId: newBranchId });
+    localStorage.setItem('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('branchId', String(data.branchId));
+    setAccessToken(data.accessToken);
+    setBranchId(data.branchId);
+    setBranches(data.branches || []);
   }, []);
 
   const logout = useCallback(async () => {
@@ -42,7 +62,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('branchId');
       setAccessToken(null);
+      setBranchId(null);
+      setBranches([]);
       setUser(null);
     }
   }, []);
@@ -54,8 +77,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         accessToken,
         isAuthenticated: !!accessToken,
         isLoading,
+        branchId,
+        branches,
         login,
         logout,
+        switchBranch,
       }}
     >
       {children}

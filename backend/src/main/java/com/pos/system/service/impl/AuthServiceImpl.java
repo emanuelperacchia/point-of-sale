@@ -5,12 +5,16 @@ import com.pos.system.dto.request.RefreshTokenRequest;
 import com.pos.system.dto.request.RegisterRequest;
 import com.pos.system.dto.response.AuthResponse;
 import com.pos.system.dto.response.UserResponse;
+import com.pos.system.entity.Branch;
 import com.pos.system.entity.RefreshToken;
 import com.pos.system.entity.Role;
 import com.pos.system.entity.User;
+import com.pos.system.entity.UserBranch;
 import com.pos.system.exception.AuthenticationException;
 import com.pos.system.exception.BadRequestException;
+import com.pos.system.repository.BranchRepository;
 import com.pos.system.repository.RoleRepository;
+import com.pos.system.repository.UserBranchRepository;
 import com.pos.system.repository.UserRepository;
 import com.pos.system.security.UserDetailsImpl;
 import com.pos.system.service.AuditService;
@@ -27,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +44,8 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AuditService auditService;
+    private final BranchRepository branchRepository;
+    private final UserBranchRepository userBranchRepository;
 
     @Override
     @Transactional
@@ -59,7 +66,10 @@ public class AuthServiceImpl implements AuthService {
 
         auditService.logLogin(user.getId(), ipAddress, userAgent);
 
-        String accessToken = jwtService.generateToken(user);
+        List<AuthResponse.BranchInfo> branches = getUserBranches(user);
+        Long defaultBranchId = resolveDefaultBranch(user, branches);
+
+        String accessToken = jwtService.generateToken(user, defaultBranchId);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -69,6 +79,8 @@ public class AuthServiceImpl implements AuthService {
                 .userId(user.getId())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .branchId(defaultBranchId)
+                .branches(branches)
                 .build();
     }
 
@@ -97,7 +109,20 @@ public class AuthServiceImpl implements AuthService {
 
         auditService.log(user.getId(), com.pos.system.entity.AuditLog.AuditAction.USER_CREATE, "USER", user.getId(), null, user.getEmail(), null, null);
 
-        String accessToken = jwtService.generateToken(user);
+        // Asignar a sucursal por defecto si existe
+        List<Branch> activeBranches = branchRepository.findByActivaTrue();
+        if (!activeBranches.isEmpty()) {
+            Branch defaultBranch = activeBranches.get(0);
+            userBranchRepository.save(UserBranch.builder()
+                    .id(new UserBranch.UserBranchId(user.getId(), defaultBranch.getId()))
+                    .activo(true)
+                    .build());
+        }
+
+        List<AuthResponse.BranchInfo> branches = getUserBranches(user);
+        Long defaultBranchId = resolveDefaultBranch(user, branches);
+
+        String accessToken = jwtService.generateToken(user, defaultBranchId);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -107,6 +132,8 @@ public class AuthServiceImpl implements AuthService {
                 .userId(user.getId())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .branchId(defaultBranchId)
+                .branches(branches)
                 .build();
     }
 
@@ -122,7 +149,10 @@ public class AuthServiceImpl implements AuthService {
         User user = refreshToken.getUser();
         refreshTokenService.revoke(refreshToken);
 
-        String accessToken = jwtService.generateToken(user);
+        List<AuthResponse.BranchInfo> branches = getUserBranches(user);
+        Long defaultBranchId = resolveDefaultBranch(user, branches);
+
+        String accessToken = jwtService.generateToken(user, defaultBranchId);
         RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
@@ -132,6 +162,8 @@ public class AuthServiceImpl implements AuthService {
                 .userId(user.getId())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .branchId(defaultBranchId)
+                .branches(branches)
                 .build();
     }
 
@@ -172,5 +204,93 @@ public class AuthServiceImpl implements AuthService {
                 .createdAt(user.getCreatedAt())
                 .lastLogin(user.getLastLogin())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public AuthResponse switchBranch(Long branchId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenticationException("No hay usuario autenticado");
+        }
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User user = userDetails.getUser();
+
+        boolean isAdmin = user.getRoles().stream()
+                .anyMatch(r -> r.getName() == Role.RoleName.ADMIN);
+
+        if (!isAdmin) {
+            boolean hasAccess = userBranchRepository.existsByIdUserIdAndIdBranchId(user.getId(), branchId);
+            if (!hasAccess) {
+                throw new BadRequestException("No tiene acceso a la sucursal especificada");
+            }
+        }
+
+        if (!isAdmin && branchId != null) {
+            Branch branch = branchRepository.findById(branchId)
+                    .orElseThrow(() -> new BadRequestException("Sucursal no encontrada"));
+            if (!branch.getActiva()) {
+                throw new BadRequestException("La sucursal no está activa");
+            }
+        }
+
+        List<AuthResponse.BranchInfo> branches = getUserBranches(user);
+        String accessToken = jwtService.generateToken(user, branchId);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+        return AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .tokenType("Bearer")
+                .userId(user.getId())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .branchId(branchId)
+                .branches(branches)
+                .build();
+    }
+
+    private List<AuthResponse.BranchInfo> getUserBranches(User user) {
+        boolean isAdmin = user.getRoles().stream()
+                .anyMatch(r -> r.getName() == Role.RoleName.ADMIN);
+
+        List<Branch> branches;
+        if (isAdmin) {
+            branches = branchRepository.findAll();
+        } else {
+            List<Long> branchIds = userBranchRepository.findActiveBranchIdsByUserId(user.getId());
+            branches = branchRepository.findAllById(branchIds);
+        }
+
+        return branches.stream()
+                .map(b -> AuthResponse.BranchInfo.builder()
+                        .id(b.getId())
+                        .nombre(b.getNombre())
+                        .direccion(b.getDireccion())
+                        .build())
+                .toList();
+    }
+
+    private Long resolveDefaultBranch(User user, List<AuthResponse.BranchInfo> branches) {
+        if (branches.isEmpty()) {
+            return null;
+        }
+
+        boolean isAdmin = user.getRoles().stream()
+                .anyMatch(r -> r.getName() == Role.RoleName.ADMIN);
+
+        // ADMIN no tiene branchId por defecto (ve todas)
+        if (isAdmin) {
+            return null;
+        }
+
+        // Si solo tiene una sucursal, esa es la default
+        if (branches.size() == 1) {
+            return branches.get(0).getId();
+        }
+
+        // Si tiene varias, la primera (podría mejorarse con preferencia guardada)
+        return branches.get(0).getId();
     }
 }

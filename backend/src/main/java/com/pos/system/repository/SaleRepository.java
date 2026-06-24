@@ -156,4 +156,6 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
               )
             """, nativeQuery = true)
     List<Object[]> findProductsWithoutSalesSince(@Param("desde") LocalDateTime desde);
+
+    List<Sale> findByCreatedAtBetween(LocalDateTime desde, LocalDateTime hasta);
 }

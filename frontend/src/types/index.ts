@@ -16,6 +16,14 @@ export interface AuthResponse {
   userId: number;
   email: string;
   fullName: string;
+  branchId: number | null;
+  branches: BranchInfo[];
+}
+
+export interface BranchInfo {
+  id: number;
+  nombre: string;
+  direccion: string;
 }
 
 export interface LoginCredentials {
@@ -31,6 +39,18 @@ export interface ProductSearchResult {
   stock: number;
   categoryName: string | null;
   active: boolean;
+}
+
+export interface ProductResponse {
+  id: number;
+  name: string;
+  sku: string;
+  price: number;
+  stock: number;
+  categoryId: number | null;
+  categoryName: string | null;
+  active: boolean;
+  tipo: string;
 }
 
 export interface CartItem {

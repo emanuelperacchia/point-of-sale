@@ -33,6 +33,9 @@ public class Expense {
     @Column(name = "proveedor_id")
     private Long proveedorId;
 
+    @Column(name = "branch_id")
+    private Long branchId;
+
     @Column(nullable = false, length = 500)
     private String descripcion;
 

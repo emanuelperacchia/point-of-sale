@@ -1,5 +1,6 @@
 package com.pos.system.config;
 
+import com.pos.system.security.BranchContextFilter;
 import com.pos.system.security.JwtAuthenticationFilter;
 import com.pos.system.security.RateLimitingFilter;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitingFilter rateLimitingFilter;
+    private final BranchContextFilter branchContextFilter;
     private final UserDetailsService userDetailsService;
 
     @Value("${cors.allowed-origins:http://localhost:5173}")
@@ -69,7 +71,8 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(branchContextFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

@@ -9,6 +9,7 @@ interface LayoutProps {
 const navItems = [
   { to: '/pos', label: 'POS' },
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/reports/consolidated', label: 'Corporativo' },
   { to: '/reports/sales-advanced', label: 'Reportes Ventas' },
   { to: '/analysis/products', label: 'Análisis ABC' },
   { to: '/analysis/inventory', label: 'Inventario' },
@@ -21,7 +22,7 @@ const navItems = [
 ];
 
 export default function Layout({ children, title }: LayoutProps) {
-  const { user, logout } = useAuth();
+  const { user, logout, branchId, branches, switchBranch } = useAuth();
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -48,6 +49,29 @@ export default function Layout({ children, title }: LayoutProps) {
           ))}
         </nav>
         <div className="border-t border-gray-700 px-4 py-3">
+          {/* Branch Selector */}
+          {branches.length > 1 && (
+            <div className="mb-2">
+              <label className="block text-[10px] font-medium uppercase tracking-wider text-gray-500">
+                Sucursal
+              </label>
+              <select
+                value={branchId ?? ''}
+                onChange={(e) => {
+                  const id = Number(e.target.value);
+                  if (id && id !== branchId) switchBranch(id);
+                }}
+                className="mt-1 w-full rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                {branchId == null && <option value="">Todas</option>}
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="text-sm text-gray-400 truncate">{user?.fullName}</div>
           <button
             onClick={logout}

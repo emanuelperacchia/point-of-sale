@@ -2,6 +2,7 @@ package com.pos.system.service;
 
 import com.pos.system.dto.response.ExpenseResponse;
 import com.pos.system.dto.response.ExpenseSummaryResponse;
+import com.pos.system.config.BranchContextHolder;
 import com.pos.system.entity.Expense;
 import com.pos.system.entity.Expense.ExpenseCategory;
 import com.pos.system.entity.Expense.ExpenseEstado;
@@ -42,6 +43,7 @@ public class ExpenseService {
 
         expense.setComprobanteUrl(fileUrl);
         expense.setEstado(ExpenseEstado.PENDIENTE);
+        expense.setBranchId(BranchContextHolder.getBranchId());
         if (expense.getRecurrente() == null) expense.setRecurrente(false);
         if (expense.getRecurrente()) {
             expense.setProximaFecha(calcularProximaFecha(expense.getFecha(), expense.getFrecuencia()));

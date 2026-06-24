@@ -15,6 +15,7 @@ import ProductAnalysisPage from './pages/ProductAnalysisPage';
 import InventoryReportPage from './pages/InventoryReportPage';
 import ProfitabilityPage from './pages/ProfitabilityPage';
 import HRReportPage from './pages/HRReportPage';
+import ConsolidatedDashboardPage from './pages/ConsolidatedDashboardPage';
 
 export default function App() {
   return (
@@ -123,6 +124,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <HRReportPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reports/consolidated"
+            element={
+              <ProtectedRoute>
+                <ConsolidatedDashboardPage />
               </ProtectedRoute>
             }
           />

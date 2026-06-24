@@ -32,12 +32,27 @@ public class JwtService {
     }
 
     public String generateToken(User user) {
+        return generateToken(user, null);
+    }
+
+    public String generateToken(User user, Long branchId) {
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("userId", user.getId());
         extraClaims.put("roles", user.getRoles().stream()
                 .map(Object::toString)
                 .toList());
+        if (branchId != null) {
+            extraClaims.put("branchId", branchId);
+        }
         return buildToken(extraClaims, user);
+    }
+
+    public Long extractBranchId(String token) {
+        try {
+            return extractClaim(token, claims -> claims.get("branchId", Long.class));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private String buildToken(Map<String, Object> extraClaims, User user) {

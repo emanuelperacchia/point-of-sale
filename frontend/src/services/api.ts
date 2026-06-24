@@ -58,6 +58,22 @@ import type {
   EvaluationTemplateResponse,
   CreateEvaluationRequest,
   PerformanceEvaluationResponse,
+  // Sprint 12 — Comisiones
+  CommissionSchemeRequest,
+  CommissionSchemeResponse,
+  CommissionResultResponse,
+  // Sprint 12 — Nómina
+  PayrollResponse,
+  PayrollAdjustmentResponse,
+  // Sprint 13 — Producción
+  RecipeRequest,
+  RecipeResponse,
+  BomExplosionResponse,
+  CostEstimateResponse,
+  ProductionOrderRequest,
+  ProductionOrderResponse,
+  CostAnalysisResponse,
+  LoteTraceabilityResponse,
 } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -524,7 +540,7 @@ export const attendanceApi = {
     api.get<AttendanceSummaryResponse>('/attendance/summary', { params }),
 };
 
-export const shiftApi = {
+export const employeeShiftApi = {
   getDefinitions: () =>
     api.get<ShiftDefinitionResponse[]>('/shifts/definitions'),
 

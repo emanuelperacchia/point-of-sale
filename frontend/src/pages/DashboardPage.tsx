@@ -23,10 +23,10 @@ const periodos = [
   { value: 'YTD', label: 'Año' },
 ];
 
-const formatCurrency = (n: number) =>
+const formatCurrency = (n: number | undefined | null) =>
   '$' + (n ?? 0).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
-const formatPercent = (n: number) => (n ?? 0).toFixed(1) + '%';
+const formatPercent = (n: number | undefined | null) => (n ?? 0).toFixed(1) + '%';
 
 export default function DashboardPage() {
   const [data, setData] = useState<ExecutiveDashboardResponse | null>(null);

@@ -34,6 +34,9 @@ public class Receivable {
     @Column(name = "sale_id", nullable = false)
     private Long saleId;
 
+    @Column(name = "branch_id")
+    private Long branchId;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal montoOriginal;
 

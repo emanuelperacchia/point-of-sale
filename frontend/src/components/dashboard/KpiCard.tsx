@@ -15,14 +15,6 @@ const colorMap = {
   purple: 'border-purple-500 bg-purple-50',
 };
 
-const badgeColorMap = {
-  blue: 'bg-blue-100 text-blue-800',
-  green: 'bg-green-100 text-green-800',
-  red: 'bg-red-100 text-red-800',
-  yellow: 'bg-yellow-100 text-yellow-800',
-  purple: 'bg-purple-100 text-purple-800',
-};
-
 const formatVariation = (v: number | undefined): string => {
   if (v === undefined || v === null) return '';
   const signo = v >= 0 ? '+' : '';

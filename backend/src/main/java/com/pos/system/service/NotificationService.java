@@ -4,6 +4,7 @@ import com.pos.system.dto.response.NotificationResponse;
 import com.pos.system.entity.Notification;
 import com.pos.system.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +15,11 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
     public NotificationResponse crear(Long userId, String titulo, String mensaje) {
         if (userId == null) {
-            // Cannot notify if user is not linked
             return null;
         }
         Notification notification = Notification.builder()
@@ -27,7 +28,20 @@ public class NotificationService {
                 .mensaje(mensaje)
                 .build();
         notification = notificationRepository.save(notification);
-        return mapToResponse(notification);
+        NotificationResponse response = mapToResponse(notification);
+
+        // Emitir por WebSocket al usuario específico
+        try {
+            messagingTemplate.convertAndSendToUser(
+                    String.valueOf(userId),
+                    "/queue/notifications",
+                    response
+            );
+        } catch (Exception e) {
+            // WebSocket no disponible — la notificación ya está persistida
+        }
+
+        return response;
     }
 
     @Transactional(readOnly = true)

@@ -3,6 +3,7 @@ package com.pos.system.controller;
 import com.pos.system.dto.request.LoginRequest;
 import com.pos.system.dto.request.RefreshTokenRequest;
 import com.pos.system.dto.request.RegisterRequest;
+import com.pos.system.dto.request.SwitchBranchRequest;
 import com.pos.system.dto.response.AuthResponse;
 import com.pos.system.dto.response.ErrorResponse;
 import com.pos.system.dto.response.UserResponse;
@@ -83,6 +84,12 @@ public class AuthController {
     @Operation(summary = "Usuario actual", description = "Retorna información del usuario autenticado")
     public ResponseEntity<UserResponse> getCurrentUser() {
         return ResponseEntity.ok(authService.getCurrentUser());
+    }
+
+    @PostMapping("/switch-branch")
+    @Operation(summary = "Cambiar sucursal activa", description = "Cambia la sucursal activa sin re-autenticar. Renueva el JWT con la nueva sucursalId.")
+    public ResponseEntity<AuthResponse> switchBranch(@RequestBody SwitchBranchRequest request) {
+        return ResponseEntity.ok(authService.switchBranch(request.getBranchId()));
     }
 
     private String getClientIp(HttpServletRequest request) {

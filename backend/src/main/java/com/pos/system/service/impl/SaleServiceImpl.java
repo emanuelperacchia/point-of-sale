@@ -8,6 +8,7 @@ import com.pos.system.dto.response.DiscountResult;
 import com.pos.system.dto.response.PaymentResponse;
 import com.pos.system.dto.response.SaleItemResponse;
 import com.pos.system.dto.response.SaleResponse;
+import com.pos.system.config.BranchContextHolder;
 import com.pos.system.entity.*;
 import com.pos.system.exception.BadRequestException;
 import com.pos.system.exception.ResourceNotFoundException;
@@ -246,6 +247,7 @@ public class SaleServiceImpl implements SaleService {
                 .discount(totalDiscount)
                 .total(total)
                 .notes(request.getNotes())
+                .branchId(BranchContextHolder.getBranchId())
                 .build();
 
         for (SaleItem item : items) {

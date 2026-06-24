@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { productionOrderApi, lotApi } from '../services/api';
-import type { ProductionOrderResponse, CostAnalysisResponse, LoteTraceabilityResponse } from '../types';
+import type { ProductionOrderResponse, ProductionOrderComponentResponse, CostAnalysisResponse, LoteTraceabilityResponse } from '../types';
 import Layout from '../components/common/Layout';
 
 type MermaEntry = { bomComponentId: number; cantidad: number; motivo: string };
@@ -39,7 +39,7 @@ export default function ProductionOrderDetailPage() {
         // reset merma form defaults
         if (res.data.componentes) {
           const defaults: Record<number, { cantidad: string; motivo: string }> = {};
-          res.data.componentes.forEach((c) => {
+          res.data.componentes.forEach((c: ProductionOrderComponentResponse) => {
             defaults[c.id] = { cantidad: '', motivo: 'PROCESO' };
           });
           setMermaEntries(defaults);

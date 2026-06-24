@@ -12,4 +12,5 @@ public interface AuthService {
     AuthResponse refreshToken(RefreshTokenRequest request, Long userId);
     void logout(RefreshTokenRequest request, Long userId, String ipAddress);
     UserResponse getCurrentUser();
+    AuthResponse switchBranch(Long branchId);
 }

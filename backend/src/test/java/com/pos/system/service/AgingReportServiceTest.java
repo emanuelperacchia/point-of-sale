@@ -28,7 +28,7 @@ class AgingReportServiceTest {
     private AgingReportService agingReportService;
 
     private Client client;
-    private final LocalDate today = LocalDate.of(2026, 6, 8);
+    private final LocalDate today = LocalDate.now();
 
     @BeforeEach
     void setUp() {

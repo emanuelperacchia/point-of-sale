@@ -34,6 +34,9 @@ public class Payable {
     @Column(name = "purchase_order_id")
     private Long purchaseOrderId;
 
+    @Column(name = "branch_id")
+    private Long branchId;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal montoOriginal;
 

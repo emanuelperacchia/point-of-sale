@@ -49,6 +49,10 @@ public class Warehouse {
     @Builder.Default
     private Boolean active = true;
 
+    @Column(name = "branch_id", nullable = false)
+    @Builder.Default
+    private Long branchId = 1L;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

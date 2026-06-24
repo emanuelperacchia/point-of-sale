@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,4 +18,16 @@ public class AuthResponse {
     private Long userId;
     private String email;
     private String fullName;
+    private Long branchId;
+    private List<BranchInfo> branches;
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class BranchInfo {
+        private Long id;
+        private String nombre;
+        private String direccion;
+    }
 }
