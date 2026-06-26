@@ -22,7 +22,15 @@ security:
     lockout-duration: 900000
 
 logging:
+  file:
+    path: ./logs
   level:
     com.pos.system: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+sentry:
+  enabled: false
+  dsn: ${SENTRY_DSN:}
+  traces-sample-rate: 0.0
+  environment: dev

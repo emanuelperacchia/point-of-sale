@@ -11,17 +11,13 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaleItemResponse {
+public class PriceDifferenceReportResponse {
 
-    private Long id;
     private Long productId;
     private String productName;
     private String productSku;
-    private Integer quantity;
-    private BigDecimal unitPrice;
-    private BigDecimal precioResuelto;
-    private Boolean esPrecioLocal;
-    private BigDecimal discount;
-    private BigDecimal taxAmount;
-    private BigDecimal subtotal;
+    private BigDecimal precioGlobal;
+    private BigDecimal precioLocal;
+    private BigDecimal diferenciaMonto;
+    private BigDecimal diferenciaPorcentaje;
 }

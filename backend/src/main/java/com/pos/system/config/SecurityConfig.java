@@ -3,6 +3,7 @@ package com.pos.system.config;
 import com.pos.system.security.BranchContextFilter;
 import com.pos.system.security.JwtAuthenticationFilter;
 import com.pos.system.security.RateLimitingFilter;
+import com.pos.system.security.SentryUserContextFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +37,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitingFilter rateLimitingFilter;
     private final BranchContextFilter branchContextFilter;
+    private final SentryUserContextFilter sentryUserContextFilter;
     private final UserDetailsService userDetailsService;
 
     @Value("${cors.allowed-origins:http://localhost:5173}")
@@ -72,7 +74,8 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(branchContextFilter, JwtAuthenticationFilter.class);
+                .addFilterAfter(branchContextFilter, JwtAuthenticationFilter.class)
+                .addFilterAfter(sentryUserContextFilter, BranchContextFilter.class);
 
         return http.build();
     }

@@ -17,6 +17,7 @@ import com.pos.system.event.SaleCompletedEvent;
 import com.pos.system.service.*;
 import com.pos.system.service.promotion.PromotionEngine;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SaleServiceImpl implements SaleService {
 
     private static final Long DEFAULT_WAREHOUSE_ID = 1L;
@@ -48,6 +50,9 @@ public class SaleServiceImpl implements SaleService {
     private final StockMovementService stockMovementService;
     private final CashShiftRepository cashShiftRepository;
     private final ApplicationEventPublisher eventPublisher;
+
+    @Autowired(required = false)
+    private PriceResolverService priceResolverService;
 
     @Autowired(required = false)
     private PromotionEngine promotionEngine;
@@ -92,7 +97,20 @@ public class SaleServiceImpl implements SaleService {
             // Validate stock
             validateStockForSale(product.getId(), warehouse.getId(), itemReq.getQuantity());
 
-            BigDecimal unitPrice = product.getPrice();
+            // Resolve price based on branch (precio local > global)
+            Long branchId = BranchContextHolder.getBranchId();
+            BigDecimal unitPrice;
+            boolean esPrecioLocal = false;
+            BigDecimal precioResuelto;
+
+            if (priceResolverService != null && branchId != null) {
+                precioResuelto = priceResolverService.resolve(product.getId(), branchId);
+                esPrecioLocal = precioResuelto.compareTo(product.getPrice()) != 0;
+            } else {
+                precioResuelto = product.getPrice();
+            }
+            unitPrice = precioResuelto;
+
             BigDecimal quantity = BigDecimal.valueOf(itemReq.getQuantity());
             BigDecimal itemSubtotal = unitPrice.multiply(quantity);
 
@@ -123,6 +141,8 @@ public class SaleServiceImpl implements SaleService {
                     .productName(product.getName())
                     .quantity(itemReq.getQuantity())
                     .unitPrice(unitPrice)
+                    .precioResuelto(precioResuelto)
+                    .esPrecioLocal(esPrecioLocal)
                     .discount(itemDiscount)
                     .taxAmount(itemTax)
                     .subtotal(itemNet)
@@ -421,6 +441,8 @@ public class SaleServiceImpl implements SaleService {
                 .productSku(item.getProduct().getSku())
                 .quantity(item.getQuantity())
                 .unitPrice(item.getUnitPrice())
+                .precioResuelto(item.getPrecioResuelto())
+                .esPrecioLocal(item.getEsPrecioLocal())
                 .discount(item.getDiscount())
                 .taxAmount(item.getTaxAmount())
                 .subtotal(item.getSubtotal())

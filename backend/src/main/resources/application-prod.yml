@@ -24,7 +24,14 @@ security:
     lockout-duration: 900000
 
 logging:
+  file:
+    path: ./logs
   level:
-    com.pos.system: WARN
+    com.pos.system: INFO
     org.hibernate.SQL: WARN
     org.springframework.security: WARN
+sentry:
+  enabled: true
+  dsn: ${SENTRY_DSN:}
+  traces-sample-rate: 0.1
+  environment: prod

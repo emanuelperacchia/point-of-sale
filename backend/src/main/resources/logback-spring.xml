@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- ================================================================ -->
+    <!-- Propiedades                                                       -->
+    <!-- ================================================================ -->
+    <springProperty name="appName" source="spring.application.name" defaultValue="POS-System"/>
+    <springProperty name="logDir" source="logging.file.path" defaultValue="./logs"/>
+
+    <!-- ================================================================ -->
+    <!-- Appender: CONSOLE — formato legible con colores (dev)             -->
+    <!-- ================================================================ -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%15.15thread] %cyan(%-40.40logger{39}) %magenta([%X{correlationId}]) %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ================================================================ -->
+    <!-- Appender: FILE_JSON — JSON estructurado con rotación (prod)       -->
+    <!-- ================================================================ -->
+    <appender name="FILE_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logDir}/pos-system.json</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Rotación diaria, compresión GZIP -->
+            <fileNamePattern>${logDir}/pos-system.%d{yyyy-MM-dd}.%i.json.gz</fileNamePattern>
+            <!-- Máximo 30 días de retención -->
+            <maxHistory>30</maxHistory>
+            <!-- Tamaño máximo por archivo antes de crear un nuevo índice -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Campos personalizados en JSON estructurado -->
+            <includeCallerData>false</includeCallerData>
+            <fieldNames>
+                <timestamp>timestamp</timestamp>
+                <level>level</level>
+                <logger>logger</logger>
+                <thread>thread</thread>
+                <message>message</message>
+                <stackTrace>stack_trace</stackTrace>
+                <mdc>mdc</mdc>
+            </fieldNames>
+            <provider class="net.logstash.logback.composite.loggingevent.LoggingEventPatternJsonProvider">
+                <pattern>
+                    {
+                        "app": "${appName}",
+                        "correlationId": "%X{correlationId}",
+                        "userId": "%X{userId}",
+                        "branchId": "%X{branchId}",
+                        "className": "%class",
+                        "methodName": "%method",
+                        "lineNumber": "%line"
+                    }
+                </pattern>
+            </provider>
+        </encoder>
+    </appender>
+
+    <!-- ================================================================ -->
+    <!-- Perfiles                                                          -->
+    <!-- ================================================================ -->
+
+    <!-- Dev: consola con colores, DEBUG -->
+    <springProfile name="dev">
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="com.pos.system" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.springframework.security" level="DEBUG"/>
+    </springProfile>
+
+    <!-- Prod: JSON con rotación, WARN root / INFO com.pos -->
+    <springProfile name="prod">
+        <root level="WARN">
+            <appender-ref ref="FILE_JSON"/>
+        </root>
+        <logger name="com.pos.system" level="INFO"/>
+        <logger name="org.springframework.security" level="WARN"/>
+        <logger name="org.hibernate.SQL" level="WARN"/>
+    </springProfile>
+
+    <!-- Default (sin perfil activo): consola INFO -->
+    <springProfile name="!dev,!prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="com.pos.system" level="INFO"/>
+    </springProfile>
+
+</configuration>

@@ -37,6 +37,13 @@ public class SaleItem {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
+    @Column(name = "precio_resuelto", precision = 10, scale = 2)
+    private BigDecimal precioResuelto;
+
+    @Column(name = "es_precio_local")
+    @Builder.Default
+    private Boolean esPrecioLocal = false;
+
     @Column(nullable = false, precision = 10, scale = 2)
     @Builder.Default
     private BigDecimal discount = BigDecimal.ZERO;
