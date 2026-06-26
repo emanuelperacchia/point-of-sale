@@ -13,32 +13,35 @@ API REST del sistema de punto de venta construida con Spring Boot 3.3 y Java 17.
 | **Database** | PostgreSQL 15+ |
 | **ORM** | Spring Data JPA + Hibernate 6 |
 | **Migrations** | Flyway (`ddl-auto: validate`) |
-| **Security** | Spring Security + JWT (access 15min / refresh 7d) |
+| **Security** | Spring Security + JWT (access 15min / refresh 7d) + API Key (SHA-256) |
 | **Validation** | Jakarta Validation |
-| **Testing** | JUnit 5 + Mockito |
+| **Testing** | JUnit 5 + Mockito (484 tests) |
 | **Build** | Maven (`.mvnw` wrapper incluido) |
 | **Fiscal** | Mock AFIP-style (factura A/B/C + Boleta, PDF, QR, XML) |
+| **WebSocket** | STOMP over SockJS (`/ws`) |
+| **Rate Limiting** | Bucket4j (API Keys) + sliding window (login) |
+| **Monitoring** | Sentry (logs + errores) |
 
 ## Estructura
 
 ```
 backend/
 ├── src/main/java/com/pos/system/
-│   ├── controller/       → 38 controladores REST
-│   ├── service/           → 57 servicios + impl/ + promotion/
-│   ├── repository/        → 30+ repositorios JPA
-│   ├── entity/            → 81 entidades JPA
+│   ├── controller/       → 58 controladores REST
+│   ├── service/           → 103 servicios (impl/ + ecommerce/ + promotion/)
+│   ├── repository/        → 84 repositorios JPA
+│   ├── entity/            → 100 entidades JPA
 │   ├── dto/
 │   │   ├── request/       → DTOs de entrada
 │   │   └── response/      → DTOs de salida
-│   ├── config/            → SecurityConfig, CorsConfig, etc.
+│   ├── config/            → SecurityConfig, WebSocketConfig, AsyncConfig, etc.
 │   ├── exception/         → BadRequestException, ResourceNotFoundException
-│   └── security/          → JwtFilter, UserDetailsServiceImpl
+│   └── security/          → JwtFilter, ApiKeyAuthFilter, BranchContextFilter
 ├── src/main/resources/
 │   ├── application.yml    → Config principal
 │   ├── application-dev.yml
-│   └── db/migration/      → 23 migrations Flyway (V6–V28)
-├── src/test/              → 461 tests unitarios
+│   └── db/migration/      → 32 migrations Flyway (V6–V37)
+├── src/test/              → 484 tests unitarios (58 archivos)
 ├── pom.xml
 └── HELP.md
 ```
@@ -84,14 +87,36 @@ $env:DB_PASSWORD="mi-pass"
 | POST | `/api/auth/login` | Login con email + password |
 | POST | `/api/auth/register` | Registro de usuario |
 | POST | `/api/auth/refresh` | Refrescar token |
+| POST | `/api/auth/switch-branch` | Cambiar sucursal activa |
 
 ### POS
 | Método | Path | Descripción |
 |--------|------|-------------|
 | GET | `/api/products/search?q=` | Búsqueda de productos para POS |
+| GET | `/api/products/{id}/price` | Precio resuelto (sucursal + promociones) |
 | POST | `/api/sales` | Crear venta |
-| GET | `/api/sales/{id}` | Obtener venta |
-| POST | `/api/sales/validate-cart` | Validar stock del carrito |
+| POST | `/api/sales/validate-cart` | Validar stock + descuentos del carrito |
+
+### Contabilidad (Sprint 18)
+| Método | Path | Descripción |
+|--------|------|-------------|
+| POST | `/api/accounting/accounts` | Crear cuenta contable |
+| GET | `/api/accounting/journal?desde=&hasta=` | Libro diario |
+| GET | `/api/accounting/trial-balance?fecha=` | Balance de comprobación |
+| GET | `/api/accounting/journal/export` | Exportar libro diario a Excel |
+
+### E-commerce (Sprint 18)
+| Método | Path | Descripción |
+|--------|------|-------------|
+| GET | `/api/integrations/ecommerce/sync-status` | Estado de sincronización |
+| POST | `/api/integrations/ecommerce/sync-now` | Forzar sincronización |
+
+### API Pública (Sprint 17) — via API Key
+| Método | Path | Descripción |
+|--------|------|-------------|
+| GET | `/public/v1/products` | Listar productos |
+| POST | `/public/v1/sales` | Crear venta desde terceros |
+| GET | `/public/v1/clients/{document}` | Consultar cliente por documento |
 
 ### Producción (Sprint 13)
 | Método | Path | Descripción |
@@ -99,13 +124,10 @@ $env:DB_PASSWORD="mi-pass"
 | GET | `/api/recipes` | Listar recetas |
 | POST | `/api/recipes` | Crear receta con BOM |
 | GET | `/api/recipes/{id}/bom-explosion` | Explosión recursiva de materiales |
-| GET | `/api/recipes/{id}/cost-estimate` | Costo estimado de producción |
 | GET | `/api/production-orders` | Listar órdenes de producción |
 | POST | `/api/production-orders` | Crear orden |
 | POST | `/api/production-orders/{id}/start` | Iniciar (reserva stock) |
 | POST | `/api/production-orders/{id}/complete` | Completar (consume stock, genera lote) |
-| POST | `/api/production-orders/{id}/cancel` | Cancelar (libera reserva) |
-| GET | `/api/production-orders/{id}/cost-analysis` | Análisis de costos (estimado vs real) |
 | GET | `/api/lots/{numeroLote}/traceability` | Trazabilidad de lote |
 
 ### RRHH (Sprint 11–12)
@@ -115,10 +137,6 @@ $env:DB_PASSWORD="mi-pass"
 | POST | `/api/attendance/check-in` | Marcar entrada |
 | POST | `/api/attendance/check-out` | Marcar salida |
 | GET | `/api/shifts/schedule` | Grilla de turnos semanal |
-| POST | `/api/evaluations` | Evaluación de desempeño |
-| POST | `/api/commissions/calculate` | Calcular comisiones |
-| GET | `/api/commissions/summary` | Resumen de comisión |
-| GET | `/api/commissions/ranking` | Ranking de vendedores |
 | GET | `/api/payroll` | Listar nóminas |
 | POST | `/api/payroll/{id}/approve` | Aprobar liquidación |
 | GET | `/api/payroll/{id}/pdf` | Descargar recibo PDF |
@@ -149,12 +167,21 @@ V25  → Product.tipo, costo_produccion, stock_reservado
 V26  → Recetas + BOM
 V27  → Órdenes de producción
 V28  → Lotes de producción
+V29  → Sucursales (infraestructura multi-sucursal)
+V30  → Transferencias de stock
+V31  → Backups + dispositivos
+V32  → Precios por sucursal
+V33  → Price resolution en sale_items
+V34  → API Keys + Webhooks
+V35  → Módulo contable (plan de cuentas, asientos)
+V36  → Seed data contable (22 cuentas + 3 templates)
+V37  → Integración e-commerce (configs, sync_logs, orders)
 ```
 
 ## Tests
 
 ```
-461 tests — 0 failures — 0 errors
+484 tests — 0 failures — 0 errors (58 archivos)
 ```
 
 - **Framework:** JUnit 5 + Mockito con `@ExtendWith(MockitoExtension.class)`
@@ -174,3 +201,4 @@ V28  → Lotes de producción
 | 11 | 35+ | Employee, Attendance, Shift, Evaluation |
 | 12 | 25+ | Commission, PayrollCalculator, Payroll |
 | 13 | 35+ | BomExplosion, ProductionOrder, CostAnalysis |
+| 14–18 | 100+ | Dashboard, SalesReport, ProductAnalysis, InventoryReport, Profitability, HRReport, multi-sucursal, precios, API Keys, webhooks, contabilidad, e-commerce |

@@ -1,7 +1,7 @@
 # Point of Sale — POS System
 
-Sistema de punto de venta completo con backend Spring Boot + frontend React (TypeScript).
-Incluye facturación electrónica AFIP-style, motor de promociones, fidelización, RRHH (asistencia, turnos, evaluaciones), comisiones, nómina, gestión de materia prima y producción, y dashboards analíticos (ventas, rentabilidad, ABC de productos, inventario).
+Sistema de punto de venta completo con backend Spring Boot + frontend React (TypeScript) + app Android (Kotlin Compose).
+Incluye facturación electrónica AFIP-style, motor de promociones, fidelización, RRHH (asistencia, turnos, evaluaciones), comisiones, nómina, gestión de materia prima y producción, dashboards analíticos, multi-sucursal, webhooks, módulo contable e integración e-commerce.
 
 ---
 
@@ -11,9 +11,10 @@ Incluye facturación electrónica AFIP-style, motor de promociones, fidelizació
 |------|-----------|
 | **Backend** | Java 17, Spring Boot 3.3, Spring Security, Spring Data JPA, Flyway, PostgreSQL |
 | **Frontend** | React 19, TypeScript 5, Vite, Axios, Tailwind CSS 4 |
-| **Build** | Maven Wrapper (backend), pnpm (frontend) |
-| **Testing** | JUnit 5, Mockito, Spring MockMvc |
-| **Auth** | JWT (access 15 min + refresh 7 días) |
+| **Android** | Kotlin 1.9+, Jetpack Compose, Hilt, Retrofit, Room, CameraX, ML Kit |
+| **Build** | Maven Wrapper (backend), pnpm (frontend), Gradle (Android) |
+| **Testing** | JUnit 5, Mockito, Spring MockMvc (back: 484 tests) |
+| **Auth** | JWT (access 15 min + refresh 7 días) + API Key (pública) |
 
 ## Estructura
 
@@ -22,27 +23,28 @@ point-of-sale/
 ├── backend/           → API REST (Spring Boot)
 │   ├── src/
 │   │   ├── main/java/com/pos/system/
-│   │   │   ├── controller/     → 44 endpoints REST
-│   │   │   ├── service/        → 63 servicios + subpaquetes
-│   │   │   ├── repository/     → 30+ repositorios JPA
-│   │   │   ├── entity/         → 81 entidades JPA
+│   │   │   ├── controller/     → 58 endpoints REST
+│   │   │   ├── service/        → 103 servicios + subpaquetes
+│   │   │   ├── repository/     → 84 repositorios JPA
+│   │   │   ├── entity/         → 100 entidades JPA
 │   │   │   ├── dto/            → request/response DTOs
-│   │   │   ├── config/         → seguridad, CORS, etc.
+│   │   │   ├── config/         → seguridad, CORS, webhooks, etc.
 │   │   │   └── exception/      → manejo de errores
 │   │   ├── main/resources/
-│   │   │   └── db/migration/   → 23 migrations Flyway (V6–V28)
+│   │   │   └── db/migration/   → 32 migrations Flyway (V6–V37)
 │   │   └── test/               → 484 tests unitarios
 │   ├── pom.xml
 │   └── HELP.md
 ├── frontend/          → SPA (React + Vite)
 │   ├── src/
-│   │   ├── pages/              → 14 páginas
+│   │   ├── pages/              → 15 páginas
 │   │   ├── components/         → 17 componentes (POS + comunes + dashboards)
 │   │   ├── services/           → 25 módulos API (Axios)
-│   │   ├── types/              → 93 interfaces + 16 type aliases
+│   │   ├── types/              → 95 interfaces + 16 type aliases
 │   │   └── context/            → AuthContext (JWT)
 │   ├── package.json
 │   └── vite.config.ts
+├── android/           → App nativa (Kotlin + Compose) — repo separado
 ├── .gitignore
 └── README.md
 ```
@@ -53,6 +55,7 @@ point-of-sale/
 - **Node.js 18+** y **pnpm** (`npm install -g pnpm`)
 - **PostgreSQL 15+**
 - **Maven** (o usar `./mvnw` incluido)
+- **Android Studio Hedgehog+** (para Android)
 
 ## Configuración rápida
 
@@ -87,6 +90,10 @@ pnpm dev
 
 El frontend corre en `http://localhost:5173` con proxy automático al backend (`/api → localhost:8080`).
 
+### 4. Android
+
+Ver README en el [repositorio Android](https://github.com/emanuelperacchia/pos-android).
+
 ## Variables de Entorno
 
 | Variable | Obligatoria | Default | Descripción |
@@ -105,6 +112,7 @@ El frontend corre en `http://localhost:5173` con proxy automático al backend (`
 | `VENDEDOR` | Consultas, clientes, comisiones |
 | `INVENTARIO` | Gestión de stock, productos, recetas, producción |
 | `CONTADOR` | Reportes fiscales, libro IVA, cuentas contables |
+| `COMPRAS_*` | Permisos granulares para ordenes de compra y proveedores |
 
 ## Funcionalidades por Sprint
 
@@ -121,6 +129,10 @@ El frontend corre en `http://localhost:5173` con proxy automático al backend (`
 | **12** | Comisiones por venta (porcentaje/escalonado), nómina (cálculo con descuentos, ajustes, PDF recibo, exportación bancaria) | CommissionScheme, CommissionTier, CommissionResult, Payroll, PayrollAdjustment |
 | **13** | Materia prima y producción: recetas con BOM, explosión recursiva de materiales, detección de ciclos, órdenes de producción (planificar/iniciar/completar/cancelar), reserva y consumo de stock, cálculo de costos (estimado vs real), trazabilidad por lote | Recipe, BomComponent, ProductionOrder, ProductionOrderComponent, LoteProduccion |
 | **14** | Analytics: dashboard ejecutivo (CompletableFuture + @Cacheable), reportes avanzados de ventas (comparativa período anterior, por hora/día/pago), análisis ABC con Pareto 80/20 dinámico, reporte de inventario (valorización + movimientos), rentabilidad (márgenes + punto equilibrio), RRHH (ausentismo + productividad vendedores). Frontend con Recharts. | DashboardService, SalesReportService, ProductAnalysisService, InventoryReportService, ProfitabilityService, HRReportService |
+| **15** | Multi-sucursal: BranchContextHolder, BranchContextFilter, BranchPriceService, stock por sucursal + transferencias, consolidación, backups programados, WebSocket STOMP, exportación masiva, frontend multi-sucursal | Branch, BranchPrice, Transfer, StockTransfer, BulkExportJob |
+| **16** | Precios por sucursal refinados (precioResuelto en sale_items), alertas de stock configurables, logs del sistema con Sentry | PriceResolutionResponse, BranchAlert, SystemLog |
+| **17** | API pública para terceros (API Key SHA-256 + rate limiting Bucket4j), webhooks (eventos VENTA_CREADA, STOCK_ACTUALIZADO, etc.), endpoints públicos de productos/ventas/clientes | ApiKey, WebhookConfig, WebhookDelivery, PublicProductController, PublicSaleController, PublicClientController |
+| **18** | Módulo contable (plan de cuentas jerárquico, asientos automáticos por venta/nómina/gasto, balance de comprobación, exportación Excel), integración e-commerce (EcommerceAdapter REST genérico, sincronización stock/catálogo/pedidos @Scheduled cada 5 min) | AccountingAccount, AccountingEntryTemplate, AccountingJournalEntry, AccountingJournalLine, EcommerceConfig, EcommerceOrder, EcommerceSyncLog, PaymentMethod.ONLINE |
 
 ## Licencia
 
