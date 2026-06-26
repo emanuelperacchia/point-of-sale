@@ -9,12 +9,14 @@ import com.pos.system.exception.ResourceNotFoundException;
 import com.pos.system.repository.PayrollAdjustmentRepository;
 import com.pos.system.repository.PayrollRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,9 @@ public class PayrollService {
     private final PayrollRepository payrollRepository;
     private final PayrollAdjustmentRepository adjustmentRepository;
     private final PayrollCalculatorService calculatorService;
+
+    @Autowired(required = false)
+    private AccountingService accountingService;
 
     // ── Calculate & Save ────────────────────────────────────────────
 
@@ -74,6 +79,23 @@ public class PayrollService {
         payroll.setAprobadoPor(aprobadoPor);
         payroll.setFechaAprobacion(LocalDate.now());
         payroll = payrollRepository.save(payroll);
+
+        // Generar asiento contable automático
+        if (accountingService != null) {
+            BigDecimal cargasSociales = BigDecimal.ZERO;
+            if (payroll.getDescJubilacion() != null) cargasSociales = cargasSociales.add(payroll.getDescJubilacion());
+            if (payroll.getDescObraSocial() != null) cargasSociales = cargasSociales.add(payroll.getDescObraSocial());
+            if (payroll.getDescAnses() != null) cargasSociales = cargasSociales.add(payroll.getDescAnses());
+
+            accountingService.generateEntry("NOMINA", payroll.getId(),
+                    "Liquidación #" + payroll.getId() + " - Empleado " + payroll.getEmployeeId(),
+                    Map.of(
+                            "SUELDOS", payroll.getTotalHaberes() != null ? payroll.getTotalHaberes() : BigDecimal.ZERO,
+                            "CARGAS_SOCIALES", cargasSociales,
+                            "NETO", payroll.getNetoApagar() != null ? payroll.getNetoApagar() : BigDecimal.ZERO
+                    ));
+        }
+
         return mapToResponse(payroll);
     }
 

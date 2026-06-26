@@ -67,6 +67,9 @@ public class SaleServiceImpl implements SaleService {
     @Autowired(required = false)
     private WebhookDispatcherService webhookDispatcherService;
 
+    @Autowired(required = false)
+    private AccountingService accountingService;
+
     @Override
     @Transactional
     public SaleResponse processSale(SaleRequest request, Long userId) {
@@ -332,6 +335,20 @@ public class SaleServiceImpl implements SaleService {
                     "total", sale.getTotal(),
                     "status", sale.getStatus().name()
             ));
+        }
+
+        // 17. Generar asiento contable automático
+        if (accountingService != null) {
+            BigDecimal neto = sale.getSubtotal() != null
+                    ? sale.getSubtotal().subtract(sale.getDiscount() != null ? sale.getDiscount() : BigDecimal.ZERO)
+                    : BigDecimal.ZERO;
+            accountingService.generateEntry("VENTA", sale.getId(),
+                    "Venta #" + sale.getId() + " - " + (client != null ? client.getName() : "Consumidor Final"),
+                    Map.of(
+                            "TOTAL", sale.getTotal() != null ? sale.getTotal() : BigDecimal.ZERO,
+                            "IVA", sale.getTaxAmount() != null ? sale.getTaxAmount() : BigDecimal.ZERO,
+                            "NETO", neto
+                    ));
         }
 
         return mapToResponse(sale);

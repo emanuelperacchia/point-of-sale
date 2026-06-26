@@ -5,5 +5,6 @@ public enum PaymentMethod {
     DEBIT_CARD,
     CREDIT_CARD,
     TRANSFER,
-    CUENTA_CORRIENTE
+    CUENTA_CORRIENTE,
+    ONLINE
 }

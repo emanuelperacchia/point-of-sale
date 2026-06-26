@@ -11,6 +11,7 @@ import com.pos.system.exception.ResourceNotFoundException;
 import com.pos.system.repository.ExpenseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Servicio de control de gastos: CRUD, adjuntos, recurrentes, resumen.
@@ -31,6 +33,9 @@ public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
     private final FileStorageService fileStorageService;
+
+    @Autowired(required = false)
+    private AccountingService accountingService;
 
     // ── CRUD ───────────────────────────────────────────────────────────
 
@@ -49,7 +54,17 @@ public class ExpenseService {
             expense.setProximaFecha(calcularProximaFecha(expense.getFecha(), expense.getFrecuencia()));
         }
 
-        return toResponse(expenseRepository.save(expense));
+        Expense saved = expenseRepository.save(expense);
+
+        // Generar asiento contable automático
+        if (accountingService != null) {
+            accountingService.generateEntry("GASTO", saved.getId(),
+                    "Gasto #" + saved.getId() + " - " + (saved.getDescripcion() != null ? saved.getDescripcion() : ""),
+                    Map.of("TOTAL", saved.getMonto() != null ? saved.getMonto() : BigDecimal.ZERO)
+            );
+        }
+
+        return toResponse(saved);
     }
 
     @Transactional(readOnly = true)
