@@ -30,6 +30,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,6 +63,9 @@ public class SaleServiceImpl implements SaleService {
 
     @Autowired(required = false)
     private ReceivableService receivableService;
+
+    @Autowired(required = false)
+    private WebhookDispatcherService webhookDispatcherService;
 
     @Override
     @Transactional
@@ -320,6 +324,15 @@ public class SaleServiceImpl implements SaleService {
 
         // 15. Emitir comprobante electrónico (asíncrono, no bloquea la respuesta)
         eventPublisher.publishEvent(new SaleCompletedEvent(sale.getId()));
+
+        // 16. Disparar webhook SALE_COMPLETED
+        if (webhookDispatcherService != null) {
+            webhookDispatcherService.dispatch("SALE_COMPLETED", Map.of(
+                    "saleId", sale.getId(),
+                    "total", sale.getTotal(),
+                    "status", sale.getStatus().name()
+            ));
+        }
 
         return mapToResponse(sale);
     }

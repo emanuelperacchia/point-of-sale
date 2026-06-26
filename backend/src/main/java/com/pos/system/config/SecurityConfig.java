@@ -1,10 +1,12 @@
 package com.pos.system.config;
 
+import com.pos.system.security.ApiKeyAuthFilter;
 import com.pos.system.security.BranchContextFilter;
 import com.pos.system.security.JwtAuthenticationFilter;
 import com.pos.system.security.RateLimitingFilter;
 import com.pos.system.security.SentryUserContextFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,12 +40,33 @@ public class SecurityConfig {
     private final RateLimitingFilter rateLimitingFilter;
     private final BranchContextFilter branchContextFilter;
     private final SentryUserContextFilter sentryUserContextFilter;
+    private final ApiKeyAuthFilter apiKeyAuthFilter;
     private final UserDetailsService userDetailsService;
 
     @Value("${cors.allowed-origins:http://localhost:5173}")
     private String allowedOrigins;
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain publicApiFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/public/**")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/public/docs/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -85,8 +108,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(allowedOrigins.split(",")));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
-        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "X-API-Key"));
+        config.setExposedHeaders(List.of("Authorization", "X-API-Key", "Retry-After"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 

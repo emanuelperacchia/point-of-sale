@@ -17,6 +17,10 @@ public interface ProductStockRepository extends JpaRepository<ProductStock, Long
     
     // Stock por producto y bodega
     Optional<ProductStock> findByProductAndWarehouse(Product product, Warehouse warehouse);
+
+    @Query("SELECT ps FROM ProductStock ps WHERE ps.product.id = :productId AND ps.warehouse.id = :warehouseId")
+    Optional<ProductStock> findByProductIdAndWarehouseId(@Param("productId") Long productId,
+                                                         @Param("warehouseId") Long warehouseId);
     
     // Todos los stocks de un producto
     List<ProductStock> findByProduct(Product product);
