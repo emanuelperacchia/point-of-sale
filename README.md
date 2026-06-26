@@ -44,7 +44,7 @@ point-of-sale/
 │   │   └── context/            → AuthContext (JWT)
 │   ├── package.json
 │   └── vite.config.ts
-├── android/           → App nativa (Kotlin + Compose) — repo separado
+├── android/           → App nativa (Kotlin + Compose)
 ├── .gitignore
 └── README.md
 ```
@@ -92,7 +92,11 @@ El frontend corre en `http://localhost:5173` con proxy automático al backend (`
 
 ### 4. Android
 
-Ver README en el [repositorio Android](https://github.com/emanuelperacchia/pos-android).
+```bash
+cd android
+```
+
+Abrir con Android Studio y sync Gradle. La app apunta a `http://10.0.2.2:8080/api/` en el emulador (configurable en `build.gradle.kts`).
 
 ## Variables de Entorno
 
