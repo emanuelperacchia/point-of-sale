@@ -21,10 +21,18 @@ object DatabaseModule {
             context,
             PosDatabase::class.java,
             PosDatabase.DATABASE_NAME
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides
     @Singleton
     fun provideProductDao(database: PosDatabase) = database.productDao()
+
+    @Provides
+    @Singleton
+    fun provideCartItemDao(database: PosDatabase) = database.cartItemDao()
+
+    @Provides
+    @Singleton
+    fun providePendingSaleDao(database: PosDatabase) = database.pendingSaleDao()
 }

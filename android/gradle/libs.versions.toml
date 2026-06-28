@@ -15,6 +15,8 @@ hilt-navigation-compose = "1.1.0"
 core-ktx = "1.12.0"
 lifecycle = "2.7.0"
 activity-compose = "1.8.2"
+work = "2.9.0"
+hilt-work = "1.1.0"
 
 [libraries]
 # Compose
@@ -68,6 +70,10 @@ security-crypto = { group = "androidx.security", name = "security-crypto", versi
 
 # Core
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+
+# WorkManager
+work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-work" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

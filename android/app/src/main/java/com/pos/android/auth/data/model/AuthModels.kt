@@ -36,13 +36,13 @@ data class AuthResponse(
     @SerializedName("fullName") val fullName: String,
     @SerializedName("branchId") val branchId: Long?,
     @SerializedName("branches") val branches: List<BranchInfo>?
-)
+) : java.io.Serializable
 
 data class BranchInfo(
     @SerializedName("id") val id: Long,
     @SerializedName("nombre") val nombre: String,
     @SerializedName("direccion") val direccion: String?
-)
+) : java.io.Serializable
 
 data class ErrorResponse(
     @SerializedName("status") val status: Int,

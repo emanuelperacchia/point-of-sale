@@ -11,7 +11,7 @@ Incluye facturación electrónica AFIP-style, motor de promociones, fidelizació
 |------|-----------|
 | **Backend** | Java 17, Spring Boot 3.3, Spring Security, Spring Data JPA, Flyway, PostgreSQL |
 | **Frontend** | React 19, TypeScript 5, Vite, Axios, Tailwind CSS 4 |
-| **Android** | Kotlin 1.9+, Jetpack Compose, Hilt, Retrofit, Room, CameraX, ML Kit |
+| **Android** | Kotlin 1.9+, Jetpack Compose, Hilt, Retrofit, Room 2.6, CameraX 1.3, ML Kit Barcode, WorkManager 2.9 |
 | **Build** | Maven Wrapper (backend), pnpm (frontend), Gradle (Android) |
 | **Testing** | JUnit 5, Mockito, Spring MockMvc (back: 484 tests) |
 | **Auth** | JWT (access 15 min + refresh 7 días) + API Key (pública) |
@@ -45,6 +45,21 @@ point-of-sale/
 │   ├── package.json
 │   └── vite.config.ts
 ├── android/           → App nativa (Kotlin + Compose)
+│   ├── app/src/main/java/com/pos/android/
+│   │   ├── MainActivity.kt       → NavHost + BottomNavBar
+│   │   ├── PosApplication.kt     → Hilt + WorkManager
+│   │   ├── Routes.kt             → rutas centralizadas
+│   │   ├── auth/                 → login, JWT refresh, selector sucursal
+│   │   ├── inventory/            → productos, búsqueda, detalle, escáner ML Kit
+│   │   ├── pos/                  → carrito persistente, cobro offline, cola sync
+│   │   ├── attendance/           → check-in/out, resumen asistencias
+│   │   ├── shifts/               → grilla semanal de turnos
+│   │   └── core/
+│   │       ├── network/          → Retrofit, AuthInterceptor, TokenAuthenticator
+│   │       ├── database/         → Room (ProductEntity, CartItemEntity, PendingSaleEntity)
+│   │       ├── sync/             → SyncWorker, SyncScheduler (WorkManager)
+│   │       ├── security/         → EncryptedSharedPreferences
+│   │       └── ui/               → theme, BottomNavBar
 ├── .gitignore
 └── README.md
 ```
@@ -96,7 +111,18 @@ El frontend corre en `http://localhost:5173` con proxy automático al backend (`
 cd android
 ```
 
-Abrir con Android Studio y sync Gradle. La app apunta a `http://10.0.2.2:8080/api/` en el emulador (configurable en `build.gradle.kts`).
+Abrir con Android Studio y sync Gradle (o generar el wrapper con `gradle wrapper`).
+
+La app apunta a `http://10.0.2.2:8080/api/` en el emulador (debug) y `https://api.pos.com/api/` en release (configurable por buildType en `app/build.gradle.kts`).
+
+**Features Android:**
+- Login con JWT + refresh automático + selector de sucursal
+- POS con carrito persistente (Room), búsqueda de productos, escáner ML Kit (CameraX), cobro multipago con cálculo de vuelto
+- Modo offline: ventas se guardan en cola (Room) y se sincronizan con WorkManager (periódico cada 15 min + inmediato)
+- Asistencia: check-in/out con resumen de período (asistencias, ausencias, tardanzas, horas totales)
+- Turnos: grilla semanal por empleado con cards de turno por día
+- Stock: búsqueda con paginación, detalle de producto con precios por sucursal y promociones
+- Bottom navigation con badge de ventas pendientes
 
 ## Variables de Entorno
 
@@ -137,6 +163,8 @@ Abrir con Android Studio y sync Gradle. La app apunta a `http://10.0.2.2:8080/ap
 | **16** | Precios por sucursal refinados (precioResuelto en sale_items), alertas de stock configurables, logs del sistema con Sentry | PriceResolutionResponse, BranchAlert, SystemLog |
 | **17** | API pública para terceros (API Key SHA-256 + rate limiting Bucket4j), webhooks (eventos VENTA_CREADA, STOCK_ACTUALIZADO, etc.), endpoints públicos de productos/ventas/clientes | ApiKey, WebhookConfig, WebhookDelivery, PublicProductController, PublicSaleController, PublicClientController |
 | **18** | Módulo contable (plan de cuentas jerárquico, asientos automáticos por venta/nómina/gasto, balance de comprobación, exportación Excel), integración e-commerce (EcommerceAdapter REST genérico, sincronización stock/catálogo/pedidos @Scheduled cada 5 min) | AccountingAccount, AccountingEntryTemplate, AccountingJournalEntry, AccountingJournalLine, EcommerceConfig, EcommerceOrder, EcommerceSyncLog, PaymentMethod.ONLINE |
+| **A1** | Android: proyecto Gradle con Hilt, Retrofit, Room, CameraX, ML Kit. Login JWT + refresh + BranchSelector. Productos (búsqueda local+remota, detalle con precio resuelto). Escáner ML Kit. Navegación con rutas centralizadas | AuthResponse, BranchInfo, ProductEntity, ProductSearchResponse, BarcodeScannerScreen |
+| **A2** | Android: POS con carrito persistente (Room), cobro multipago (efectivo/tarjeta/mixto) con vuelto, ventas offline con cola de sincronización (WorkManager 15 min + 3 reintentos). Asistencia (check-in/out + resumen). Turnos (grilla semanal). BottomNavBar con badge de pendientes | CartItemEntity, PendingSaleEntity, SyncWorker, SyncScheduler, ConnectivityObserver, PosScreen, PaymentScreen, AttendanceScreen, ShiftScreen, BottomNavBar |
 
 ## Licencia
 
