@@ -11,7 +11,7 @@ Incluye facturación electrónica AFIP-style, motor de promociones, fidelizació
 |------|-----------|
 | **Backend** | Java 17, Spring Boot 3.3, Spring Security, Spring Data JPA, Flyway, PostgreSQL |
 | **Frontend** | React 19, TypeScript 5, Vite, Axios, Tailwind CSS 4 |
-| **Android** | Kotlin 1.9+, Jetpack Compose, Hilt, Retrofit, Room 2.6, CameraX 1.3, ML Kit Barcode, WorkManager 2.9 |
+| **Android** | Kotlin 2.2, Jetpack Compose, Hilt, Retrofit, Room 2.7, CameraX 1.3, ML Kit Barcode, WorkManager 2.9, Vico Charts |
 | **Build** | Maven Wrapper (backend), pnpm (frontend), Gradle (Android) |
 | **Testing** | JUnit 5, Mockito, Spring MockMvc (back: 484 tests) |
 | **Auth** | JWT (access 15 min + refresh 7 días) + API Key (pública) |
@@ -46,17 +46,19 @@ point-of-sale/
 │   └── vite.config.ts
 ├── android/           → App nativa (Kotlin + Compose)
 │   ├── app/src/main/java/com/pos/android/
-│   │   ├── MainActivity.kt       → NavHost + BottomNavBar
+│   │   ├── MainActivity.kt       → NavHost + BottomNavBar + badge notificaciones
 │   │   ├── PosApplication.kt     → Hilt + WorkManager
 │   │   ├── Routes.kt             → rutas centralizadas
-│   │   ├── auth/                 → login, JWT refresh, selector sucursal
+│   │   ├── auth/                 → login, JWT refresh, TokenRefreshApi, selector sucursal
 │   │   ├── inventory/            → productos, búsqueda, detalle, escáner ML Kit
 │   │   ├── pos/                  → carrito persistente, cobro offline, cola sync
 │   │   ├── attendance/           → check-in/out, resumen asistencias
 │   │   ├── shifts/               → grilla semanal de turnos
+│   │   ├── dashboard/            → KPI cards, chart Vico, top 5, alertas, caché offline
+│   │   ├── notification/         → polling HTTP 30s, mark-as-read, badge contador
 │   │   └── core/
-│   │       ├── network/          → Retrofit, AuthInterceptor, TokenAuthenticator
-│   │       ├── database/         → Room (ProductEntity, CartItemEntity, PendingSaleEntity)
+│   │       ├── network/          → Retrofit, AuthInterceptor, TokenAuthenticator, dos OkHttpClients
+│   │       ├── database/         → Room (ProductEntity, CartItemEntity, PendingSaleEntity, DashboardCacheEntity, NotificationEntity)
 │   │       ├── sync/             → SyncWorker, SyncScheduler (WorkManager)
 │   │       ├── security/         → EncryptedSharedPreferences
 │   │       └── ui/               → theme, BottomNavBar
@@ -116,13 +118,15 @@ Abrir con Android Studio y sync Gradle (o generar el wrapper con `gradle wrapper
 La app apunta a `http://10.0.2.2:8080/api/` en el emulador (debug) y `https://api.pos.com/api/` en release (configurable por buildType en `app/build.gradle.kts`).
 
 **Features Android:**
-- Login con JWT + refresh automático + selector de sucursal
+- Login con JWT + refresh automático (dos OkHttpClients para evitar ciclo Hilt) + selector de sucursal
 - POS con carrito persistente (Room), búsqueda de productos, escáner ML Kit (CameraX), cobro multipago con cálculo de vuelto
 - Modo offline: ventas se guardan en cola (Room) y se sincronizan con WorkManager (periódico cada 15 min + inmediato)
+- Dashboard ejecutivo offline-first: KPI cards, chart de ventas (Vico), top 5 productos, alertas activas, selector de período/sucursal, PullToRefreshBox
+- Centro de notificaciones con polling HTTP cada 30s, mark-as-read, badge contador en bottom nav
 - Asistencia: check-in/out con resumen de período (asistencias, ausencias, tardanzas, horas totales)
 - Turnos: grilla semanal por empleado con cards de turno por día
 - Stock: búsqueda con paginación, detalle de producto con precios por sucursal y promociones
-- Bottom navigation con badge de ventas pendientes
+- Bottom navigation con badge de ventas pendientes + notificaciones sin leer
 
 ## Variables de Entorno
 
@@ -165,6 +169,7 @@ La app apunta a `http://10.0.2.2:8080/api/` en el emulador (debug) y `https://ap
 | **18** | Módulo contable (plan de cuentas jerárquico, asientos automáticos por venta/nómina/gasto, balance de comprobación, exportación Excel), integración e-commerce (EcommerceAdapter REST genérico, sincronización stock/catálogo/pedidos @Scheduled cada 5 min) | AccountingAccount, AccountingEntryTemplate, AccountingJournalEntry, AccountingJournalLine, EcommerceConfig, EcommerceOrder, EcommerceSyncLog, PaymentMethod.ONLINE |
 | **A1** | Android: proyecto Gradle con Hilt, Retrofit, Room, CameraX, ML Kit. Login JWT + refresh + BranchSelector. Productos (búsqueda local+remota, detalle con precio resuelto). Escáner ML Kit. Navegación con rutas centralizadas | AuthResponse, BranchInfo, ProductEntity, ProductSearchResponse, BarcodeScannerScreen |
 | **A2** | Android: POS con carrito persistente (Room), cobro multipago (efectivo/tarjeta/mixto) con vuelto, ventas offline con cola de sincronización (WorkManager 15 min + 3 reintentos). Asistencia (check-in/out + resumen). Turnos (grilla semanal). BottomNavBar con badge de pendientes | CartItemEntity, PendingSaleEntity, SyncWorker, SyncScheduler, ConnectivityObserver, PosScreen, PaymentScreen, AttendanceScreen, ShiftScreen, BottomNavBar |
+| **A3** | Android: Dashboard offline-first con KPI cards, gráfico Vico, top 5, alertas, PullToRefreshBox. Centro de notificaciones con polling 30s + badge. TokenRefreshApi separada. Hilt 2.58 + Room 2.7.1 (compat Kotlin 2.2.10). Vico 2.0.3 (stable). Compose BOM 2025.01.00. compileSdk 35 | DashboardScreen, DashboardViewModel, DashboardRepository, DashboardApi, DashboardCacheEntity, NotificationScreen, NotificationViewModel, NotificationRepository, NotificationApi, NotificationEntity, TokenRefreshApi |
 
 ## Licencia
 

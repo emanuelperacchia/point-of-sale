@@ -52,6 +52,10 @@ class TokenStorage @Inject constructor(
         get() = prefs.getString(KEY_BRANCH_NAME, null)
         set(value) = prefs.edit().putString(KEY_BRANCH_NAME, value).apply()
 
+    var isAdmin: Boolean
+        get() = prefs.getBoolean(KEY_IS_ADMIN, false)
+        set(value) = prefs.edit().putBoolean(KEY_IS_ADMIN, value).apply()
+
     val isLoggedIn: Boolean
         get() = accessToken != null
 
@@ -68,5 +72,6 @@ class TokenStorage @Inject constructor(
         private const val KEY_USER_NAME = "user_name"
         private const val KEY_BRANCH_ID = "branch_id"
         private const val KEY_BRANCH_NAME = "branch_name"
+        private const val KEY_IS_ADMIN = "is_admin"
     }
 }

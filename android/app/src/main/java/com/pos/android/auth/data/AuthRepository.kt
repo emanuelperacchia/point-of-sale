@@ -2,6 +2,7 @@ package com.pos.android.auth.data
 
 import com.pos.android.auth.data.model.AuthResponse
 import com.pos.android.auth.data.model.LoginRequest
+import com.pos.android.auth.data.model.RefreshTokenRequest
 import com.pos.android.auth.data.model.RegisterRequest
 import com.pos.android.auth.data.model.SwitchBranchRequest
 import com.pos.android.auth.data.model.UserResponse

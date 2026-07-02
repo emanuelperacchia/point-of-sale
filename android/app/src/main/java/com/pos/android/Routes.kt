@@ -12,6 +12,12 @@ object Routes {
     // Home (Bottom Nav container)
     const val HOME = "home"
 
+    // Dashboard
+    const val DASHBOARD = "dashboard"
+
+    // Notifications
+    const val NOTIFICATIONS = "notifications"
+
     // POS
     const val POS = "pos"
     const val PAYMENT = "pos/payment/{total}"

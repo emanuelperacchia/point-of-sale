@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -13,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,7 +31,10 @@ import com.pos.android.core.security.TokenStorage
 import com.pos.android.core.ui.navigation.BottomNavItem
 import com.pos.android.core.ui.navigation.PosBottomNavBar
 import com.pos.android.core.ui.theme.POSTheme
+import com.pos.android.dashboard.ui.DashboardScreen
 import com.pos.android.inventory.ui.ProductDetailScreen
+import com.pos.android.notification.ui.NotificationScreen
+import com.pos.android.notification.ui.NotificationViewModel
 import com.pos.android.inventory.ui.ProductSearchScreen
 import com.pos.android.inventory.ui.scanner.BarcodeScannerScreen
 import com.pos.android.pos.ui.PosScreen
@@ -63,9 +69,11 @@ fun POSNavHost(tokenStorage: TokenStorage) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Shared PosViewModel between POS screens
+    // Shared ViewModels
     val posViewModel: PosViewModel = hiltViewModel()
     val posUiState by posViewModel.uiState.collectAsState()
+    val notificationViewModel: NotificationViewModel = hiltViewModel()
+    val notificationState by notificationViewModel.state.collectAsState()
 
     // Escaner: leer código cuando volvemos
     val scannedCode = navController.currentBackStackEntry
@@ -80,8 +88,9 @@ fun POSNavHost(tokenStorage: TokenStorage) {
         }
     }
 
-    val bottomNavItems = remember(posUiState.pendingSaleCount) {
+    val bottomNavItems = remember(posUiState.pendingSaleCount, notificationState.unreadCount) {
         listOf(
+            BottomNavItem(Routes.DASHBOARD, "Dashboard", Icons.Default.Dashboard, badgeCount = notificationState.unreadCount),
             BottomNavItem(Routes.POS, "POS", Icons.Default.PointOfSale, badgeCount = posUiState.pendingSaleCount),
             BottomNavItem(Routes.INVENTORY_SEARCH, "Stock", Icons.Default.Inventory2),
             BottomNavItem(Routes.ATTENDANCE, "Asistencia", Icons.Default.Fingerprint),
@@ -92,6 +101,7 @@ fun POSNavHost(tokenStorage: TokenStorage) {
     val showBottomBar = currentRoute in bottomNavItems.map { it.route }
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -122,7 +132,7 @@ fun POSNavHost(tokenStorage: TokenStorage) {
             composable(Routes.LOGIN) {
                 LoginScreen(
                     onLoginSuccess = {
-                        navController.navigate(Routes.POS) {
+                        navController.navigate(Routes.DASHBOARD) {
                             popUpTo(Routes.LOGIN) { inclusive = true }
                         }
                     },
@@ -146,12 +156,36 @@ fun POSNavHost(tokenStorage: TokenStorage) {
                         onBranchSelected = { branch ->
                             tokenStorage.activeBranchId = branch.id
                             tokenStorage.activeBranchName = branch.nombre
-                            navController.navigate(Routes.POS) {
+                            navController.navigate(Routes.DASHBOARD) {
                                 popUpTo(0) { inclusive = true }
                             }
                         }
                     )
                 }
+            }
+
+            // ── Home (redirige a Dashboard) ──
+            composable(Routes.HOME) {
+                navController.navigate(Routes.DASHBOARD) {
+                    popUpTo(Routes.HOME) { inclusive = true }
+                }
+            }
+
+            // ── Dashboard ──
+            composable(Routes.DASHBOARD) {
+                DashboardScreen(
+                    unreadNotificationCount = notificationState.unreadCount,
+                    onNavigateToNotifications = {
+                        navController.navigate(Routes.NOTIFICATIONS)
+                    },
+                    onAlertClick = { type ->
+                        when (type) {
+                            "CRITICAL_STOCK" -> navController.navigate(Routes.INVENTORY_SEARCH)
+                            "OVERDUE_RECEIVABLE" -> { /* TODO: navegar a cobranzas */ }
+                            else -> { /* sin acción */ }
+                        }
+                    }
+                )
             }
 
             // ── POS ──
@@ -176,12 +210,14 @@ fun POSNavHost(tokenStorage: TokenStorage) {
                         navController.navigate(Routes.POS) {
                             popUpTo(Routes.POS) { inclusive = true }
                         }
-                        if (wasOffline) {
-                            snackbarHostState.showSnackbar(
-                                "Venta guardada sin conexión. Se sincronizará automáticamente."
-                            )
-                        } else {
-                            snackbarHostState.showSnackbar("Venta #$saleId completada")
+                        coroutineScope.launch {
+                            if (wasOffline) {
+                                snackbarHostState.showSnackbar(
+                                    "Venta guardada sin conexión. Se sincronizará automáticamente."
+                                )
+                            } else {
+                                snackbarHostState.showSnackbar("Venta #$saleId completada")
+                            }
                         }
                     }
                 )
@@ -225,6 +261,13 @@ fun POSNavHost(tokenStorage: TokenStorage) {
             // ── Shifts ──
             composable(Routes.SHIFTS) {
                 ShiftScreen()
+            }
+
+            // ── Notifications ──
+            composable(Routes.NOTIFICATIONS) {
+                NotificationScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
             }
         }
     }

@@ -3,6 +3,7 @@ package com.pos.android.pos.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -243,7 +244,7 @@ private fun PaymentMethodButton(
         selected = selected,
         onClick = onClick,
         label = { Text(text, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal) },
-        icon = {
+        leadingIcon = {
             Icon(
                 icon,
                 contentDescription = null,

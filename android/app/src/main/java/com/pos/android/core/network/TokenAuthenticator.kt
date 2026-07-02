@@ -1,23 +1,24 @@
 package com.pos.android.core.network
 
+import com.pos.android.auth.data.TokenRefreshApi
 import com.pos.android.core.security.TokenStorage
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
-import retrofit2.Retrofit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
  * Authenticator que intenta renovar el token automáticamente ante un 401.
  * Si el refresh también falla, limpia el storage y fuerza el login.
+ * Usa AuthApi desde un Retrofit SIN authenticator para evitar ciclo.
  */
 @Singleton
 class TokenAuthenticator @Inject constructor(
     private val tokenStorage: TokenStorage,
-    private val authApiProvider: dagger.Lazy<AuthApi>
+    private val tokenRefreshApi: TokenRefreshApi
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
@@ -31,7 +32,7 @@ class TokenAuthenticator @Inject constructor(
 
         return try {
             val result = runBlocking {
-                authApiProvider.get().refreshToken(
+                tokenRefreshApi.refreshToken(
                     com.pos.android.auth.data.model.RefreshTokenRequest(refreshToken)
                 )
             }

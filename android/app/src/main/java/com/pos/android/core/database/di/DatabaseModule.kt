@@ -35,4 +35,12 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun providePendingSaleDao(database: PosDatabase) = database.pendingSaleDao()
+
+    @Provides
+    @Singleton
+    fun provideDashboardCacheDao(database: PosDatabase) = database.dashboardCacheDao()
+
+    @Provides
+    @Singleton
+    fun provideNotificationDao(database: PosDatabase) = database.notificationDao()
 }

@@ -2,11 +2,12 @@ package com.pos.android.pos.data
 
 import com.google.gson.Gson
 import com.pos.android.core.network.ApiResult
-import com.pos.android.core.network.ConnectivityObserver
+import com.pos.android.core.network.connectivity.ConnectivityObserver
 import com.pos.android.core.network.connectivity.ConnectivityStatus
 import com.pos.android.pos.data.local.CartItemDao
 import com.pos.android.pos.data.local.CartItemEntity
 import com.pos.android.pos.data.local.PendingSaleDao
+import com.pos.android.pos.data.local.PendingSaleEntity
 import com.pos.android.pos.data.model.*
 import javax.inject.Inject
 import javax.inject.Singleton

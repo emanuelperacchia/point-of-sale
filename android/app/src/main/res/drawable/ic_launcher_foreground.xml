@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- POS Terminal icon -->
+    <group
+        android:translateX="4"
+        android:translateY="4">
+        <!-- Monitor screen -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M20,20 L80,20 C84,20 86,22 86,26 L86,60 C86,64 84,66 80,66 L20,66 C16,66 14,64 14,60 L14,26 C14,22 16,20 20,20 Z" />
+        <!-- Screen content - grid lines -->
+        <path
+            android:fillColor="#1B5E20"
+            android:pathData="M22,28 L78,28 L78,32 L22,32 Z" />
+        <path
+            android:fillColor="#1B5E20"
+            android:pathData="M22,36 L78,36 L78,40 L22,40 Z" />
+        <path
+            android:fillColor="#1B5E20"
+            android:pathData="M22,44 L50,44 L50,58 L22,58 Z" />
+        <!-- Stand -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M48,66 L60,66 L60,70 L48,70 Z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M40,70 L68,70 L70,76 L38,76 Z" />
+    </group>
+</vector>

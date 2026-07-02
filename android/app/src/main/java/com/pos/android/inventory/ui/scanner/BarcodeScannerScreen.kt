@@ -100,9 +100,8 @@ fun BarcodeScannerScreen(
                         cameraProviderFuture.addListener({
                             val cameraProvider = cameraProviderFuture.get()
 
-                            val preview = Preview.Builder().build().also {
-                                it.surfaceProvider = previewView.surfaceProvider
-                            }
+                            val preview = Preview.Builder().build()
+                            preview.setSurfaceProvider(previewView.getSurfaceProvider())
 
                             val barcodeScanner = BarcodeScanning.getClient()
 
