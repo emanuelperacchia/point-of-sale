@@ -25,11 +25,23 @@ export default function Layout({ children, title }: LayoutProps) {
   const { user, logout, branchId, branches, switchBranch } = useAuth();
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="flex w-56 flex-col bg-gray-900 text-white">
-        <div className="px-4 py-5">
-          <h1 className="text-lg font-bold">POS System</h1>
+      <aside className="flex w-56 flex-col bg-primary-dark text-ink-on-dark">
+        <div className="flex items-center gap-2 px-4 py-5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
+            <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
+              <rect width="48" height="48" rx="10" fill="#1C2541" />
+              <text
+                x="24" y="33" textAnchor="middle"
+                fontFamily="Segoe UI, system-ui, sans-serif"
+                fontSize="26" fontWeight="600" fill="#C9A24B"
+              >N</text>
+            </svg>
+          </div>
+          <span className="text-sm font-semibold uppercase tracking-[0.25em] text-ink-on-dark">
+            Nivex
+          </span>
         </div>
         <nav className="flex-1 space-y-1 px-3">
           {navItems.map((item) => (
@@ -37,10 +49,10 @@ export default function Layout({ children, title }: LayoutProps) {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `block rounded px-3 py-2 text-sm transition-colors ${
+                `block rounded-md px-3 py-2 text-sm transition-colors ${
                   isActive
-                    ? 'bg-gray-700 text-white font-medium'
-                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ? 'bg-primary text-accent-soft font-medium'
+                    : 'text-ink-on-dark/70 hover:bg-primary-soft hover:text-ink-on-dark'
                 }`
               }
             >
@@ -48,11 +60,11 @@ export default function Layout({ children, title }: LayoutProps) {
             </NavLink>
           ))}
         </nav>
-        <div className="border-t border-gray-700 px-4 py-3">
+        <div className="border-t border-primary-soft/40 px-4 py-3">
           {/* Branch Selector */}
           {branches.length > 1 && (
             <div className="mb-2">
-              <label className="block text-[10px] font-medium uppercase tracking-wider text-gray-500">
+              <label className="block text-[10px] font-medium uppercase tracking-wider text-ink-faint">
                 Sucursal
               </label>
               <select
@@ -61,7 +73,7 @@ export default function Layout({ children, title }: LayoutProps) {
                   const id = Number(e.target.value);
                   if (id && id !== branchId) switchBranch(id);
                 }}
-                className="mt-1 w-full rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 w-full rounded-md border border-primary-soft/40 bg-primary px-2 py-1 text-xs text-ink-on-dark focus:outline-none focus:ring-1 focus:ring-accent"
               >
                 {branchId == null && <option value="">Todas</option>}
                 {branches.map((b) => (
@@ -72,10 +84,10 @@ export default function Layout({ children, title }: LayoutProps) {
               </select>
             </div>
           )}
-          <div className="text-sm text-gray-400 truncate">{user?.fullName}</div>
+          <div className="truncate text-sm text-ink-on-dark/80">{user?.fullName}</div>
           <button
             onClick={logout}
-            className="mt-2 w-full rounded bg-gray-700 px-3 py-1 text-xs text-gray-300 hover:bg-gray-600"
+            className="mt-2 w-full rounded-md bg-primary px-3 py-1 text-xs text-ink-on-dark/80 hover:bg-primary-soft hover:text-ink-on-dark"
           >
             Cerrar sesion
           </button>
@@ -85,8 +97,8 @@ export default function Layout({ children, title }: LayoutProps) {
       {/* Main content */}
       <div className="flex flex-1 flex-col">
         {title && (
-          <header className="bg-white px-6 py-3 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+          <header className="bg-surface px-6 py-3 shadow-soft">
+            <h2 className="text-lg font-semibold text-ink">{title}</h2>
           </header>
         )}
         <main className="flex-1 overflow-auto p-6">{children}</main>
