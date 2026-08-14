@@ -79,9 +79,10 @@ import type {
 // ---------------------------------------------------------------------------
 // Axios instance
 // ---------------------------------------------------------------------------
-
+// En dev usa el proxy de Vite (vite.config.ts → localhost:8080).
+// En produccion (Vercel) VITE_API_URL apunta al backend real (p.ej. https://api.tu-dominio.com/api).
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
