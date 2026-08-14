@@ -1,12 +1,16 @@
 package com.pos.system.config;
 
+import com.pos.system.entity.Branch;
 import com.pos.system.entity.Permission;
 import com.pos.system.entity.Permission.PermissionName;
 import com.pos.system.entity.Role;
 import com.pos.system.entity.Role.RoleName;
 import com.pos.system.entity.User;
+import com.pos.system.entity.UserBranch;
+import com.pos.system.repository.BranchRepository;
 import com.pos.system.repository.PermissionRepository;
 import com.pos.system.repository.RoleRepository;
+import com.pos.system.repository.UserBranchRepository;
 import com.pos.system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +31,8 @@ public class DataInitializer implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final UserRepository userRepository;
+    private final BranchRepository branchRepository;
+    private final UserBranchRepository userBranchRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -126,6 +132,25 @@ public class DataInitializer implements CommandLineRunner {
                 .build();
         admin.getRoles().add(adminRole);
         userRepository.save(admin);
+
+        // Sucursal principal por defecto (multi-sucursal: el admin necesita al menos una)
+        if (branchRepository.count() == 0) {
+            Branch defaultBranch = Branch.builder()
+                    .nombre("Sucursal Principal")
+                    .direccion("Direccion Principal")
+                    .timezone("America/Argentina/Buenos_Aires")
+                    .puntoVentaFiscal("00001")
+                    .build();
+            branchRepository.save(defaultBranch);
+            log.info("Sucursal principal creada");
+        }
+
+        // Vincular admin a la primera sucursal activa
+        branchRepository.findByActivaTrue().stream().findFirst().ifPresent(branch ->
+                userBranchRepository.save(UserBranch.builder()
+                        .id(new UserBranch.UserBranchId(admin.getId(), branch.getId()))
+                        .activo(true)
+                        .build()));
 
         log.info("Datos inicializados correctamente. Usuario admin creado: {}", admin.getEmail());
     }

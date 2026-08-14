@@ -31,7 +31,7 @@ point-of-sale/
 │   │   │   ├── config/         → seguridad, CORS, webhooks, etc.
 │   │   │   └── exception/      → manejo de errores
 │   │   ├── main/resources/
-│   │   │   └── db/migration/   → 32 migrations Flyway (V6–V37)
+│   │   │   └── db/migration/   → Flyway: V1 baseline + V2/V3 seeds (legacy V6–V37 en db/legacy/)
 │   │   └── test/               → 484 tests unitarios
 │   ├── pom.xml
 │   └── HELP.md
@@ -73,6 +73,7 @@ point-of-sale/
 - **PostgreSQL 15+**
 - **Maven** (o usar `./mvnw` incluido)
 - **Android Studio Hedgehog+** (para Android)
+- **Docker Desktop** (opcional, para el stack completo)
 
 ## Configuración rápida
 
@@ -88,7 +89,7 @@ createdb pos_db
 cd backend
 
 # Configurar variables de entorno
-$env:JWT_SECRET="tu-secreto-jwt"
+$env:JWT_SECRET="tu-secreto-jwt"   # base64 de 32+ bytes (ej: openssl rand -base64 48)
 $env:DB_PASSWORD="tu-contraseña"
 
 # Iniciar (con Flyway: ddl-auto=validate)
@@ -128,13 +129,48 @@ La app apunta a `http://10.0.2.2:8080/api/` en el emulador (debug) y `https://ap
 - Stock: búsqueda con paginación, detalle de producto con precios por sucursal y promociones
 - Bottom navigation con badge de ventas pendientes + notificaciones sin leer
 
+### 5. Docker (stack completo)
+
+Levanta **PostgreSQL + Backend + Frontend** con un solo comando. Requiere **Docker Desktop**.
+
+```bash
+# 1. Configurar secretos (primera vez)
+Copy-Item .env.example .env   # y editar POS_JWT_SECRET
+
+# 2. Construir y levantar
+docker compose up -d --build
+
+# 3. Verificar
+docker compose ps                     # los 3 servicios healthy
+curl http://localhost:8080/api/health/db   # backend + DB
+```
+
+| Servicio | URL |
+|----------|-----|
+| Frontend (Nginx) | `http://localhost:5173` |
+| Backend API | `http://localhost:8080` |
+| Swagger UI | `http://localhost:8080/swagger-ui.html` |
+| PostgreSQL | `localhost:5432` |
+
+Detalles de arquitectura:
+- **Backend**: Dockerfile multi-stage (Maven → JRE slim), `SPRING_PROFILES_ACTIVE=prod`, healthcheck sobre `/api/health/db`, volúmenes para `uploads/`, `invoices/` y `logs/`
+- **Frontend**: Dockerfile multi-stage (pnpm + Vite → Nginx), SPA fallback, proxy `/api` → backend, headers de seguridad (CSP, X-Frame-Options, etc.)
+- **Postgres**: healthcheck `pg_isready`; el backend arranca solo cuando la DB está healthy (`depends_on: condition: service_healthy`)
+- **Red**: bridge interna `pos-network`; solo se exponen los puertos necesarios
+- Los logs del backend: `docker compose logs -f backend`
+
+> Nota: `backend/docker-compose.yml` queda solo para levantar Postgres en desarrollo local (sin el resto del stack). El compose raíz es la fuente de verdad para el despliegue completo.
+
 ## Variables de Entorno
 
 | Variable | Obligatoria | Default | Descripción |
 |----------|------------|---------|-------------|
-| `JWT_SECRET` | ✅ | — | Clave secreta para firmar tokens JWT |
+| `POS_JWT_SECRET` | ✅ (Docker) | — | Clave JWT (base64 ≥ 256 bits para HS256). El compose la expone como `JWT_SECRET` al backend. Prefijada con `POS_` para evitar colisiones con variables del host Windows (Docker Desktop hereda env vars del sistema, que tienen precedencia sobre `.env`) |
 | `DB_PASSWORD` | ✅ | — | Contraseña de PostgreSQL |
 | `CORS_ORIGINS` | ❌ | `http://localhost:5173` | Orígenes CORS permitidos |
+| `POSTGRES_PASSWORD` | ✅ (Docker) | — | Password de PostgreSQL en el stack Docker (inyecta `DB_PASSWORD` al backend) |
+| `DB_POOL_MAX_SIZE` | ❌ | `12` | Máximo de conexiones HikariCP |
+| `DB_POOL_MIN_IDLE` | ❌ | `12` | Mínimo de conexiones idle HikariCP (pool fijo) |
 
 ## Roles del Sistema
 
