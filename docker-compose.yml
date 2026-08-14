@@ -1,0 +1,70 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: pos-postgres
+    environment:
+      POSTGRES_DB: pos_db
+      POSTGRES_USER: pos_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Debe definir POSTGRES_PASSWORD en .env}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pos_user -d pos_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - pos-network
+
+  backend:
+    build: ./backend
+    container_name: pos-backend
+    environment:
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Debe definir POSTGRES_PASSWORD en .env}
+      JWT_SECRET: ${POS_JWT_SECRET:?Defina POS_JWT_SECRET en .env}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pos_db
+      DB_POOL_MAX_SIZE: ${DB_POOL_MAX_SIZE:-12}
+      DB_POOL_MIN_IDLE: ${DB_POOL_MIN_IDLE:-12}
+      SPRING_PROFILES_ACTIVE: prod
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/api/health/db > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    volumes:
+      - pos_uploads:/app/uploads
+      - pos_invoices:/app/invoices
+      - pos_logs:/app/logs
+    networks:
+      - pos-network
+
+  frontend:
+    build: ./frontend
+    container_name: pos-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - pos-network
+
+volumes:
+  postgres_data:
+  pos_uploads:
+  pos_invoices:
+  pos_logs:
+
+networks:
+  pos-network:
+    driver: bridge
