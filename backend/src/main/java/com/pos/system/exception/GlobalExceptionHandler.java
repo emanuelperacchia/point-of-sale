@@ -60,6 +60,31 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
+    /**
+     * Excepciones de la jerarquía de Spring Security (BadCredentialsException,
+     * DisabledException, LockedException, etc.). Sin este handler llegan al
+     * genérico y producen un 500 incorrecto en el flujo normal de login.
+     * Se devuelven mensajes genéricos para no filtrar si la cuenta existe
+     * o si está desactivada (enumeración de usuarios).
+     */
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleSpringSecurityAuthException(
+            org.springframework.security.core.AuthenticationException ex,
+            HttpServletRequest request) {
+        String message = ex instanceof org.springframework.security.authentication.DisabledException
+                ? "La cuenta está desactivada"
+                : "Credenciales inválidas";
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Unauthorized",
+                message,
+                request.getRequestURI(),
+                LocalDateTime.now()
+        );
+        log.warn("Autenticación rechazada en {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getClass().getSimpleName());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<ErrorResponse> handleTokenExpired(
             TokenExpiredException ex,

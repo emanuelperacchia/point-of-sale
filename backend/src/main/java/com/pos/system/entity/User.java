@@ -45,6 +45,14 @@ public class User {
     @Builder.Default
     private Boolean emailVerified = false;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean termsAccepted = false;
+
+    private LocalDateTime termsAcceptedAt;
+
+    private LocalDateTime deletedAt;
+
     private LocalDateTime lastLogin;
 
     @ManyToMany(fetch = FetchType.EAGER)

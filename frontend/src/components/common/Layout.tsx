@@ -85,12 +85,20 @@ export default function Layout({ children, title }: LayoutProps) {
             </div>
           )}
           <div className="truncate text-sm text-ink-on-dark/80">{user?.fullName}</div>
-          <button
-            onClick={logout}
-            className="mt-2 w-full rounded-md bg-primary px-3 py-1 text-xs text-ink-on-dark/80 hover:bg-primary-soft hover:text-ink-on-dark"
-          >
-            Cerrar sesion
-          </button>
+          <div className="mt-2 space-y-1">
+            <NavLink
+              to="/mi-perfil"
+              className="block w-full rounded-md bg-primary px-3 py-1 text-center text-xs text-ink-on-dark/80 hover:bg-primary-soft hover:text-ink-on-dark"
+            >
+              Mi perfil
+            </NavLink>
+            <button
+              onClick={logout}
+              className="w-full rounded-md bg-primary px-3 py-1 text-xs text-ink-on-dark/80 hover:bg-primary-soft hover:text-ink-on-dark"
+            >
+              Cerrar sesion
+            </button>
+          </div>
         </div>
       </aside>
 

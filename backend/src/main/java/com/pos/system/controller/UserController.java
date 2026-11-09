@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -50,5 +51,20 @@ public class UserController {
     @Operation(summary = "Listar usuarios", description = "Solo administradores")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/me/data-export")
+    @Operation(summary = "Exportar datos personales", description = "Derecho de acceso/portabilidad (Ley 25.326 art. 14): descarga todos los datos personales que el sistema almacena del usuario autenticado")
+    public ResponseEntity<Map<String, Object>> exportMyData(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(userService.exportUserData(userDetails.getId()));
+    }
+
+    @PostMapping("/me/delete-request")
+    @Operation(summary = "Solicitar supresión de cuenta", description = "Derecho al olvido (Ley 25.326 art. 16): da de baja la cuenta lógicamente, revoca sesiones y preserva registros fiscales por obligación legal")
+    public ResponseEntity<Void> requestMyAccountDeletion(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.requestAccountDeletion(userDetails.getId());
+        return ResponseEntity.noContent().build();
     }
 }

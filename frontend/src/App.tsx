@@ -16,6 +16,9 @@ import InventoryReportPage from './pages/InventoryReportPage';
 import ProfitabilityPage from './pages/ProfitabilityPage';
 import HRReportPage from './pages/HRReportPage';
 import ConsolidatedDashboardPage from './pages/ConsolidatedDashboardPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 export default function App() {
   return (
@@ -23,6 +26,16 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/terminos" element={<TermsPage />} />
+          <Route path="/privacidad" element={<PrivacyPolicyPage />} />
+          <Route
+            path="/mi-perfil"
+            element={
+              <ProtectedRoute>
+                <PrivacyPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/pos"
             element={

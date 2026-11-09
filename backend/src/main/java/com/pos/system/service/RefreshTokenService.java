@@ -4,7 +4,12 @@ import com.pos.system.entity.RefreshToken;
 import com.pos.system.entity.User;
 
 public interface RefreshTokenService {
-    RefreshToken createRefreshToken(User user);
+    /**
+     * Crea y persiste un refresh token (la base guarda SOLO el hash SHA-256).
+     *
+     * @return el token crudo en claro — se entrega al cliente una única vez
+     */
+    String createRefreshToken(User user);
     RefreshToken findByToken(String token);
     boolean isValid(RefreshToken refreshToken);
     void revoke(RefreshToken refreshToken);

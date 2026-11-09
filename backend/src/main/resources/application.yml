@@ -58,6 +58,10 @@ jwt:
   expiration: 900000
   refresh-expiration: 604800000
 
+pos:
+  crypto:
+    key: ${POS_CRYPTO_KEY:}
+
 cors:
   allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
 

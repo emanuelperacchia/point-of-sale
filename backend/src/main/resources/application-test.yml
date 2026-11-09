@@ -21,6 +21,10 @@ jwt:
   expiration: 900000
   refresh-expiration: 604800000
 
+pos:
+  crypto:
+    key: test-crypto-key-no-utilizar-en-produccion
+
 cors:
   allowed-origins: http://localhost:5173
 

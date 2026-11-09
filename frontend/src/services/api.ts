@@ -724,4 +724,13 @@ export const lotApi = {
     api.get<LoteTraceabilityResponse>(`/lots/${loteId}/traceability`),
 };
 
+// ---------------------------------------------------------------------------
+// Privacidad — Ley 25.326 (acceso/portabilidad + supresión)
+// ---------------------------------------------------------------------------
+
+export const privacyApi = {
+  exportMyData: () => api.get<Record<string, unknown>>('/users/me/data-export'),
+  requestAccountDeletion: () => api.post<void>('/users/me/delete-request'),
+};
+
 export default api;

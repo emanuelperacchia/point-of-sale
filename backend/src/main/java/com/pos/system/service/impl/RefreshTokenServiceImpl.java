@@ -9,9 +9,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.HexFormat;
 import java.util.UUID;
 
+/**
+ * Gestión de refresh tokens.
+ * <p>
+ * En base de datos solo se persiste el hash SHA-256 del token: si el store se
+ * compromete, los tokens almacenados no son utilizables. El token crudo se
+ * retorna al cliente únicamente en el momento de creación.
+ * </p>
+ */
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService {
@@ -23,19 +35,21 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     @Transactional
-    public RefreshToken createRefreshToken(User user) {
+    public String createRefreshToken(User user) {
+        String rawToken = UUID.randomUUID().toString();
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
-                .token(UUID.randomUUID().toString())
+                .token(hash(rawToken))
                 .expirationDate(LocalDateTime.now().plusSeconds(refreshExpiration / 1000))
                 .build();
-        return refreshTokenRepository.save(refreshToken);
+        refreshTokenRepository.save(refreshToken);
+        return rawToken;
     }
 
     @Override
     @Transactional(readOnly = true)
     public RefreshToken findByToken(String token) {
-        return refreshTokenRepository.findByToken(token).orElse(null);
+        return refreshTokenRepository.findByToken(hash(token)).orElse(null);
     }
 
     @Override
@@ -54,5 +68,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public void revokeAllUserTokens(Long userId) {
         refreshTokenRepository.deleteByUserId(userId);
+    }
+
+    private String hash(String rawToken) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(rawToken.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hashBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 no disponible", e);
+        }
     }
 }

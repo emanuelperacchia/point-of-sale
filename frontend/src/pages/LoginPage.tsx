@@ -99,7 +99,14 @@ export default function LoginPage() {
         </div>
 
         <p className="mt-6 text-center text-xs text-ink-faint">
-          © {new Date().getFullYear()} Nivex
+          © {new Date().getFullYear()} Nivex ·{' '}
+          <a href="/terminos" className="underline hover:text-ink-soft">
+            Términos
+          </a>{' '}
+          ·{' '}
+          <a href="/privacidad" className="underline hover:text-ink-soft">
+            Privacidad
+          </a>
         </p>
       </div>
     </div>

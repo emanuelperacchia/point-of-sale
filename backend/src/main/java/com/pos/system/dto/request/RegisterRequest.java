@@ -2,6 +2,8 @@ package com.pos.system.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -22,4 +24,8 @@ public class RegisterRequest {
     private String lastName;
 
     private String phone;
+
+    @NotNull(message = "Debe aceptar los Términos y Condiciones")
+    @AssertTrue(message = "Debe aceptar los Términos y Condiciones y la Política de Privacidad")
+    private Boolean termsAccepted;
 }

@@ -24,6 +24,7 @@ services:
     environment:
       DB_PASSWORD: ${POSTGRES_PASSWORD:?Debe definir POSTGRES_PASSWORD en .env}
       JWT_SECRET: ${POS_JWT_SECRET:?Defina POS_JWT_SECRET en .env}
+      POS_CRYPTO_KEY: ${POS_CRYPTO_KEY:?Defina POS_CRYPTO_KEY en .env}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pos_db
       DB_POOL_MAX_SIZE: ${DB_POOL_MAX_SIZE:-12}
       DB_POOL_MIN_IDLE: ${DB_POOL_MIN_IDLE:-12}

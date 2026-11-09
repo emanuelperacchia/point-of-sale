@@ -1,9 +1,11 @@
 package com.pos.system.service;
 
 import com.pos.system.entity.DigitalCertificate;
+import com.pos.system.security.CryptoService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
@@ -37,6 +39,7 @@ import java.util.Collections;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class DigitalSignatureService {
 
     private static final Logger log = LoggerFactory.getLogger(DigitalSignatureService.class);
@@ -44,6 +47,8 @@ public class DigitalSignatureService {
     private static final String SIGNATURE_ALGORITHM = SignatureMethod.RSA_SHA256;
     private static final String DIGEST_ALGORITHM = DigestMethod.SHA256;
     private static final String KEYSTORE_TYPE = "PKCS12";
+
+    private final CryptoService cryptoService;
 
     /**
      * Firma el XML del comprobante con el certificado digital provisto.
@@ -62,8 +67,8 @@ public class DigitalSignatureService {
             // Registrar Bouncy Castle como provider de seguridad
             Security.addProvider(new BouncyCastleProvider());
 
-            // Cargar keystore PKCS#12
-            char[] password = certificate.getStorePassword().toCharArray();
+            // Cargar keystore PKCS#12 (password descifrada: en DB solo vive cifrada)
+            char[] password = cryptoService.decrypt(certificate.getStorePassword()).toCharArray();
             KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE, "BC");
             ks.load(new ByteArrayInputStream(certificate.getCertificateData()), password);
 
