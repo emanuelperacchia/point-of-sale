@@ -7,7 +7,9 @@ import com.pos.system.event.SaleCompletedEvent;
 import com.pos.system.exception.BadRequestException;
 import com.pos.system.exception.ResourceNotFoundException;
 import com.pos.system.repository.*;
+import com.pos.system.service.FiscalApiClient;
 import com.pos.system.service.*;
+import com.pos.system.service.afip.AfipCodeMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -30,6 +33,17 @@ import java.util.stream.Collectors;
  * <p>
  * Escucha el evento {@link SaleCompletedEvent} para emitir automáticamente
  * el comprobante después de cada venta completada.
+ * <p>
+ * Flujo de emisión (Fase 3 — AFIP real):
+ * <ol>
+ *   <li>Construye un {@link FiscalApiClient.FiscalEmissionRequest} estructurado
+ *       desde los datos de la venta.</li>
+ *   <li>Lo envía al organismo fiscal (mock o AFIP wsfev1 según
+ *       {@code fiscal.mode}).</li>
+ *   <li>Genera y firma el XML <b>local</b> del comprobante (solo para el
+ *       documento del cliente / PDF; no se envía a AFIP).</li>
+ *   <li>Persiste el comprobante con el CAE obtenido.</li>
+ * </ol>
  * </p>
  */
 @Service
@@ -95,20 +109,28 @@ public class InvoiceServiceImpl implements InvoiceService {
         Company company = companyRepository.findByActiveTrue()
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No hay empresa activa configurada. " +
-                        "Registre los datos fiscales en /api/companies."));
+                                "Registre los datos fiscales en /api/companies."));
 
         // Determinar tipo de comprobante según condición fiscal del cliente
         TipoComprobante tipo = determineTipoComprobante(client);
 
         // Obtener próximo número correlativo desde la sequence PostgreSQL
-        // (thread-safe, sin race condition como el anterior SELECT MAX + 1)
         Long numero = invoiceRepository.nextSequenceValue(tipo.name());
 
-        // 1. Generar XML
+        // 1. Datos estructurados para el organismo fiscal (AFIP wsfev1 / mock)
+        FiscalApiClient.FiscalEmissionRequest request = buildEmissionRequest(
+                sale, client, company, tipo, numero);
+
+        // 2. Enviar al organismo fiscal
+        FiscalApiClient.FiscalEmissionResponse fiscalResponse =
+                fiscalApiClient.emitirComprobante(request);
+
+        // 3. Generar XML local del comprobante (solo documento del cliente;
+        //    NO se envía a AFIP — AFIP recibe los campos estructurados del paso 1)
         String xml = xmlBuilder.buildInvoiceXml(sale, client, company, tipo, numero);
         log.debug("XML generado para comprobante {} ({} bytes)", numero, xml.length());
 
-        // 2. Firmar XML (si hay certificado activo)
+        // 4. Firmar XML local (si hay certificado activo)
         String xmlFirmado;
         DigitalCertificate cert = certificateRepository.findByActiveTrue().orElse(null);
         if (cert != null) {
@@ -119,22 +141,19 @@ public class InvoiceServiceImpl implements InvoiceService {
             log.warn("No hay certificado digital activo — XML enviado sin firma");
         }
 
-        // 3. Enviar al organismo fiscal
-        FiscalApiClient.FiscalEmissionResponse fiscalResponse = fiscalApiClient.emitirComprobante(
-                xmlFirmado, tipo.name(), numero, company.getPuntoVenta());
-
-        // 4. Persistir comprobante
+        // 5. Persistir comprobante
+        boolean aprobado = "A".equals(fiscalResponse.resultado());
         InvoiceDocument invoice = InvoiceDocument.builder()
                 .saleId(sale.getId())
                 .tipoComprobante(tipo)
                 .puntoVenta(company.getPuntoVenta())
                 .numero(numero)
-                .cae("A".equals(fiscalResponse.resultado()) ? fiscalResponse.cae() : null)
-                .fechaCae("A".equals(fiscalResponse.resultado()) ? fiscalResponse.fechaVencimiento() : null)
+                .cae(aprobado ? fiscalResponse.cae() : null)
+                .fechaCae(aprobado ? fiscalResponse.fechaVencimiento() : null)
                 .xmlFirmado(xmlFirmado)
-                .estado("A".equals(fiscalResponse.resultado()) ? InvoiceStatus.EMITIDO : InvoiceStatus.RECHAZADO)
+                .estado(aprobado ? InvoiceStatus.EMITIDO : InvoiceStatus.RECHAZADO)
                 .intentos(1)
-                .motivoRechazo(!"A".equals(fiscalResponse.resultado()) ? fiscalResponse.observaciones() : null)
+                .motivoRechazo(aprobado ? null : fiscalResponse.observaciones())
                 .receptorNombre(client != null
                         ? (client.getBusinessName() != null ? client.getBusinessName() : client.getName())
                         : "Consumidor Final")
@@ -162,7 +181,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         if (invoice.getEstado() != InvoiceStatus.PENDIENTE) {
             throw new BadRequestException(
                     "Solo se pueden reintentar comprobantes en estado PENDIENTE. " +
-                    "Estado actual: " + invoice.getEstado());
+                            "Estado actual: " + invoice.getEstado());
         }
 
         int nuevoIntento = invoice.getIntentos() + 1;
@@ -183,11 +202,18 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "No hay empresa activa configurada"));
 
-        FiscalApiClient.FiscalEmissionResponse fiscalResponse = fiscalApiClient.emitirComprobante(
-                invoice.getXmlFirmado(),
-                invoice.getTipoComprobante().name(),
-                invoice.getNumero(),
-                invoice.getPuntoVenta());
+        // Reconstruir datos estructurados para el reintento desde la factura + venta
+        Sale sale = saleRepository.findById(invoice.getSaleId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Venta asociada no encontrada: " + invoice.getSaleId()));
+        Client client = sale.getClient();
+
+        TipoComprobante tipo = invoice.getTipoComprobante();
+        FiscalApiClient.FiscalEmissionRequest request = buildEmissionRequest(
+                sale, client, company, tipo, invoice.getNumero());
+
+        FiscalApiClient.FiscalEmissionResponse fiscalResponse =
+                fiscalApiClient.emitirComprobante(request);
 
         if ("A".equals(fiscalResponse.resultado())) {
             invoice.setEstado(InvoiceStatus.EMITIDO);
@@ -321,6 +347,69 @@ public class InvoiceServiceImpl implements InvoiceService {
             case EXENTO -> TipoComprobante.FACTURA_B;
             case CONSUMIDOR_FINAL -> TipoComprobante.BOLETA;
         };
+    }
+
+    /**
+     * Construye la petición estructurada para el organismo fiscal desde los
+     * datos de la venta, cliente y empresa.
+     */
+    private FiscalApiClient.FiscalEmissionRequest buildEmissionRequest(
+            Sale sale, Client client, Company company,
+            TipoComprobante tipo, Long numero) {
+
+        CondicionIva condicionIvaReceptor =
+                (client != null && client.getCondicionIva() != null)
+                        ? client.getCondicionIva()
+                        : CondicionIva.CONSUMIDOR_FINAL;
+
+        String docNro = client != null ? client.getDocumentNumber() : null;
+        String razonSocial = client != null
+                ? (client.getBusinessName() != null ? client.getBusinessName() : client.getName())
+                : "Consumidor Final";
+        String domicilio = client != null ? client.getTaxAddress() : "";
+
+        Long docTipo = client != null && client.getDocumentType() != null
+                ? (long) AfipCodeMapper.docTipo(client.getDocumentType())
+                : 99L;
+
+        List<FiscalApiClient.AfipItem> items = sale.getItems().stream()
+                .map(item -> new FiscalApiClient.AfipItem(
+                        item.getProduct() != null && item.getProduct().getId() != null
+                                ? item.getProduct().getId().toString()
+                                : item.getProductName(),
+                        item.getProductName(),
+                        BigDecimal.valueOf(item.getQuantity()),
+                        item.getUnitPrice(),
+                        item.getDiscount(),
+                        item.getTaxAmount(),
+                        item.getSubtotal()
+                ))
+                .collect(Collectors.toList());
+
+        BigDecimal neto = sale.getSubtotal() != null ? sale.getSubtotal() : BigDecimal.ZERO;
+        BigDecimal iva = sale.getTaxAmount() != null ? sale.getTaxAmount() : BigDecimal.ZERO;
+        BigDecimal total = sale.getTotal() != null ? sale.getTotal() : BigDecimal.ZERO;
+
+        return new FiscalApiClient.FiscalEmissionRequest(
+                company.getPuntoVenta(),
+                tipo,
+                numero,
+                sale.getCreatedAt(),
+                AfipCodeMapper.conceptoProductos(), // 1 = productos
+                docTipo,
+                docNro,
+                razonSocial,
+                domicilio,
+                condicionIvaReceptor,
+                neto,
+                iva,
+                total,
+                BigDecimal.ZERO, // importe exento (no modelado por separado aún)
+                BigDecimal.ZERO, // otros tributos
+                "PES",
+                AfipCodeMapper.cotizacionMonedaLocal(),
+                items
+        );
     }
 
     private InvoiceResponse mapToResponse(InvoiceDocument doc) {

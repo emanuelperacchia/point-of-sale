@@ -40,7 +40,7 @@ backend/
 ├── src/main/resources/
 │   ├── application.yml    → Config principal
 │   ├── application-dev.yml
-│   └── db/migration/      → 32 migrations Flyway (V6–V37)
+│   └── db/migration/      → Flyway: V1 baseline, V2/V3 seeds (V6–V37 en db/legacy/)
 ├── src/test/              → 484 tests unitarios (58 archivos)
 ├── pom.xml
 └── HELP.md
@@ -57,6 +57,8 @@ backend/
 | `spring.datasource.password` | `${DB_PASSWORD}` | Variable de entorno |
 | `spring.jpa.hibernate.ddl-auto` | `validate` | Flyway gestiona el schema |
 | `spring.jpa.open-in-view` | `false` | Evita LazyInitializationException |
+| `spring.datasource.hikari.maximum-pool-size` | `${DB_POOL_MAX_SIZE:12}` | Pool Hikari: (cores×2)+1 |
+| `spring.datasource.hikari.minimum-idle` | `${DB_POOL_MIN_IDLE:12}` | Pool fijo (min = max) |
 | `server.port` | `8080` | |
 | `jwt.secret` | `${JWT_SECRET}` | Variable de entorno |
 | `jwt.expiration` | `900000` | 15 min |
@@ -143,40 +145,17 @@ $env:DB_PASSWORD="mi-pass"
 
 ## Migraciones Flyway
 
+Flyway corre migraciones versionadas en `classpath:db/migration` al bootear (antes de Hibernate `validate`).
+
 ```
-V6   → Stock
-V7   → Clientes
-V8   → Ventas
-V9   → Facturación
-V10  → Constraints + versión factura
-V11  → Turnos de caja
-V12  → Devoluciones
-V13  → Promociones + cupones
-V14  → Fidelización (puntos + tiers)
-V15  → Gastos
-V16  → Cuentas por cobrar
-V17  → Cuentas por pagar
-V18  → Conciliación bancaria
-V19  → Empleados
-V20  → Asistencia
-V21  → Turnos RRHH
-V22  → Evaluaciones
-V23  → Comisiones
-V24  → Nómina
-V25  → Product.tipo, costo_produccion, stock_reservado
-V26  → Recetas + BOM
-V27  → Órdenes de producción
-V28  → Lotes de producción
-V29  → Sucursales (infraestructura multi-sucursal)
-V30  → Transferencias de stock
-V31  → Backups + dispositivos
-V32  → Precios por sucursal
-V33  → Price resolution en sale_items
-V34  → API Keys + Webhooks
-V35  → Módulo contable (plan de cuentas, asientos)
-V36  → Seed data contable (22 cuentas + 3 templates)
-V37  → Integración e-commerce (configs, sync_logs, orders)
+V1 → Baseline: schema completo (93 tablas, pg_dump del schema JPA)
+V2 → Seed core: sucursal principal + bodega principal
+V3 → Seed contable: plan de cuentas (26 cuentas) + 3 templates de asientos
 ```
+
+> Las migraciones históricas de sprints 6–18 (V6–V37) están archivadas en
+> `db/legacy/` — estaban escritas para MySQL, referenciaban V1–V5 inexistentes y
+> nunca se ejecutaron. Ver `backend/src/main/resources/db/legacy/README.md`.
 
 ## Tests
 

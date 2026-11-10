@@ -79,9 +79,10 @@ import type {
 // ---------------------------------------------------------------------------
 // Axios instance
 // ---------------------------------------------------------------------------
-
+// En dev usa el proxy de Vite (vite.config.ts → localhost:8080).
+// En produccion (Vercel) VITE_API_URL apunta al backend real (p.ej. https://api.tu-dominio.com/api).
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -721,6 +722,15 @@ export const productionOrderApi = {
 export const lotApi = {
   getTraceability: (loteId: string) =>
     api.get<LoteTraceabilityResponse>(`/lots/${loteId}/traceability`),
+};
+
+// ---------------------------------------------------------------------------
+// Privacidad — Ley 25.326 (acceso/portabilidad + supresión)
+// ---------------------------------------------------------------------------
+
+export const privacyApi = {
+  exportMyData: () => api.get<Record<string, unknown>>('/users/me/data-export'),
+  requestAccountDeletion: () => api.post<void>('/users/me/delete-request'),
 };
 
 export default api;

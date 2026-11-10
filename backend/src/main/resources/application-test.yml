@@ -12,10 +12,18 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
 
+  # Los tests usan H2 con create-drop; el baseline V1 es PostgreSQL puro.
+  flyway:
+    enabled: false
+
 jwt:
   secret: dGVzdC1zZWNyZXQta2V5LWZvci10ZXN0aW5nLXB1cnBvc2VzLW9ubHk=
   expiration: 900000
   refresh-expiration: 604800000
+
+pos:
+  crypto:
+    key: test-crypto-key-no-utilizar-en-produccion
 
 cors:
   allowed-origins: http://localhost:5173

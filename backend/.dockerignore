@@ -1,0 +1,16 @@
+target/
+.mvn/
+.mvn/wrapper/
+mvnw
+mvnw.cmd
+*.md
+.idea/
+.vscode/
+.git/
+.github/
+docs/
+postman/
+logs/
+invoices/
+uploads/
+HELP.md

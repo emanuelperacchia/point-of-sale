@@ -1,1 +1,65 @@
 @import "tailwindcss";
+
+/* ============================================================
+   Nivex — Design tokens (Tailwind v4 @theme)
+   Identidad: elegant / premium. Azul marino + dorado champagne
+   sobre hueso. Multi-rubro: sin acentos de vertical específico.
+   ============================================================ */
+
+/* ---------- Primitivos: valores crudos de la paleta ---------- */
+:root {
+  --nivex-marine-950: #0b1020;
+  --nivex-marine-900: #141a2e;
+  --nivex-marine-800: #1c2541; /* primario */
+  --nivex-marine-700: #2a3557;
+  --nivex-marine-600: #3b4a73;
+  --nivex-marine-500: #54618f;
+
+  --nivex-gold-500: #b88a35;
+  --nivex-gold-400: #c9a24b; /* acento */
+  --nivex-gold-300: #d9b96a;
+
+  --nivex-bone-100: #f5f3ef; /* fondo */
+  --nivex-bone-200: #edeae3; /* surface */
+  --nivex-bone-300: #e0dcd2; /* surface elevado / bordes */
+
+  --nivex-sage-600: #4a6757;
+  --nivex-sage-500: #5b7b6c; /* exito */
+
+  --nivex-terra-600: #94423e;
+  --nivex-terra-500: #b0524d; /* error */
+}
+
+/* ---------- Semánticos: roles con propósito ---------- */
+@theme {
+  /* Brand */
+  --color-primary: var(--nivex-marine-800);
+  --color-primary-soft: var(--nivex-marine-700);
+  --color-primary-dark: var(--nivex-marine-950);
+  --color-accent: var(--nivex-gold-400);
+  --color-accent-soft: var(--nivex-gold-300);
+
+  /* Superficies */
+  --color-background: var(--nivex-bone-100);
+  --color-surface: var(--nivex-bone-200);
+  --color-surface-raised: var(--nivex-bone-300);
+
+  /* Ink (texto) */
+  --color-ink: var(--nivex-marine-800);
+  --color-ink-soft: var(--nivex-marine-600);
+  --color-ink-faint: var(--nivex-marine-500);
+  --color-ink-on-dark: var(--nivex-bone-100);
+
+  /* Estado */
+  --color-success: var(--nivex-sage-500);
+  --color-danger: var(--nivex-terra-500);
+  --color-warning: var(--nivex-gold-400);
+
+  /* Tipografia: sans-serif sobria, peso medio, sin dependencias de red */
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue",
+    Arial, sans-serif;
+
+  /* Sombras sutiles — premium, no llamativo */
+  --shadow-soft: 0 1px 3px rgb(28 37 65 / 0.08), 0 4px 14px rgb(28 37 65 / 0.06);
+  --shadow-lift: 0 2px 6px rgb(28 37 65 / 0.10), 0 10px 30px rgb(28 37 65 / 0.08);
+}

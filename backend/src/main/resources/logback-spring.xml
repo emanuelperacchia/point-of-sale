@@ -22,15 +22,16 @@
     <!-- ================================================================ -->
     <appender name="FILE_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${logDir}/pos-system.json</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- Rotación diaria, compresión GZIP -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Rotación diaria + por tamaño, compresión GZIP -->
+            <!-- SizeAndTimeBasedFNATP fue eliminada en Logback 1.4; esta clase la reemplaza -->
             <fileNamePattern>${logDir}/pos-system.%d{yyyy-MM-dd}.%i.json.gz</fileNamePattern>
+            <!-- Tamaño máximo por archivo antes de crear un nuevo índice -->
+            <maxFileSize>100MB</maxFileSize>
             <!-- Máximo 30 días de retención -->
             <maxHistory>30</maxHistory>
-            <!-- Tamaño máximo por archivo antes de crear un nuevo índice -->
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- Tope total de logs rotados (higiene) -->
+            <totalSizeCap>5GB</totalSizeCap>
         </rollingPolicy>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <!-- Campos personalizados en JSON estructurado -->

@@ -7,6 +7,22 @@ spring:
     username: pos_user
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      # Pool fijo: min = max para evitar churn de conexiones (recomendado por HikariCP)
+      # Fórmula de sizing: (cores * 2) + 1 => 12 para 6 cores físicos (Postgres comparte la máquina)
+      pool-name: PosHikariPool
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:12}
+      minimum-idle: ${DB_POOL_MIN_IDLE:12}
+      # Si no hay conexión disponible en 30s -> SQLTransientConnectionException (falta de pool)
+      connection-timeout: 30000
+      # Debe ser < connection-timeout
+      validation-timeout: 5000
+      # Solo aplica si minimum-idle < maximum-pool-size (10 min)
+      idle-timeout: 600000
+      # Renovación de conexiones: siempre < al límite de vida de PostgreSQL
+      max-lifetime: 1800000
+      # Warning si una conexión se mantiene fuera del pool > 10s: caza fugas en load tests
+      leak-detection-threshold: 10000
 
   jpa:
     hibernate:
@@ -16,6 +32,14 @@ spring:
       hibernate:
         format_sql: false
     open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    # Falla el boot si el schema migrado no coincide con las entidades JPA
+    validate-on-migrate: true
+    # Con postgres cada migración corre en su propia transacción (default)
+    baseline-on-migrate: false
 
   devtools:
     restart:
@@ -33,6 +57,10 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: 900000
   refresh-expiration: 604800000
+
+pos:
+  crypto:
+    key: ${POS_CRYPTO_KEY:}
 
 cors:
   allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
@@ -54,6 +82,14 @@ fiscal:
     output-dir: ./invoices
   email:
     enabled: false
+  # Endpoints de AFIP/ARCA (wsfev1 / WSAA). Se usan cuando fiscal.mode =
+  # homologacion o produccion. Pueden sobreescribirse por entorno.
+  afip:
+    wsaa-homologacion: https://wsaahomo.afip.gov.ar/ws/services/LoginCms
+    wsaa-produccion: https://wsaa.afip.gov.ar/ws/services/LoginCms
+    wsfe-homologacion: https://wswhomo.afip.gov.ar/wsfev1/service.asmx
+    wsfe-produccion: https://servicios1.afip.gov.ar/wsfev1/service.asmx
+    ta-refresh-interval-ms: 3600000
 
 returns:
   auto-approve-limit: 5000

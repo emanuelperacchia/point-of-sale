@@ -112,6 +112,7 @@ class AuthControllerTest {
         request.setFirstName("New");
         request.setLastName("User");
         request.setPhone("123456789");
+        request.setTermsAccepted(true);
 
         AuthResponse response = AuthResponse.builder()
                 .accessToken("eyJhbGciOiJIUzI1NiJ9...")
@@ -140,6 +141,7 @@ class AuthControllerTest {
         request.setPassword("password123");
         request.setFirstName("Admin");
         request.setLastName("User");
+        request.setTermsAccepted(true);
 
         when(authService.register(any()))
                 .thenThrow(new BadRequestException("El email ya está registrado"));
@@ -148,6 +150,23 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void register_WithoutTermsAccepted_ShouldReturn400() throws Exception {
+        // Ley 25.326: el consentimiento es obligatorio — sin aceptar Términos no hay registro
+        RegisterRequest request = new RegisterRequest();
+        request.setEmail("newuser@pos.com");
+        request.setPassword("password123");
+        request.setFirstName("New");
+        request.setLastName("User");
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+
+        verify(authService, never()).register(any());
     }
 
     @Test

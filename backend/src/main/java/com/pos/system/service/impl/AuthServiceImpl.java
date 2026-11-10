@@ -70,11 +70,11 @@ public class AuthServiceImpl implements AuthService {
         Long defaultBranchId = resolveDefaultBranch(user, branches);
 
         String accessToken = jwtService.generateToken(user, defaultBranchId);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        String refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken.getToken())
+                .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .userId(user.getId())
                 .email(user.getEmail())
@@ -102,6 +102,8 @@ public class AuthServiceImpl implements AuthService {
                 .phone(request.getPhone())
                 .active(true)
                 .emailVerified(false)
+                .termsAccepted(Boolean.TRUE.equals(request.getTermsAccepted()))
+                .termsAcceptedAt(LocalDateTime.now())
                 .build();
         user.getRoles().add(defaultRole);
 
@@ -123,11 +125,11 @@ public class AuthServiceImpl implements AuthService {
         Long defaultBranchId = resolveDefaultBranch(user, branches);
 
         String accessToken = jwtService.generateToken(user, defaultBranchId);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        String refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken.getToken())
+                .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .userId(user.getId())
                 .email(user.getEmail())
@@ -153,11 +155,11 @@ public class AuthServiceImpl implements AuthService {
         Long defaultBranchId = resolveDefaultBranch(user, branches);
 
         String accessToken = jwtService.generateToken(user, defaultBranchId);
-        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
+        String newRefreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(newRefreshToken.getToken())
+                .refreshToken(newRefreshToken)
                 .tokenType("Bearer")
                 .userId(user.getId())
                 .email(user.getEmail())
@@ -237,11 +239,11 @@ public class AuthServiceImpl implements AuthService {
 
         List<AuthResponse.BranchInfo> branches = getUserBranches(user);
         String accessToken = jwtService.generateToken(user, branchId);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        String refreshToken = refreshTokenService.createRefreshToken(user);
 
         return AuthResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken.getToken())
+                .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .userId(user.getId())
                 .email(user.getEmail())

@@ -145,7 +145,7 @@ class InvoiceServiceTest {
                 new FiscalApiClient.FiscalEmissionResponse(
                         "12345678901", LocalDateTime.now().plusDays(15),
                         "A", "Aprobado", "<response/>");
-        when(fiscalApiClient.emitirComprobante(anyString(), anyString(), anyLong(), anyInt()))
+        when(fiscalApiClient.emitirComprobante(any(FiscalApiClient.FiscalEmissionRequest.class)))
                 .thenReturn(fiscalResponse);
 
         InvoiceDocument saved = InvoiceDocument.builder()
@@ -165,7 +165,7 @@ class InvoiceServiceTest {
         assertEquals("12345678901", result.cae());
 
         verify(xmlBuilder).buildInvoiceXml(eq(sale), eq(client), eq(company), eq(TipoComprobante.BOLETA), eq(1L));
-        verify(fiscalApiClient).emitirComprobante(anyString(), eq("BOLETA"), eq(1L), eq(1));
+        verify(fiscalApiClient).emitirComprobante(any(FiscalApiClient.FiscalEmissionRequest.class));
         verify(invoiceRepository).save(any(InvoiceDocument.class));
     }
 
@@ -196,7 +196,7 @@ class InvoiceServiceTest {
 
         assertEquals(InvoiceStatus.RECHAZADO, result.estado());
         assertTrue(result.motivoRechazo().contains("Máximo de reintentos"));
-        verify(fiscalApiClient, never()).emitirComprobante(anyString(), anyString(), anyLong(), anyInt());
+        verify(fiscalApiClient, never()).emitirComprobante(any());
     }
 
     @Test
@@ -205,7 +205,6 @@ class InvoiceServiceTest {
                 .id(1L).saleId(1L)
                 .tipoComprobante(TipoComprobante.FACTURA_B)
                 .puntoVenta(1).numero(1L)
-                .xmlFirmado("<firmado/>")
                 .estado(InvoiceStatus.PENDIENTE)
                 .intentos(1)
                 .build();
@@ -213,12 +212,13 @@ class InvoiceServiceTest {
         when(invoiceRepository.findById(1L)).thenReturn(Optional.of(invoice));
         when(fiscalProperties.getRetry()).thenReturn(retryConfig);
         when(companyRepository.findByActiveTrue()).thenReturn(Optional.of(company));
+        when(saleRepository.findById(1L)).thenReturn(Optional.of(sale));
 
         FiscalApiClient.FiscalEmissionResponse fiscalResponse =
                 new FiscalApiClient.FiscalEmissionResponse(
                         "98765432101", LocalDateTime.now().plusDays(15),
                         "A", "Aprobado", "<response/>");
-        when(fiscalApiClient.emitirComprobante(anyString(), anyString(), anyLong(), anyInt()))
+        when(fiscalApiClient.emitirComprobante(any(FiscalApiClient.FiscalEmissionRequest.class)))
                 .thenReturn(fiscalResponse);
         when(invoiceRepository.save(any())).thenReturn(invoice);
 
@@ -283,8 +283,7 @@ class InvoiceServiceTest {
 
     @Test
     void getPdf_WhenFileNotFound_ShouldThrowException() {
-        InvoiceDocument doc = InvoiceDocument.builder()
-                .id(1L).pdfPath("/nonexistent/invoice.pdf").build();
+        InvoiceDocument doc = InvoiceDocument.builder().id(1L).pdfPath("/nonexistent/invoice.pdf").build();
         when(invoiceRepository.findById(1L)).thenReturn(Optional.of(doc));
 
         assertThrows(ResourceNotFoundException.class, () -> invoiceService.getPdf(1L));

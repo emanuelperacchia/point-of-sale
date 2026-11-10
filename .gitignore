@@ -34,3 +34,6 @@ Thumbs.db
 
 ### Temp ###
 test-output.txt
+
+### Security reports ###
+zap-reports/

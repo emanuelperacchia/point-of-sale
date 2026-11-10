@@ -9,4 +9,6 @@ public interface UserService {
     UserResponse getUserById(Long id);
     List<UserResponse> getAllUsers();
     Set<String> getUserPermissions(Long userId);
+    java.util.Map<String, Object> exportUserData(Long userId);
+    void requestAccountDeletion(Long userId);
 }

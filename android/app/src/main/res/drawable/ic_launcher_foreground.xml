@@ -4,30 +4,19 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- POS Terminal icon -->
-    <group
-        android:translateX="4"
-        android:translateY="4">
-        <!-- Monitor screen -->
+    <!-- Nivex wordmark: letra N en dorado champagne -->
+    <group>
+        <!-- Poste izquierdo -->
         <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M20,20 L80,20 C84,20 86,22 86,26 L86,60 C86,64 84,66 80,66 L20,66 C16,66 14,64 14,60 L14,26 C14,22 16,20 20,20 Z" />
-        <!-- Screen content - grid lines -->
+            android:fillColor="#C9A24B"
+            android:pathData="M32,34 L40,34 L40,74 L32,74 Z" />
+        <!-- Poste derecho -->
         <path
-            android:fillColor="#1B5E20"
-            android:pathData="M22,28 L78,28 L78,32 L22,32 Z" />
+            android:fillColor="#C9A24B"
+            android:pathData="M68,34 L76,34 L76,74 L68,74 Z" />
+        <!-- Diagonal -->
         <path
-            android:fillColor="#1B5E20"
-            android:pathData="M22,36 L78,36 L78,40 L22,40 Z" />
-        <path
-            android:fillColor="#1B5E20"
-            android:pathData="M22,44 L50,44 L50,58 L22,58 Z" />
-        <!-- Stand -->
-        <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M48,66 L60,66 L60,70 L48,70 Z" />
-        <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M40,70 L68,70 L70,76 L38,76 Z" />
+            android:fillColor="#C9A24B"
+            android:pathData="M40,74 L68,34 L76,34 L48,74 Z" />
     </group>
 </vector>
