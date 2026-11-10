@@ -73,11 +73,11 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Lombok -->
+		<!-- Lombok (annotation processor: se mantiene en compile-classpath pero no se empaqueta) -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- JWT (Versión segura) -->

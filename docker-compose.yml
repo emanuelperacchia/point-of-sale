@@ -46,6 +46,8 @@ services:
       - pos_uploads:/app/uploads
       - pos_invoices:/app/invoices
       - pos_logs:/app/logs
+      # Cache de Maven del host: evita re-descargar dependencias con la red lenta
+      - C:/Users/WIN10/.m2/repository:/root/.m2/repository
     networks:
       - pos-network
 
