@@ -82,6 +82,14 @@ fiscal:
     output-dir: ./invoices
   email:
     enabled: false
+  # Endpoints de AFIP/ARCA (wsfev1 / WSAA). Se usan cuando fiscal.mode =
+  # homologacion o produccion. Pueden sobreescribirse por entorno.
+  afip:
+    wsaa-homologacion: https://wsaahomo.afip.gov.ar/ws/services/LoginCms
+    wsaa-produccion: https://wsaa.afip.gov.ar/ws/services/LoginCms
+    wsfe-homologacion: https://wswhomo.afip.gov.ar/wsfev1/service.asmx
+    wsfe-produccion: https://servicios1.afip.gov.ar/wsfev1/service.asmx
+    ta-refresh-interval-ms: 3600000
 
 returns:
   auto-approve-limit: 5000

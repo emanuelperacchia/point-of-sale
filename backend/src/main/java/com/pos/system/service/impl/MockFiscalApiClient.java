@@ -14,7 +14,7 @@ import java.util.Random;
 /**
  * Implementación mock del cliente de API fiscal.
  * <p>
- * Activa por defecto ({@code fiscal.retry.mock=true}) o cuando {@code fiscal.mode=mock}.
+ * Activa por defecto ({@code fiscal.mode=mock} o cuando falta la propiedad).
  * Simula el envío de comprobantes con una tasa de éxito configurable.
  * </p>
  */
@@ -29,14 +29,11 @@ public class MockFiscalApiClient implements FiscalApiClient {
     private final Random random = new Random();
 
     @Override
-    public FiscalEmissionResponse emitirComprobante(
-            String xmlFirmado,
-            String tipoComprobante,
-            Long numero,
-            Integer puntoVenta) {
+    public FiscalEmissionResponse emitirComprobante(FiscalEmissionRequest request) {
 
-        log.info("[MOCK] Emitiendo comprobante {} - Tipo: {}, Nro: {}, PV: {}",
-                tipoComprobante, numero, puntoVenta);
+        log.info("[MOCK] Emitiendo comprobante {} - Tipo: {}, Nro: {}, PV: {}, Receptor: {} (doc {})",
+                request.numero(), request.tipoComprobante(), request.puntoVenta(),
+                request.docNro(), request.razonSocial());
 
         // Simular latencia de red
         if (properties.getMock().getDelayMs() > 0) {
@@ -56,30 +53,34 @@ public class MockFiscalApiClient implements FiscalApiClient {
                     Math.abs(random.nextLong() % 100_000_000_000L));
             LocalDateTime vencimiento = LocalDateTime.now().plusDays(15);
 
-            log.info("[MOCK] Comprobante {} APROBADO - CAE: {}", numero, cae);
+            log.info("[MOCK] Comprobante {} APROBADO - CAE: {}", numero(request), cae);
 
             return new FiscalEmissionResponse(
                     cae,
                     vencimiento,
                     "A",
-                    "Comprobante autorizado",
+                    "Comprobante autorizado (mock)",
                     "<respuesta><resultado>A</resultado>"
                             + "<CAE>" + cae + "</CAE>"
                             + "<vencimiento>" + vencimiento + "</vencimiento>"
                             + "</respuesta>"
             );
         } else {
-            log.warn("[MOCK] Comprobante {} RECHAZADO (simulado)", numero);
+            log.warn("[MOCK] Comprobante {} RECHAZADO (simulado)", numero(request));
 
             return new FiscalEmissionResponse(
                     null,
                     null,
                     "R",
-                    "Rechazo simulado: el comprobante no cumple con las validaciones fiscales",
+                    "Rechazo simulado: el comprobante no cumple con las validaciones fiscales (mock)",
                     "<respuesta><resultado>R</resultado>"
                             + "<observaciones>Rechazo simulado</observaciones>"
                             + "</respuesta>"
             );
         }
+    }
+
+    private Long numero(FiscalEmissionRequest request) {
+        return request.numero() != null ? request.numero() : 0L;
     }
 }
