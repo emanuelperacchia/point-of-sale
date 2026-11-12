@@ -52,7 +52,7 @@ public class HttpSoapClient implements SoapClient {
             throw e;
         } catch (Exception e) {
             throw new BadRequestException("Error llamando al servicio SOAP " + endpoint
-                    + ": " + e.getMessage(), e);
+                    + ": " + e.getMessage());
         }
     }
 }

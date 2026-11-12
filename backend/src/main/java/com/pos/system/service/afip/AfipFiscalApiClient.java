@@ -64,7 +64,7 @@ public class AfipFiscalApiClient implements FiscalApiClient {
                 int cbteTipo = AfipCodeMapper.cbteTipo(request.tipoComprobante());
 
                 String soapEnvelope = buildFecaesSolicitar(
-                        ticketAccess, cuit, request.puntoVenta, cbteTipo, request);
+                        ticketAccess, cuit, request.puntoVenta(), cbteTipo, request);
 
                 String endpoint = wsfeEndpoint();
                 String response = soapClient.post(endpoint, "FECAESolicitar", soapEnvelope);

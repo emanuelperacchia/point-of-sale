@@ -162,9 +162,7 @@ public class AfipAuthService {
         java.security.cert.X509Certificate cert =
                 (java.security.cert.X509Certificate) ks.getCertificate(alias);
 
-        X509CertificateHolder certHolder = new JcaX509CertificateConverter()
-                .setProvider("BC")
-                .getCertificate(cert);
+        X509CertificateHolder certHolder = new X509CertificateHolder(cert.getEncoded());
 
         CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
         ContentSigner signer = new JcaContentSignerBuilder("SHA256withRSA")
@@ -173,16 +171,16 @@ public class AfipAuthService {
 
         generator.addSignerInfoGenerator(
                 new JcaSignerInfoGeneratorBuilder(
-                        new JcaDigestCalculatorProviderBuilder().setProvider("BC")
+                        new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()
                 )
                 .build(signer, certHolder)
         );
         generator.addCertificate(certHolder);
 
         byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
-        org.bouncycastle.cms.CMSProcessable contentProcessable =
+        org.bouncycastle.cms.CMSTypedData typedData =
                 new org.bouncycastle.cms.CMSProcessableByteArray(contentBytes);
-        CMSSignedData signedData = generator.generate(contentProcessable, true);
+        CMSSignedData signedData = generator.generate(typedData, true);
 
         return Base64.getEncoder().encodeToString(signedData.getEncoded());
     }
