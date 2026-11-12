@@ -6,11 +6,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 /**
  * Implementación de {@link SoapClient} sobre {@link java.net.http.HttpClient}
  * (Java 17+, sin dependencias SOAP externas).
  */
+@Component
+@RequiredArgsConstructor
 public class HttpSoapClient implements SoapClient {
 
     private static final int CONNECT_TIMEOUT_SECONDS = 10;

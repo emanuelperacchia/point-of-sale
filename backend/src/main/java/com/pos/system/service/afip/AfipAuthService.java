@@ -17,12 +17,16 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
+import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Security;
@@ -242,5 +246,12 @@ public class AfipAuthService {
 
         this.cachedTicketAccess = ticketAccessBase64;
         this.ticketExpiry = LocalDateTime.parse(expMatcher.group(1).trim(), TS_FORMATTER);
+    }
+
+    @Bean
+    HttpClient httpClient() {
+        return HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
     }
 }
