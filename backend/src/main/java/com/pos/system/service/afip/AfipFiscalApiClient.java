@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * </p>
  */
 @Service
-@ConditionalOnExpression("${fiscal.mode:'mock'} != 'mock'")
+@ConditionalOnExpression("'${fiscal.mode:mock}' != 'mock'")
 @RequiredArgsConstructor
 public class AfipFiscalApiClient implements FiscalApiClient {
 
