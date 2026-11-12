@@ -28,10 +28,6 @@ public class HttpSoapClient implements SoapClient {
                 .build();
     }
 
-    HttpSoapClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
-
     @Override
     public String post(String endpoint, String soapAction, String envelope) {
         try {
