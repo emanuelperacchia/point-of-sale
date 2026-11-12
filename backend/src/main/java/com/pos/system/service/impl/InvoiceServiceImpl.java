@@ -203,9 +203,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                         "No hay empresa activa configurada"));
 
         // Reconstruir datos estructurados para el reintento desde la factura + venta
-        Sale sale = saleRepository.findById(invoice.getSaleId())
+        final Long saleId = invoice.getSaleId();
+        Sale sale = saleRepository.findById(saleId)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Venta asociada no encontrada: " + invoice.getSaleId()));
+                        "Venta asociada no encontrada: " + saleId));
         Client client = sale.getClient();
 
         TipoComprobante tipo = invoice.getTipoComprobante();
