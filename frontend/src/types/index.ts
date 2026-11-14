@@ -191,6 +191,35 @@ export interface ShiftReportResponse {
 }
 
 // ──────────────────────────────────────────────
+// Sucursales (negocios)
+// ──────────────────────────────────────────────
+
+export interface BranchResponse {
+  id: number;
+  nombre: string;
+  direccion: string | null;
+  telefono: string | null;
+  email: string | null;
+  responsableId: number | null;
+  activa: boolean;
+  timezone: string | null;
+  puntoVentaFiscal: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BranchRequest {
+  nombre: string;
+  direccion?: string;
+  telefono?: string;
+  email?: string;
+  responsableId?: number;
+  activa?: boolean;
+  timezone?: string;
+  puntoVentaFiscal?: string;
+}
+
+// ──────────────────────────────────────────────
 // Devoluciones (US-019a)
 // ──────────────────────────────────────────────
 

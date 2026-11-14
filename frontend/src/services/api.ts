@@ -12,6 +12,8 @@ import type {
   ShiftReportResponse,
   ShiftStatus,
   User,
+  BranchResponse,
+  BranchRequest,
   CondicionIva,
   SaleReturnResponse,
   CreateReturnRequest,
@@ -241,6 +243,33 @@ export const clientApi = {
     taxAddress?: string;
   }) =>
     api.put<ClientSearchResult>(`/clients/${id}`, data),
+};
+
+// ---------------------------------------------------------------------------
+// Sucursales (negocios)
+// ---------------------------------------------------------------------------
+
+export const branchApi = {
+  listActive: () =>
+    api.get<BranchResponse[]>('/branches'),
+
+  listAll: () =>
+    api.get<BranchResponse[]>('/branches/all'),
+
+  getById: (id: number) =>
+    api.get<BranchResponse>(`/branches/${id}`),
+
+  create: (data: BranchRequest) =>
+    api.post<BranchResponse>('/branches', data),
+
+  update: (id: number, data: BranchRequest) =>
+    api.put<BranchResponse>(`/branches/${id}`, data),
+
+  assignUser: (branchId: number, userId: number) =>
+    api.post<void>(`/branches/${branchId}/users/${userId}`),
+
+  removeUser: (branchId: number, userId: number) =>
+    api.delete<void>(`/branches/${branchId}/users/${userId}`),
 };
 
 // ---------------------------------------------------------------------------

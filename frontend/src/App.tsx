@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import PosPage from './pages/PosPage';
+import BranchesPage from './pages/BranchesPage';
 import CommissionPage from './pages/CommissionPage';
 import PayrollListPage from './pages/PayrollListPage';
 import PayrollDetailPage from './pages/PayrollDetailPage';
@@ -26,6 +27,14 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/sucursales"
+            element={
+              <ProtectedRoute>
+                <BranchesPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/terminos" element={<TermsPage />} />
           <Route path="/privacidad" element={<PrivacyPolicyPage />} />
           <Route
