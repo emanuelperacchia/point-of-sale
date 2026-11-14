@@ -14,6 +14,8 @@ import type {
   User,
   BranchResponse,
   BranchRequest,
+  SupplierResponse,
+  SupplierRequest,
   CondicionIva,
   SaleReturnResponse,
   CreateReturnRequest,
@@ -270,6 +272,39 @@ export const branchApi = {
 
   removeUser: (branchId: number, userId: number) =>
     api.delete<void>(`/branches/${branchId}/users/${userId}`),
+};
+
+// ---------------------------------------------------------------------------
+// Proveedores
+// ---------------------------------------------------------------------------
+
+export const supplierApi = {
+  findAll: (params?: { activeOnly?: boolean }) =>
+    api.get<SupplierResponse[]>('/suppliers', { params }),
+
+  findById: (id: number) =>
+    api.get<SupplierResponse>(`/suppliers/${id}`),
+
+  findByCode: (code: string) =>
+    api.get<SupplierResponse>(`/suppliers/code/${code}`),
+
+  search: (term: string) =>
+    api.get<SupplierResponse[]>('/suppliers/search', { params: { term } }),
+
+  findWithDebt: () =>
+    api.get<SupplierResponse[]>('/suppliers/with-debt'),
+
+  findTopRated: () =>
+    api.get<SupplierResponse[]>('/suppliers/top-rated'),
+
+  create: (data: SupplierRequest) =>
+    api.post<SupplierResponse>('/suppliers', data),
+
+  update: (id: number, data: SupplierRequest) =>
+    api.put<SupplierResponse>(`/suppliers/${id}`, data),
+
+  delete: (id: number) =>
+    api.delete<void>(`/suppliers/${id}`),
 };
 
 // ---------------------------------------------------------------------------

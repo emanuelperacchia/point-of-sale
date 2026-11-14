@@ -4,6 +4,7 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import PosPage from './pages/PosPage';
 import BranchesPage from './pages/BranchesPage';
+import ProvidersPage from './pages/ProvidersPage';
 import CommissionPage from './pages/CommissionPage';
 import PayrollListPage from './pages/PayrollListPage';
 import PayrollDetailPage from './pages/PayrollDetailPage';
@@ -32,6 +33,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <BranchesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/proveedores"
+            element={
+              <ProtectedRoute>
+                <ProvidersPage />
               </ProtectedRoute>
             }
           />

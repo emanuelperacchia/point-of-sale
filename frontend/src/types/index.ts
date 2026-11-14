@@ -220,6 +220,69 @@ export interface BranchRequest {
 }
 
 // ──────────────────────────────────────────────
+// Proveedores
+// ──────────────────────────────────────────────
+
+export type PaymentTerm = 'IMMEDIATE' | 'NET_7' | 'NET_15' | 'NET_30' | 'NET_45' | 'NET_60' | 'NET_90';
+
+export const PAYMENT_TERM_LABELS: Record<PaymentTerm, string> = {
+  IMMEDIATE: 'Inmediato',
+  NET_7: '7 días',
+  NET_15: '15 días',
+  NET_30: '30 días',
+  NET_45: '45 días',
+  NET_60: '60 días',
+  NET_90: '90 días',
+};
+
+export interface SupplierResponse {
+  id: number;
+  code: string;
+  taxId: string;
+  businessName: string;
+  tradeName: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  postalCode: string | null;
+  country: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  categoryId: number | null;
+  paymentTerm: PaymentTerm;
+  discountPercentage: number;
+  creditLimit: number;
+  currentDebt: number;
+  rating: number;
+  active: boolean;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SupplierRequest {
+  code: string;
+  taxId: string;
+  businessName: string;
+  tradeName?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  categoryId?: number;
+  paymentTerm: PaymentTerm;
+  discountPercentage?: number;
+  creditLimit?: number;
+  notes?: string;
+  active: boolean;
+}
+
+// ──────────────────────────────────────────────
 // Devoluciones (US-019a)
 // ──────────────────────────────────────────────
 
