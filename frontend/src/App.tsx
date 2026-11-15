@@ -7,6 +7,7 @@ import BranchesPage from './pages/BranchesPage';
 import ProvidersPage from './pages/ProvidersPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ProductsPage from './pages/ProductsPage';
+import PricesPage from './pages/PricesPage';
 import CommissionPage from './pages/CommissionPage';
 import PayrollListPage from './pages/PayrollListPage';
 import PayrollDetailPage from './pages/PayrollDetailPage';
@@ -59,6 +60,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ProductsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/precios"
+            element={
+              <ProtectedRoute>
+                <PricesPage />
               </ProtectedRoute>
             }
           />

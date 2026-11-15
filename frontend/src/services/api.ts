@@ -22,6 +22,9 @@ import type {
   ProductCreateRequest,
   ProductUpdateRequest,
   ProductStockUpdate,
+  PriceResolutionResponse,
+  BranchPriceResponse,
+  BranchPriceRequest,
   CondicionIva,
   SaleReturnResponse,
   CreateReturnRequest,
@@ -372,6 +375,39 @@ export const productApi = {
 
   delete: (id: number) =>
     api.delete<void>(`/products/${id}`),
+};
+
+// ---------------------------------------------------------------------------
+// Precios por Producto y Sucursal
+// ---------------------------------------------------------------------------
+
+export const productPriceApi = {
+  resolvePrice: (productId: number) =>
+    api.get<PriceResolutionResponse>(`/products/${productId}/price`),
+};
+
+// ---------------------------------------------------------------------------
+// Precios por Sucursal (locales)
+// ---------------------------------------------------------------------------
+
+export const branchPriceApi = {
+  listByBranch: (branchId: number) =>
+    api.get<BranchPriceResponse[]>(`/branches/${branchId}/prices`),
+
+  getById: (branchId: number, priceId: number) =>
+    api.get<BranchPriceResponse>(`/branches/${branchId}/prices/${priceId}`),
+
+  create: (branchId: number, data: BranchPriceRequest) =>
+    api.post<BranchPriceResponse>(`/branches/${branchId}/prices`, data),
+
+  update: (branchId: number, priceId: number, data: BranchPriceRequest) =>
+    api.put<BranchPriceResponse>(`/branches/${branchId}/prices/${priceId}`, data),
+
+  delete: (branchId: number, priceId: number) =>
+    api.delete<void>(`/branches/${branchId}/prices/${priceId}`),
+
+  syncGlobal: (branchId: number) =>
+    api.post<void>(`/branches/${branchId}/prices/sync-global`),
 };
 
 // ---------------------------------------------------------------------------

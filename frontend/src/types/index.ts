@@ -343,6 +343,43 @@ export interface ProductStockUpdate {
 }
 
 // ──────────────────────────────────────────────
+// Precios por Sucursal
+// ──────────────────────────────────────────────
+
+export interface PriceResolutionResponse {
+  productId: number;
+  productName: string;
+  productSku: string;
+  precioFinal: number;
+  precioGlobal: number;
+  precioLocal: number | null;
+  esLocal: boolean;
+  sucursalId: number | null;
+  vigenciaHasta: string | null;
+}
+
+export interface BranchPriceResponse {
+  id: number;
+  branchId: number;
+  productId: number;
+  productName: string;
+  productSku: string;
+  precio: number;
+  precioGlobal: number;
+  vigenciaDesde: string | null;
+  vigenciaHasta: string | null;
+  activo: boolean;
+  createdAt: string;
+}
+
+export interface BranchPriceRequest {
+  productId: number;
+  precio: number;
+  vigenciaDesde?: string;
+  vigenciaHasta?: string;
+}
+
+// ──────────────────────────────────────────────
 // Devoluciones (US-019a)
 // ──────────────────────────────────────────────
 
