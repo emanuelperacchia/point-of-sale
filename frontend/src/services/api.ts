@@ -191,18 +191,6 @@ export const authApi = {
 };
 
 // ---------------------------------------------------------------------------
-// Product endpoints
-// ---------------------------------------------------------------------------
-
-export const productApi = {
-  search: (q: string, limit = 10) =>
-    api.get<ProductSearchResult[]>('/products/search', { params: { q, limit } }),
-
-  getAll: (page = 0, size = 10, sortBy = 'createdAt', sortDir = 'desc', search?: string, tipo?: string) =>
-    api.get<any>('/products', { params: { page, size, sortBy, sortDir, search, tipo } }),
-};
-
-// ---------------------------------------------------------------------------
 // Sale endpoints
 // ---------------------------------------------------------------------------
 
