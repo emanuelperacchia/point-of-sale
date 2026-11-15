@@ -380,6 +380,23 @@ export interface BranchPriceRequest {
 }
 
 // ──────────────────────────────────────────────
+// Usuarios
+// ──────────────────────────────────────────────
+
+export interface UserResponse {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  phone: string | null;
+  active: boolean;
+  roles: string[];
+  createdAt: string;
+  lastLogin: string | null;
+}
+
+// ──────────────────────────────────────────────
 // Devoluciones (US-019a)
 // ──────────────────────────────────────────────
 

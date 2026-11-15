@@ -25,6 +25,7 @@ import type {
   PriceResolutionResponse,
   BranchPriceResponse,
   BranchPriceRequest,
+  UserResponse,
   CondicionIva,
   SaleReturnResponse,
   CreateReturnRequest,
@@ -408,6 +409,21 @@ export const branchPriceApi = {
 
   syncGlobal: (branchId: number) =>
     api.post<void>(`/branches/${branchId}/prices/sync-global`),
+};
+
+// ---------------------------------------------------------------------------
+// Usuarios
+// ---------------------------------------------------------------------------
+
+export const userApi = {
+  getMyPermissions: () =>
+    api.get<string[]>('/users/me/permissions'),
+
+  getUserById: (id: number) =>
+    api.get<UserResponse>(`/users/${id}`),
+
+  getAllUsers: () =>
+    api.get<UserResponse[]>('/users'),
 };
 
 // ---------------------------------------------------------------------------
