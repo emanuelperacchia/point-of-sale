@@ -179,7 +179,7 @@ export default function ProvidersPage() {
         )}
 
         {/* Tabla de proveedores */}
-        <div className="rounded-xl border border-surface-raised bg-white/80 shadow-sm">
+        <div className="rounded-xl border border-surface-raised bg-surface/80 ">
           <table className="w-full text-sm text-left border-collapse">
             <thead>
               <tr className="border-b border-surface-raised bg-surface-raised/50 text-ink-soft">
@@ -256,7 +256,7 @@ export default function ProvidersPage() {
               onClick={() => setOpenForm(false)}
               aria-hidden="true"
             />
-            <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 shadow-lg border border-surface-raised">
+            <div className="relative w-full max-w-2xl rounded-xl bg-surface p-6  border border-surface-raised">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-ink">
                   {editing ? 'Editar proveedor' : 'Nuevo proveedor'}
@@ -281,7 +281,7 @@ export default function ProvidersPage() {
                       value={form.code}
                       onChange={(e) => handleInputChange('code', e.target.value)}
                       required
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -294,7 +294,7 @@ export default function ProvidersPage() {
                       value={form.taxId}
                       onChange={(e) => handleInputChange('taxId', e.target.value)}
                       required
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -307,7 +307,7 @@ export default function ProvidersPage() {
                       value={form.businessName}
                       onChange={(e) => handleInputChange('businessName', e.target.value)}
                       required
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -319,7 +319,7 @@ export default function ProvidersPage() {
                       type="text"
                       value={form.tradeName}
                       onChange={(e) => handleInputChange('tradeName', e.target.value)}
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -331,7 +331,7 @@ export default function ProvidersPage() {
                       type="text"
                       value={form.address}
                       onChange={(e) => handleInputChange('address', e.target.value)}
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -344,7 +344,7 @@ export default function ProvidersPage() {
                         type="text"
                         value={form.city}
                         onChange={(e) => handleInputChange('city', e.target.value)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                     <div>
@@ -355,7 +355,7 @@ export default function ProvidersPage() {
                         type="text"
                         value={form.state}
                         onChange={(e) => handleInputChange('state', e.target.value)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                     <div>
@@ -366,7 +366,7 @@ export default function ProvidersPage() {
                         type="text"
                         value={form.postalCode}
                         onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                     <div>
@@ -377,7 +377,7 @@ export default function ProvidersPage() {
                         type="text"
                         value={form.country}
                         onChange={(e) => handleInputChange('country', e.target.value)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                   </div>
@@ -391,7 +391,7 @@ export default function ProvidersPage() {
                         type="tel"
                         value={form.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                     <div>
@@ -402,7 +402,7 @@ export default function ProvidersPage() {
                         type="email"
                         value={form.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                     <div>
@@ -413,7 +413,7 @@ export default function ProvidersPage() {
                         type="text"
                         value={form.website}
                         onChange={(e) => handleInputChange('website', e.target.value)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                   </div>
@@ -426,7 +426,7 @@ export default function ProvidersPage() {
                       <select
                         value={form.paymentTerm}
                         onChange={(e) => handleInputChange('paymentTerm', e.target.value as PaymentTerm)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       >
                         {Object.entries(PAYMENT_TERM_LABELS).map(([key, label]) => (
                           <option key={key} value={key as PaymentTerm}>
@@ -443,7 +443,7 @@ export default function ProvidersPage() {
                         type="number"
                         value={form.discountPercentage ?? 0}
                         onChange={(e) => handleInputChange('discountPercentage', Number(e.target.value) || 0)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                     <div>
@@ -454,7 +454,7 @@ export default function ProvidersPage() {
                         type="number"
                         value={form.creditLimit ?? 0}
                         onChange={(e) => handleInputChange('creditLimit', Number(e.target.value) || 0)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                   </div>
@@ -467,7 +467,7 @@ export default function ProvidersPage() {
                       value={form.notes}
                       onChange={(e) => handleInputChange('notes', e.target.value)}
                       rows={2}
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -497,7 +497,7 @@ export default function ProvidersPage() {
                   <button
                     type="button"
                     onClick={() => setOpenForm(false)}
-                    className="rounded-md px-4 py-2 text-sm font-medium text-ink-soft bg-white border border-surface-raised hover:bg-surface-raised transition-colors"
+                    className="rounded-md px-4 py-2 text-sm font-medium text-ink-soft bg-surface border border-surface-raised hover:bg-surface-raised transition-colors"
                   >
                     Cancelar
                   </button>
@@ -516,3 +516,4 @@ export default function ProvidersPage() {
     </Layout>
   );
 }
+

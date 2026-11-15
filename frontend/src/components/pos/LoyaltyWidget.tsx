@@ -10,7 +10,7 @@ interface Props {
 
 const TIER_STYLES: Record<string, string> = {
   BRONCE: 'bg-amber-100 text-amber-800 border-amber-300',
-  PLATA: 'bg-gray-100 text-gray-700 border-gray-300',
+  PLATA: 'bg-surface-raised/30 text-ink border-surface-raised',
   ORO: 'bg-yellow-100 text-yellow-800 border-yellow-400',
 };
 
@@ -43,7 +43,7 @@ export default function LoyaltyWidget({ clientId, onRedeem, disabled }: Props) {
 
   if (loading) {
     return (
-      <div className="rounded-lg bg-white p-3 shadow-sm text-sm text-gray-400">
+      <div className="rounded-lg bg-surface p-3  text-sm text-ink-faint">
         Cargando puntos…
       </div>
     );
@@ -61,14 +61,14 @@ export default function LoyaltyWidget({ clientId, onRedeem, disabled }: Props) {
   };
 
   return (
-    <div className="rounded-lg border bg-white p-3 shadow-sm">
+    <div className="rounded-lg border bg-surface p-3 ">
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-semibold text-gray-600">Puntos</span>
+        <span className="text-xs font-semibold text-ink-soft">Puntos</span>
         <span className={`rounded-full border px-2 py-0.5 text-xs font-bold ${TIER_STYLES[data.tier] ?? TIER_STYLES.BRONCE}`}>
           {data.tier}
         </span>
       </div>
-      <p className="text-lg font-bold text-gray-800">
+      <p className="text-lg font-bold text-ink">
         {data.saldoActual.toLocaleString('es-CL')} pts
       </p>
       {onRedeem && data.saldoActual > 0 && (
@@ -81,7 +81,7 @@ export default function LoyaltyWidget({ clientId, onRedeem, disabled }: Props) {
             onChange={(e) => { setRedeemPuntos(e.target.value); setError(''); }}
             placeholder="Puntos a canjear"
             disabled={disabled}
-            className="w-full rounded border border-gray-300 px-2 py-1 text-xs focus:border-blue-500 focus:outline-none disabled:opacity-50"
+            className="w-full rounded border border-surface-raised px-2 py-1 text-xs focus:border-blue-500 focus:outline-none disabled:opacity-50"
           />
           <button
             onClick={handleRedeem}
@@ -96,3 +96,5 @@ export default function LoyaltyWidget({ clientId, onRedeem, disabled }: Props) {
     </div>
   );
 }
+
+

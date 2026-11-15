@@ -24,7 +24,7 @@ export default function CartView({
   if (items.length === 0) {
     return (
       <div
-        className="flex flex-1 items-center justify-center rounded-lg bg-white p-8 text-gray-400 shadow-sm"
+        className="flex flex-1 items-center justify-center rounded-lg bg-surface p-8 text-ink-faint "
         role="status"
       >
         Carrito vacío — busque productos con F2
@@ -33,10 +33,10 @@ export default function CartView({
   }
 
   return (
-    <section className="flex flex-1 flex-col rounded-lg bg-white shadow-sm" aria-label="Carrito de compras">
+    <section className="flex flex-1 flex-col rounded-lg bg-surface " aria-label="Carrito de compras">
       {/* Encabezado */}
       <div className="flex items-center justify-between border-b px-4 py-3">
-        <h2 className="font-semibold text-gray-700">
+        <h2 className="font-semibold text-ink">
           Carrito ({itemCount} ítems)
         </h2>
         <button
@@ -54,7 +54,7 @@ export default function CartView({
         <table className="w-full text-sm">
           <caption className="sr-only">Productos en el carrito</caption>
           <thead>
-            <tr className="border-b bg-gray-50 text-left text-gray-600">
+            <tr className="border-b bg-surface/50 text-left text-ink-soft">
               <th className="px-4 py-2" scope="col">Producto</th>
               <th className="px-2 py-2 text-right" scope="col">Precio</th>
               <th className="px-2 py-2 text-right" scope="col">Cantidad</th>
@@ -64,12 +64,12 @@ export default function CartView({
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.product.id} className="border-b last:border-0 hover:bg-gray-50">
+              <tr key={item.product.id} className="border-b last:border-0 hover:bg-surface/50">
                 <td className="px-4 py-3">
-                  <div className="font-medium text-gray-800">{item.product.name}</div>
-                  <div className="text-xs text-gray-500">{item.product.sku}</div>
+                  <div className="font-medium text-ink">{item.product.name}</div>
+                  <div className="text-xs text-ink-faint">{item.product.sku}</div>
                 </td>
-                <td className="px-2 py-3 text-right text-gray-700">
+                <td className="px-2 py-3 text-right text-ink">
                   ${item.product.price.toLocaleString('es-CL')}
                 </td>
                 <td className="px-2 py-3 text-right">
@@ -85,7 +85,7 @@ export default function CartView({
                     className="w-16 rounded border px-2 py-1 text-right"
                   />
                 </td>
-                <td className="px-2 py-3 text-right font-semibold text-gray-800">
+                <td className="px-2 py-3 text-right font-semibold text-ink">
                   ${(item.product.price * item.quantity).toLocaleString('es-CL')}
                   {item.discount > 0 && (
                     <span className="ml-1 inline-block rounded bg-red-100 px-1.5 py-0.5 text-xs font-medium text-red-700">
@@ -110,7 +110,7 @@ export default function CartView({
 
       {/* Totales */}
       <div className="border-t px-4 py-3">
-        <div className="flex justify-between text-sm text-gray-600">
+        <div className="flex justify-between text-sm text-ink-soft">
           <span>Subtotal</span>
           <span>${subtotal.toLocaleString('es-CL')}</span>
         </div>
@@ -120,7 +120,7 @@ export default function CartView({
             <span>-${discount.toLocaleString('es-CL')}</span>
           </div>
         )}
-        <div className="flex justify-between text-lg font-bold text-gray-800">
+        <div className="flex justify-between text-lg font-bold text-ink">
           <span>Total</span>
           <span>${total.toLocaleString('es-CL')}</span>
         </div>
@@ -128,3 +128,5 @@ export default function CartView({
     </section>
   );
 }
+
+

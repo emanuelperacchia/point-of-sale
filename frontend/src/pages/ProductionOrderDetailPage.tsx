@@ -130,13 +130,13 @@ export default function ProductionOrderDetailPage() {
       COMPLETADA: 'bg-green-100 text-green-700',
       CANCELADA: 'bg-red-100 text-red-700',
     };
-    return <span className={`rounded px-2 py-0.5 text-xs font-medium ${colors[estado] || 'bg-gray-100 text-gray-700'}`}>{estado}</span>;
+    return <span className={`rounded px-2 py-0.5 text-xs font-medium ${colors[estado] || 'bg-surface-raised/30 text-ink'}`}>{estado}</span>;
   }
 
   if (loading) {
     return (
       <Layout title="Orden de Produccion">
-        <p className="text-gray-500">Cargando...</p>
+        <p className="text-ink-faint">Cargando...</p>
       </Layout>
     );
   }
@@ -157,20 +157,20 @@ export default function ProductionOrderDetailPage() {
         {success && <div className="rounded border border-green-300 bg-green-50 px-4 py-2 text-sm text-green-700">{success}</div>}
 
         {/* ── Header + Actions ────────────────────────────────────── */}
-        <div className="flex items-center justify-between rounded-lg bg-white p-4 shadow">
+        <div className="flex items-center justify-between rounded-lg bg-surface p-4 shadow">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-semibold text-gray-800">OP #{order.id}</h3>
+              <h3 className="text-lg font-semibold text-ink">OP #{order.id}</h3>
               {estadoBadge(order.estado)}
             </div>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-ink-faint">
               {order.recipeNombre || `Receta #${order.recipeId}`}
               {order.productoTerminadoNombre ? ` → ${order.productoTerminadoNombre}` : ''}
             </p>
-            {order.numeroLote && <p className="text-xs text-gray-400">Lote: {order.numeroLote}</p>}
+            {order.numeroLote && <p className="text-xs text-ink-faint">Lote: {order.numeroLote}</p>}
           </div>
           <div className="flex gap-2">
-            <button onClick={() => navigate('/production-orders')} className="rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50">Volver</button>
+            <button onClick={() => navigate('/production-orders')} className="rounded border border-surface-raised px-3 py-1.5 text-sm text-ink-soft hover:bg-surface/50">Volver</button>
             {order.estado === 'PLANIFICADA' && (
               <button onClick={handleStart} className="rounded bg-green-600 px-3 py-1.5 text-sm text-white hover:bg-green-700">Iniciar</button>
             )}
@@ -184,50 +184,50 @@ export default function ProductionOrderDetailPage() {
         </div>
 
         {/* ── Detail info ─────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 gap-4 rounded-lg bg-white p-4 shadow md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 rounded-lg bg-surface p-4 md:grid-cols-4">
           <div>
-            <p className="text-xs text-gray-500">Cant. Planificada</p>
+            <p className="text-xs text-ink-faint">Cant. Planificada</p>
             <p className="text-sm font-medium">{order.cantidadPlanificada}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Cant. Producida</p>
+            <p className="text-xs text-ink-faint">Cant. Producida</p>
             <p className="text-sm font-medium">{order.cantidadProducida ?? '-'}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Fecha Planificada</p>
+            <p className="text-xs text-ink-faint">Fecha Planificada</p>
             <p className="text-sm font-medium">{order.fechaPlanificada}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Responsable</p>
+            <p className="text-xs text-ink-faint">Responsable</p>
             <p className="text-sm font-medium">{order.responsableNombre || `#${order.responsableId}`}</p>
           </div>
           {order.observaciones && (
             <div className="col-span-2">
-              <p className="text-xs text-gray-500">Observaciones</p>
+              <p className="text-xs text-ink-faint">Observaciones</p>
               <p className="text-sm">{order.observaciones}</p>
             </div>
           )}
         </div>
 
         {/* ── Components table ────────────────────────────────────── */}
-        <div className="rounded-lg bg-white shadow">
+        <div className="rounded-lg bg-surface shadow">
           <div className="border-b px-4 py-2">
-            <h4 className="text-sm font-semibold text-gray-700">Componentes</h4>
+            <h4 className="text-sm font-semibold text-ink">Componentes</h4>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b bg-gray-50">
-                  <th className="px-3 py-2 font-medium text-gray-600">Componente</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Planif.</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Consumido</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Merma</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Motivo</th>
+                <tr className="border-b bg-surface/50">
+                  <th className="px-3 py-2 font-medium text-ink-soft">Componente</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Planif.</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Consumido</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Merma</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Motivo</th>
                 </tr>
               </thead>
               <tbody>
                 {order.componentes.map((c) => (
-                  <tr key={c.id} className="border-b hover:bg-gray-50">
+                  <tr key={c.id} className="border-b hover:bg-surface/50">
                     <td className="px-3 py-2">{c.componenteNombre || `#${c.componenteId}`}</td>
                     <td className="px-3 py-2">{c.cantidadPlanificada}</td>
                     <td className="px-3 py-2">{c.cantidadConsumida ?? '-'}</td>
@@ -236,7 +236,7 @@ export default function ProductionOrderDetailPage() {
                   </tr>
                 ))}
                 {order.componentes.length === 0 && (
-                  <tr><td colSpan={5} className="px-3 py-8 text-center text-gray-400">Sin componentes</td></tr>
+                  <tr><td colSpan={5} className="px-3 py-8 text-center text-ink-faint">Sin componentes</td></tr>
                 )}
               </tbody>
             </table>
@@ -246,11 +246,11 @@ export default function ProductionOrderDetailPage() {
         {/* ── Complete modal ──────────────────────────────────────── */}
         {showComplete && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+            <div className="w-full max-w-lg rounded-lg bg-surface p-6 shadow-xl">
               <h4 className="mb-4 text-base font-semibold">Completar Orden #{order.id}</h4>
               <form onSubmit={handleComplete} className="space-y-4">
                 <div>
-                  <label className="block text-xs text-gray-600">Cantidad Producida</label>
+                  <label className="block text-xs text-ink-soft">Cantidad Producida</label>
                   <input
                     type="number"
                     min={0}
@@ -263,11 +263,11 @@ export default function ProductionOrderDetailPage() {
                 {order.componentes
                   .filter((c) => c.mermaReal == null)
                   .map((c) => (
-                    <div key={c.id} className="rounded bg-gray-50 p-3">
+                    <div key={c.id} className="rounded bg-surface/50 p-3">
                       <p className="mb-1 text-sm font-medium">{c.componenteNombre || `#${c.componenteId}`}</p>
                       <div className="flex gap-2">
                         <div className="flex-1">
-                          <label className="block text-xs text-gray-500">Merma real</label>
+                          <label className="block text-xs text-ink-faint">Merma real</label>
                           <input
                             type="number"
                             min={0}
@@ -283,7 +283,7 @@ export default function ProductionOrderDetailPage() {
                           />
                         </div>
                         <div className="flex-1">
-                          <label className="block text-xs text-gray-500">Motivo</label>
+                          <label className="block text-xs text-ink-faint">Motivo</label>
                           <select
                             value={mermaEntries[c.id]?.motivo || 'PROCESO'}
                             onChange={(e) =>
@@ -304,7 +304,7 @@ export default function ProductionOrderDetailPage() {
                     </div>
                   ))}
                 <div className="flex justify-end gap-2">
-                  <button type="button" onClick={() => setShowComplete(false)} className="rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50">Cancelar</button>
+                  <button type="button" onClick={() => setShowComplete(false)} className="rounded border border-surface-raised px-3 py-1.5 text-sm text-ink-soft hover:bg-surface/50">Cancelar</button>
                   <button type="submit" className="rounded bg-blue-600 px-4 py-1.5 text-sm text-white hover:bg-blue-700">Confirmar</button>
                 </div>
               </form>
@@ -314,27 +314,27 @@ export default function ProductionOrderDetailPage() {
 
         {/* ── Cost Analysis ───────────────────────────────────────── */}
         {order.estado === 'COMPLETADA' && (
-          <div className="rounded-lg bg-white shadow">
+          <div className="rounded-lg bg-surface shadow">
             <button
               onClick={loadCostAnalysis}
               className="flex w-full items-center justify-between px-4 py-2 text-left"
             >
-              <span className="text-sm font-semibold text-gray-700">Analisis de Costos</span>
-              <span className="text-xs text-gray-400">{showCost ? 'Ocultar' : 'Mostrar'}</span>
+              <span className="text-sm font-semibold text-ink">Analisis de Costos</span>
+              <span className="text-xs text-ink-faint">{showCost ? 'Ocultar' : 'Mostrar'}</span>
             </button>
             {showCost && costAnalysis && (
               <div className="border-t px-4 py-3">
                 <div className="mb-3 grid grid-cols-3 gap-4 text-sm">
                   <div>
-                    <p className="text-xs text-gray-500">Costo Estimado</p>
-                    <p className="font-medium text-gray-800">${costAnalysis.costoEstimadoTotal.toFixed(2)}</p>
+                    <p className="text-xs text-ink-faint">Costo Estimado</p>
+                    <p className="font-medium text-ink">${costAnalysis.costoEstimadoTotal.toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Costo Real</p>
-                    <p className="font-medium text-gray-800">${costAnalysis.costoRealTotal.toFixed(2)}</p>
+                    <p className="text-xs text-ink-faint">Costo Real</p>
+                    <p className="font-medium text-ink">${costAnalysis.costoRealTotal.toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Desviacion</p>
+                    <p className="text-xs text-ink-faint">Desviacion</p>
                     <p className={`font-medium ${costAnalysis.desviacion >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {costAnalysis.desviacion >= 0 ? '+' : ''}{costAnalysis.desviacion.toFixed(2)}%
                     </p>
@@ -343,19 +343,19 @@ export default function ProductionOrderDetailPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b bg-gray-50">
-                        <th className="px-2 py-1 font-medium text-gray-600">Componente</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">Planif.</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">Consumido</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">P.U.</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">Est.</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">Real</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">Desv.</th>
+                      <tr className="border-b bg-surface/50">
+                        <th className="px-2 py-1 font-medium text-ink-soft">Componente</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">Planif.</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">Consumido</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">P.U.</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">Est.</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">Real</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">Desv.</th>
                       </tr>
                     </thead>
                     <tbody>
                       {costAnalysis.componentes.map((comp, i) => (
-                        <tr key={i} className="border-b hover:bg-gray-50">
+                        <tr key={i} className="border-b hover:bg-surface/50">
                           <td className="px-2 py-1">{comp.componenteNombre}</td>
                           <td className="px-2 py-1">{comp.cantidadPlanificada}</td>
                           <td className="px-2 py-1">{comp.cantidadConsumida}</td>
@@ -377,37 +377,37 @@ export default function ProductionOrderDetailPage() {
 
         {/* ── Lot Traceability ────────────────────────────────────── */}
         {order.estado === 'COMPLETADA' && order.numeroLote && (
-          <div className="rounded-lg bg-white shadow">
+          <div className="rounded-lg bg-surface shadow">
             <button
               onClick={loadTraceability}
               className="flex w-full items-center justify-between px-4 py-2 text-left"
             >
-              <span className="text-sm font-semibold text-gray-700">
+              <span className="text-sm font-semibold text-ink">
                 Trazabilidad — Lote {order.numeroLote}
               </span>
-              <span className="text-xs text-gray-400">{traceability ? 'Ocultar' : 'Mostrar'}</span>
+              <span className="text-xs text-ink-faint">{traceability ? 'Ocultar' : 'Mostrar'}</span>
             </button>
             {traceability && (
               <div className="border-t px-4 py-3">
                 <div className="mb-3 text-sm">
-                  <p><span className="text-gray-500">Fecha produccion:</span> {traceability.fechaProduccion}</p>
-                  <p><span className="text-gray-500">Cantidad:</span> {traceability.cantidad}</p>
-                  <p><span className="text-gray-500">Producto:</span> {traceability.productoTerminadoNombre || '-'}</p>
+                  <p><span className="text-ink-faint">Fecha produccion:</span> {traceability.fechaProduccion}</p>
+                  <p><span className="text-ink-faint">Cantidad:</span> {traceability.cantidad}</p>
+                  <p><span className="text-ink-faint">Producto:</span> {traceability.productoTerminadoNombre || '-'}</p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b bg-gray-50">
-                        <th className="px-2 py-1 font-medium text-gray-600">Materia Prima</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">SKU</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">Cantidad</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">Lote Compra</th>
-                        <th className="px-2 py-1 font-medium text-gray-600">Proveedor</th>
+                      <tr className="border-b bg-surface/50">
+                        <th className="px-2 py-1 font-medium text-ink-soft">Materia Prima</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">SKU</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">Cantidad</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">Lote Compra</th>
+                        <th className="px-2 py-1 font-medium text-ink-soft">Proveedor</th>
                       </tr>
                     </thead>
                     <tbody>
                       {traceability.materiasPrimas.map((mp, i) => (
-                        <tr key={i} className="border-b hover:bg-gray-50">
+                        <tr key={i} className="border-b hover:bg-surface/50">
                           <td className="px-2 py-1">{mp.productoNombre}</td>
                           <td className="px-2 py-1 text-xs">{mp.productoSku}</td>
                           <td className="px-2 py-1">{mp.cantidad}</td>
@@ -426,3 +426,5 @@ export default function ProductionOrderDetailPage() {
     </Layout>
   );
 }
+
+

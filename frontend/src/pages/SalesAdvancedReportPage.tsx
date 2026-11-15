@@ -72,7 +72,7 @@ export default function SalesAdvancedReportPage() {
       {/* Filtros */}
       <form onSubmit={handleSearch} className="mb-6 flex flex-wrap items-end gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-500">Desde</label>
+          <label className="block text-xs font-medium text-ink-faint">Desde</label>
           <input
             type="date"
             value={desde}
@@ -81,7 +81,7 @@ export default function SalesAdvancedReportPage() {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-500">Hasta</label>
+          <label className="block text-xs font-medium text-ink-faint">Hasta</label>
           <input
             type="date"
             value={hasta}
@@ -124,11 +124,11 @@ export default function SalesAdvancedReportPage() {
 
           {/* Comparativa período anterior */}
           {data.comparativa && data.comparativa.length > 0 && (
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-gray-500">
+            <div className="rounded-lg bg-surface p-4 ">
+              <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-ink-faint">
                 Comparativa vs Período Anterior
               </h3>
-              <p className="mb-3 text-xs text-gray-400">
+              <p className="mb-3 text-xs text-ink-faint">
                 Actual: {data.periodo} | Anterior: {data.periodoAnterior}
               </p>
               <ResponsiveContainer width="100%" height={250}>
@@ -147,8 +147,8 @@ export default function SalesAdvancedReportPage() {
 
           {/* Ventas por hora */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
+            <div className="rounded-lg bg-surface p-4 ">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-faint">
                 Ventas por Hora
               </h3>
               {data.ventasPorHora.length > 0 ? (
@@ -162,13 +162,13 @@ export default function SalesAdvancedReportPage() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-sm text-gray-400">Sin datos</p>
+                <p className="text-sm text-ink-faint">Sin datos</p>
               )}
             </div>
 
             {/* Ventas por día de semana */}
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
+            <div className="rounded-lg bg-surface p-4 ">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-faint">
                 Ventas por Día de Semana
               </h3>
               {data.ventasPorDiaSemana.length > 0 ? (
@@ -182,15 +182,15 @@ export default function SalesAdvancedReportPage() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <p className="text-sm text-gray-400">Sin datos</p>
+                <p className="text-sm text-ink-faint">Sin datos</p>
               )}
             </div>
           </div>
 
           {/* Método de pago */}
           {data.porMetodoPago.length > 0 && (
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
+            <div className="rounded-lg bg-surface p-4 ">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-faint">
                 Ventas por Método de Pago
               </h3>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -225,9 +225,9 @@ export default function SalesAdvancedReportPage() {
                         <span className="font-medium">{pm.metodo}</span>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-gray-500">{pm.cantidad} ops</span>
+                        <span className="text-ink-faint">{pm.cantidad} ops</span>
                         <span className="font-semibold">{formatCurrency(pm.monto)}</span>
-                        <span className="text-xs text-gray-400">{pm.porcentaje.toFixed(1)}%</span>
+                        <span className="text-xs text-ink-faint">{pm.porcentaje.toFixed(1)}%</span>
                       </div>
                     </div>
                   ))}
@@ -243,9 +243,11 @@ export default function SalesAdvancedReportPage() {
 
 function MetricBox({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div className="rounded-lg bg-white p-3 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
-      <p className={`mt-1 text-lg font-bold ${color || 'text-gray-900'}`}>{value}</p>
+    <div className="rounded-lg bg-surface p-3 ">
+      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint">{label}</p>
+      <p className={`mt-1 text-lg font-bold ${color || 'text-ink'}`}>{value}</p>
     </div>
   );
 }
+
+

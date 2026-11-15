@@ -105,11 +105,11 @@ export default function PosPage() {
         <div className="flex h-full items-center justify-center">
           <div className="text-center">
             <div className="mb-4 text-5xl" aria-hidden="true">✅</div>
-            <h2 className="mb-2 text-xl font-bold text-gray-800">Venta registrada</h2>
-            <p className="mb-1 text-sm text-gray-600">
+            <h2 className="mb-2 text-xl font-bold text-ink">Venta registrada</h2>
+            <p className="mb-1 text-sm text-ink-soft">
               Venta N° <span className="font-semibold">{successId}</span>
             </p>
-            <p className="mb-6 text-sm text-gray-500">
+            <p className="mb-6 text-sm text-ink-faint">
               Total: <strong>${successTotal.toLocaleString('es-CL')}</strong>
             </p>
             <button
@@ -151,7 +151,7 @@ export default function PosPage() {
             <button
               onClick={() => setShowPayment(true)}
               disabled={!canCharge}
-              className="w-full rounded-lg bg-green-600 py-3 text-lg font-bold text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+              className="w-full rounded-lg bg-green-600 py-3 text-lg font-bold text-white  hover:bg-green-700 disabled:opacity-50"
             >
               {processing ? 'Procesando…' : `Cobrar $${total.toLocaleString('es-CL')}`}
             </button>
@@ -169,7 +169,7 @@ export default function PosPage() {
           <ShiftPanel />
           <button
             onClick={() => setShowReturns(true)}
-            className="flex w-full items-center gap-2 rounded-lg border border-orange-200 bg-white px-4 py-3 text-sm font-medium text-orange-700 shadow-sm hover:bg-orange-50 transition-colors"
+            className="flex w-full items-center gap-2 rounded-lg border border-orange-200 bg-surface px-4 py-3 text-sm font-medium text-orange-700  hover:bg-orange-50 transition-colors"
           >
             <span aria-hidden="true">↩️</span>
             Devoluciones
@@ -196,9 +196,9 @@ export default function PosPage() {
 
           <CashFlowChart />
 
-          <section className="rounded-lg bg-white p-4 shadow-sm" aria-label="Pago">
-            <h2 className="mb-1 font-semibold text-gray-700">Pago</h2>
-            <p className="text-xs text-gray-400">
+          <section className="rounded-lg bg-surface p-4 " aria-label="Pago">
+            <h2 className="mb-1 font-semibold text-ink">Pago</h2>
+            <p className="text-xs text-ink-faint">
               {items.length === 0
                 ? 'Agregue productos al carrito'
                 : `Se cobrarán $${total.toLocaleString('es-CL')}`}
@@ -236,3 +236,5 @@ export default function PosPage() {
     </Layout>
   );
 }
+
+

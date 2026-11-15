@@ -14,11 +14,11 @@ const TYPE_INFO: Record<string, { icon: string; desc: string }> = {
 export default function InvoiceTypeSelector({ condicionIva }: Props) {
   if (!condicionIva) {
     return (
-      <div className="rounded-lg bg-white p-4 shadow-sm">
-        <h3 className="mb-1 text-sm font-semibold text-gray-700">
+      <div className="rounded-lg bg-surface p-4 ">
+        <h3 className="mb-1 text-sm font-semibold text-ink">
           Comprobante
         </h3>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-ink-faint">
           Seleccione un cliente para ver el tipo de comprobante
         </p>
       </div>
@@ -29,8 +29,8 @@ export default function InvoiceTypeSelector({ condicionIva }: Props) {
   const info = TYPE_INFO[tipo];
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm">
-      <h3 className="mb-2 text-sm font-semibold text-gray-700">
+    <div className="rounded-lg bg-surface p-4 ">
+      <h3 className="mb-2 text-sm font-semibold text-ink">
         Comprobante
       </h3>
       <div className="flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5">
@@ -45,3 +45,5 @@ export default function InvoiceTypeSelector({ condicionIva }: Props) {
     </div>
   );
 }
+
+

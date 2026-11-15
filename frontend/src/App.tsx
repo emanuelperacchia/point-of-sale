@@ -11,6 +11,7 @@ import PricesPage from './pages/PricesPage';
 import UsersPage from './pages/UsersPage';
 import EmployeesPage from './pages/EmployeesPage';
 import SalesHistoryPage from './pages/SalesHistoryPage';
+import ShiftsPage from './pages/ShiftsPage';
 import RegisterPage from './pages/RegisterPage';
 import CommissionPage from './pages/CommissionPage';
 import PayrollListPage from './pages/PayrollListPage';
@@ -97,6 +98,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <SalesHistoryPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cierre-caja"
+            element={
+              <ProtectedRoute>
+                <ShiftsPage />
               </ProtectedRoute>
             }
           />

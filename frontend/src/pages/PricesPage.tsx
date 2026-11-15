@@ -206,7 +206,7 @@ export default function PricesPage() {
         )}
 
         {/* Selector de sucursal */}
-        <div className="rounded-xl border border-surface-raised bg-white/80 shadow-sm p-6">
+        <div className="rounded-xl border border-surface-raised bg-surface/80  p-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-ink-soft">
@@ -215,7 +215,7 @@ export default function PricesPage() {
               <select
                 value={selectedBranchId ?? ''}
                 onChange={(e) => handleBranchChange(Number(e.target.value))}
-                className="w-full md:w-72 rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full md:w-72 rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               >
                 <option value="">-- Seleccionar sucursal --</option>
                 {branches.map((b) => (
@@ -248,7 +248,7 @@ export default function PricesPage() {
 
         {/* Tabla de precios locales de la sucursal */}
         {selectedBranchId && (
-          <div className="rounded-xl border border-surface-raised bg-white/80 shadow-sm">
+          <div className="rounded-xl border border-surface-raised bg-surface/80 ">
             <div className="p-4 border-b border-surface-raised bg-surface-raised/50">
               <h2 className="text-lg font-bold text-ink">
                 Precios Locales — {branches.find((b) => b.id === selectedBranchId)?.nombre}
@@ -331,7 +331,7 @@ export default function PricesPage() {
         )}
 
         {/* Resolución de precio (precio final según sucursal del JWT) */}
-        <div className="rounded-xl border border-surface-raised bg-white/80 shadow-sm p-6">
+        <div className="rounded-xl border border-surface-raised bg-surface/80  p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-ink">Resolver Precio de Producto</h2>
             <p className="text-sm text-ink-faint">
@@ -347,7 +347,7 @@ export default function PricesPage() {
               <select
                 value={productToResolve ?? ''}
                 onChange={(e) => handleResolvePrice(Number(e.target.value))}
-                className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               >
                 <option value="">-- Seleccionar producto --</option>
                 {products.map((p) => (
@@ -410,7 +410,7 @@ export default function PricesPage() {
               onClick={() => setOpenForm(false)}
               aria-hidden="true"
             />
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-lg border border-surface-raised">
+            <div className="relative w-full max-w-md rounded-xl bg-surface p-6  border border-surface-raised">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-ink">
                   {editing ? 'Editar Precio Local' : 'Nuevo Precio Local'}
@@ -433,7 +433,7 @@ export default function PricesPage() {
                     value={form.productId}
                     onChange={(e) => handleInputChange('productId', Number(e.target.value))}
                     required
-                    className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                    className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                   >
                     <option value="0">-- Seleccionar producto --</option>
                     {products.map((p) => (
@@ -454,7 +454,7 @@ export default function PricesPage() {
                     value={form.precio}
                     onChange={(e) => handleInputChange('precio', Number(e.target.value) || 0)}
                     required
-                    className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                    className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                   />
                 </div>
 
@@ -467,7 +467,7 @@ export default function PricesPage() {
                       type="date"
                       value={form.vigenciaDesde ?? ''}
                       onChange={(e) => handleInputChange('vigenciaDesde', e.target.value)}
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
                   <div>
@@ -478,7 +478,7 @@ export default function PricesPage() {
                       type="date"
                       value={form.vigenciaHasta ?? ''}
                       onChange={(e) => handleInputChange('vigenciaHasta', e.target.value)}
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
                 </div>
@@ -493,7 +493,7 @@ export default function PricesPage() {
                   <button
                     type="button"
                     onClick={() => setOpenForm(false)}
-                    className="rounded-md px-4 py-2 text-sm font-medium text-ink-soft bg-white border border-surface-raised hover:bg-surface-raised transition-colors"
+                    className="rounded-md px-4 py-2 text-sm font-medium text-ink-soft bg-surface border border-surface-raised hover:bg-surface-raised transition-colors"
                   >
                     Cancelar
                   </button>
@@ -512,3 +512,4 @@ export default function PricesPage() {
     </Layout>
   );
 }
+

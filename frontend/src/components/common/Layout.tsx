@@ -17,6 +17,7 @@ const navItems = [
   { to: '/usuarios', label: 'Usuarios' },
   { to: '/empleados', label: 'Empleados' },
   { to: '/ventas', label: 'Ventas' },
+  { to: '/cierre-caja', label: 'Cierre Caja' },
   { to: '/reports/consolidated', label: 'Corporativo' },
   { to: '/reports/sales-advanced', label: 'Reportes Ventas' },
   { to: '/analysis/products', label: 'Análisis ABC' },

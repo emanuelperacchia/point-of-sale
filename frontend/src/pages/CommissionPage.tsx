@@ -94,11 +94,11 @@ export default function CommissionPage() {
         )}
 
         {/* ── Crear esquema ───────────────────────────────────────── */}
-        <section className="rounded-lg bg-white p-4 shadow">
-          <h3 className="mb-3 text-base font-semibold text-gray-800">Crear Esquema de Comision</h3>
+        <section className="rounded-lg bg-surface p-4 shadow">
+          <h3 className="mb-3 text-base font-semibold text-ink">Crear Esquema de Comision</h3>
           <form onSubmit={handleCreateScheme} className="flex flex-wrap items-end gap-3">
             <div>
-              <label className="block text-xs text-gray-600">Nombre</label>
+              <label className="block text-xs text-ink-soft">Nombre</label>
               <input
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
@@ -107,7 +107,7 @@ export default function CommissionPage() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-600">Tipo</label>
+              <label className="block text-xs text-ink-soft">Tipo</label>
               <select
                 value={tipo}
                 onChange={(e) => setTipo(e.target.value as 'PORCENTAJE_VENTA' | 'ESCALONADO')}
@@ -118,7 +118,7 @@ export default function CommissionPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-600">Valor (%)</label>
+              <label className="block text-xs text-ink-soft">Valor (%)</label>
               <input
                 type="number"
                 step="0.01"
@@ -137,21 +137,21 @@ export default function CommissionPage() {
         </section>
 
         {/* ── Esquemas existentes ─────────────────────────────────── */}
-        <section className="rounded-lg bg-white p-4 shadow">
-          <h3 className="mb-3 text-base font-semibold text-gray-800">Esquemas Existentes</h3>
+        <section className="rounded-lg bg-surface p-4 shadow">
+          <h3 className="mb-3 text-base font-semibold text-ink">Esquemas Existentes</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b bg-gray-50">
-                  <th className="px-3 py-2 font-medium text-gray-600">Nombre</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Tipo</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Valor</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Activo</th>
+                <tr className="border-b bg-surface/50">
+                  <th className="px-3 py-2 font-medium text-ink-soft">Nombre</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Tipo</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Valor</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Activo</th>
                 </tr>
               </thead>
               <tbody>
                 {schemes.map((s) => (
-                  <tr key={s.id} className="border-b hover:bg-gray-50">
+                  <tr key={s.id} className="border-b hover:bg-surface/50">
                     <td className="px-3 py-2">{s.nombre}</td>
                     <td className="px-3 py-2">{s.tipo}</td>
                     <td className="px-3 py-2">{s.valor}%</td>
@@ -160,7 +160,7 @@ export default function CommissionPage() {
                 ))}
                 {schemes.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-3 py-4 text-center text-gray-400">
+                    <td colSpan={4} className="px-3 py-4 text-center text-ink-faint">
                       No hay esquemas registrados
                     </td>
                   </tr>
@@ -171,11 +171,11 @@ export default function CommissionPage() {
         </section>
 
         {/* ── Calcular comisiones ─────────────────────────────────── */}
-        <section className="rounded-lg bg-white p-4 shadow">
-          <h3 className="mb-3 text-base font-semibold text-gray-800">Calcular Comisiones</h3>
+        <section className="rounded-lg bg-surface p-4 shadow">
+          <h3 className="mb-3 text-base font-semibold text-ink">Calcular Comisiones</h3>
           <form onSubmit={handleCalculate} className="flex flex-wrap items-end gap-3">
             <div>
-              <label className="block text-xs text-gray-600">Empleado</label>
+              <label className="block text-xs text-ink-soft">Empleado</label>
               <select
                 value={calcEmployeeId}
                 onChange={(e) => setCalcEmployeeId(e.target.value)}
@@ -191,7 +191,7 @@ export default function CommissionPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-600">Mes</label>
+              <label className="block text-xs text-ink-soft">Mes</label>
               <input
                 type="number"
                 min={1}
@@ -202,7 +202,7 @@ export default function CommissionPage() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-600">Anio</label>
+              <label className="block text-xs text-ink-soft">Anio</label>
               <input
                 type="number"
                 value={calcAnio}
@@ -219,7 +219,7 @@ export default function CommissionPage() {
           </form>
 
           {calcResult && (
-            <div className="mt-4 rounded border bg-gray-50 p-3 text-sm">
+            <div className="mt-4 rounded border bg-surface/50 p-3 text-sm">
               <p>
                 <strong>Total Ventas:</strong> ${calcResult.totalVentas?.toFixed(2)}
               </p>
@@ -242,11 +242,11 @@ export default function CommissionPage() {
         </section>
 
         {/* ── Ranking ─────────────────────────────────────────────── */}
-        <section className="rounded-lg bg-white p-4 shadow">
-          <h3 className="mb-3 text-base font-semibold text-gray-800">Ranking de Vendedores</h3>
+        <section className="rounded-lg bg-surface p-4 shadow">
+          <h3 className="mb-3 text-base font-semibold text-ink">Ranking de Vendedores</h3>
           <div className="mb-3 flex items-end gap-3">
             <div>
-              <label className="block text-xs text-gray-600">Mes</label>
+              <label className="block text-xs text-ink-soft">Mes</label>
               <input
                 type="number"
                 min={1}
@@ -257,7 +257,7 @@ export default function CommissionPage() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-600">Anio</label>
+              <label className="block text-xs text-ink-soft">Anio</label>
               <input
                 type="number"
                 value={rankAnio}
@@ -276,17 +276,17 @@ export default function CommissionPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b bg-gray-50">
-                  <th className="px-3 py-2 font-medium text-gray-600">#</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Empleado</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Total Ventas</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Comision</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Bono</th>
+                <tr className="border-b bg-surface/50">
+                  <th className="px-3 py-2 font-medium text-ink-soft">#</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Empleado</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Total Ventas</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Comision</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Bono</th>
                 </tr>
               </thead>
               <tbody>
                 {ranking.map((r, i) => (
-                  <tr key={r.id} className="border-b hover:bg-gray-50">
+                  <tr key={r.id} className="border-b hover:bg-surface/50">
                     <td className="px-3 py-2">{i + 1}</td>
                     <td className="px-3 py-2">Empleado #{r.employeeId}</td>
                     <td className="px-3 py-2">${r.totalVentas?.toFixed(2)}</td>
@@ -296,7 +296,7 @@ export default function CommissionPage() {
                 ))}
                 {ranking.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-3 py-4 text-center text-gray-400">
+                    <td colSpan={5} className="px-3 py-4 text-center text-ink-faint">
                       Sin datos para el periodo seleccionado
                     </td>
                   </tr>
@@ -309,3 +309,5 @@ export default function CommissionPage() {
     </Layout>
   );
 }
+
+

@@ -98,7 +98,7 @@ export default function UsersPage() {
         )}
 
         {/* Mis permisos (informativo) */}
-        <div className="rounded-xl border border-surface-raised bg-white/80 shadow-sm p-6">
+        <div className="rounded-xl border border-surface-raised bg-surface/80  p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-ink">Mis Permisos</h2>
             <p className="text-sm text-ink-faint">
@@ -117,7 +117,7 @@ export default function UsersPage() {
         </div>
 
         {/* Tabla de usuarios */}
-        <div className="rounded-xl border border-surface-raised bg-white/80 shadow-sm">
+        <div className="rounded-xl border border-surface-raised bg-surface/80 ">
           <div className="p-4 border-b border-surface-raised bg-surface-raised/50">
             <h2 className="text-lg font-bold text-ink">Listado de Usuarios</h2>
           </div>
@@ -197,7 +197,7 @@ export default function UsersPage() {
               onClick={() => setOpenForm(false)}
               aria-hidden="true"
             />
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-lg border border-surface-raised">
+            <div className="relative w-full max-w-md rounded-xl bg-surface p-6  border border-surface-raised">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-ink">Detalles de Usuario</h2>
                 <button
@@ -295,3 +295,4 @@ export default function UsersPage() {
     </Layout>
   );
 }
+

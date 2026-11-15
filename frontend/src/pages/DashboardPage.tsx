@@ -76,7 +76,7 @@ export default function DashboardPage() {
     <Layout title="Dashboard Ejecutivo">
       {/* Selector de período */}
       <div className="mb-6 flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-500">Período:</span>
+        <span className="text-sm font-medium text-ink-faint">Período:</span>
         <div className="flex gap-1">
           {periodos.map((p) => (
             <button
@@ -84,8 +84,8 @@ export default function DashboardPage() {
               onClick={() => setPeriodo(p.value)}
               className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 periodo === p.value
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  ? 'bg-blue-600 text-white '
+                  : 'bg-surface text-ink-soft hover:bg-surface-raised/30'
               }`}
             >
               {p.label}
@@ -94,7 +94,7 @@ export default function DashboardPage() {
         </div>
         <button
           onClick={() => load(periodo)}
-          className="ml-2 rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-200"
+          className="ml-2 rounded-md bg-surface-raised/30 px-3 py-1.5 text-sm text-ink-soft hover:bg-gray-200"
         >
           ↻
         </button>
@@ -107,7 +107,7 @@ export default function DashboardPage() {
 
           {/* KPIs — 1ra fila: Ventas */}
           <div>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">Ventas</h3>
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-faint">Ventas</h3>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <KpiCard
                 title="Ventas Totales"
@@ -170,8 +170,8 @@ export default function DashboardPage() {
           </div>
 
           {/* Gráfico de ventas diarias */}
-          <div className="rounded-lg bg-white p-4 shadow-sm">
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
+          <div className="rounded-lg bg-surface p-4 ">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-ink-faint">
               Ventas Diarias
             </h3>
             {data.dailySales && data.dailySales.length > 0 ? (
@@ -198,7 +198,7 @@ export default function DashboardPage() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-sm text-gray-400">Sin datos de ventas en el período</p>
+              <p className="text-sm text-ink-faint">Sin datos de ventas en el período</p>
             )}
           </div>
 
@@ -212,3 +212,5 @@ export default function DashboardPage() {
     </Layout>
   );
 }
+
+

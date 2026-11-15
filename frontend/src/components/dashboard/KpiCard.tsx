@@ -26,9 +26,9 @@ export default function KpiCard({ title, value, variation, subtitle, status, col
   const isPositive = variation !== undefined && variation >= 0;
 
   return (
-    <div className={`rounded-lg border-l-4 p-4 shadow-sm ${colorMap[color]} ${isError ? 'opacity-60' : ''}`}>
-      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{title}</p>
-      <p className="mt-1 text-2xl font-bold text-gray-900">
+    <div className={`rounded-lg border-l-4 p-4  ${colorMap[color]} ${isError ? 'opacity-60' : ''}`}>
+      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint">{title}</p>
+      <p className="mt-1 text-2xl font-bold text-ink">
         {isError ? '—' : value}
       </p>
       <div className="mt-2 flex items-center gap-2 text-xs">
@@ -41,9 +41,11 @@ export default function KpiCard({ title, value, variation, subtitle, status, col
             {isPositive ? '↑' : '↓'} {formatVariation(variation)}
           </span>
         )}
-        {subtitle && <span className="text-gray-400">{subtitle}</span>}
+        {subtitle && <span className="text-ink-faint">{subtitle}</span>}
         {isError && <span className="text-red-500 font-medium">Sin datos</span>}
       </div>
     </div>
   );
 }
+
+

@@ -157,10 +157,10 @@ export default function ShiftPanel() {
   // ── Render ────────────────────────────────────
   return (
     <section
-      className="rounded-lg bg-white p-4 shadow-sm"
+      className="rounded-lg bg-surface p-4 "
       aria-label="Panel de turno"
     >
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-ink-faint">
         Turno de caja
       </h2>
 
@@ -168,12 +168,12 @@ export default function ShiftPanel() {
       {shift ? (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">Estado</span>
+            <span className="text-xs text-ink-faint">Estado</span>
             <span
               className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                 shift.estado === 'ABIERTO'
                   ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-600'
+                  : 'bg-surface-raised/30 text-ink-soft'
               }`}
             >
               {shift.estado === 'ABIERTO' ? 'Abierto' : 'Cerrado'}
@@ -181,7 +181,7 @@ export default function ShiftPanel() {
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">Apertura</span>
+            <span className="text-xs text-ink-faint">Apertura</span>
             <span className="text-sm font-medium">
               ${shift.montoApertura.toLocaleString('es-CL')}
             </span>
@@ -189,7 +189,7 @@ export default function ShiftPanel() {
 
           {shift.estado === 'CERRADO' && shift.diferencia != null && (
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Diferencia</span>
+              <span className="text-xs text-ink-faint">Diferencia</span>
               <span
                 className={`text-sm font-medium ${
                   shift.diferencia >= 0 ? 'text-green-600' : 'text-red-600'
@@ -201,11 +201,11 @@ export default function ShiftPanel() {
           )}
 
           {shift.estado === 'CERRADO' && report && (
-            <div className="space-y-1 border-t pt-2 text-xs text-gray-500">
+            <div className="space-y-1 border-t pt-2 text-xs text-ink-faint">
               <p>Ventas efectivo: ${report.totalVentasEfectivo.toLocaleString('es-CL')}</p>
               <p>Ingresos: ${report.totalIngresos.toLocaleString('es-CL')}</p>
               <p>Retiros: ${report.totalRetiros.toLocaleString('es-CL')}</p>
-              <p className="font-medium text-gray-700">
+              <p className="font-medium text-ink">
                 Esperado: ${report.montoEsperado.toLocaleString('es-CL')}
               </p>
             </div>
@@ -242,7 +242,7 @@ export default function ShiftPanel() {
                     </button>
                     <button
                       onClick={() => setShowCloseForm(false)}
-                      className="rounded bg-gray-200 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-300"
+                      className="rounded bg-gray-200 px-3 py-1.5 text-xs text-ink-soft hover:bg-gray-300"
                     >
                       Cancelar
                     </button>
@@ -295,7 +295,7 @@ export default function ShiftPanel() {
                     </button>
                     <button
                       onClick={() => setShowMovForm(false)}
-                      className="rounded bg-gray-200 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-300"
+                      className="rounded bg-gray-200 px-3 py-1.5 text-xs text-ink-soft hover:bg-gray-300"
                     >
                       Cancelar
                     </button>
@@ -308,7 +308,7 @@ export default function ShiftPanel() {
       ) : (
         /* Sin turno activo — formulario de apertura */
         <div className="space-y-3">
-          <p className="text-xs text-gray-400">No hay turno activo</p>
+          <p className="text-xs text-ink-faint">No hay turno activo</p>
           <input
             type="number"
             value={montoApertura}
@@ -341,3 +341,5 @@ export default function ShiftPanel() {
     </section>
   );
 }
+
+

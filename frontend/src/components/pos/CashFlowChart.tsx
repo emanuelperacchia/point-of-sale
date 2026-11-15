@@ -54,15 +54,15 @@ export default function CashFlowChart() {
 
   if (loading) {
     return (
-      <div className="rounded-lg bg-white p-4 shadow-sm">
-        <p className="text-sm text-gray-400">Cargando flujo de caja…</p>
+      <div className="rounded-lg bg-surface p-4 ">
+        <p className="text-sm text-ink-faint">Cargando flujo de caja…</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="rounded-lg bg-surface p-4 ">
         <p className="text-sm text-red-500">{error || 'Sin datos'}</p>
       </div>
     );
@@ -71,9 +71,9 @@ export default function CashFlowChart() {
   const weeks = groupByWeek(data.dias);
 
   return (
-    <section className="rounded-lg bg-white p-4 shadow-sm" aria-label="Flujo de caja">
+    <section className="rounded-lg bg-surface p-4 " aria-label="Flujo de caja">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="font-semibold text-gray-700">Flujo de Caja</h2>
+        <h2 className="font-semibold text-ink">Flujo de Caja</h2>
         {data.alertaSaldoNegativo && (
           <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700" role="alert">
             ⚠ Saldo negativo proyectado: {data.primerDiaSaldoNegativo}
@@ -82,7 +82,7 @@ export default function CashFlowChart() {
       </div>
 
       {weeks.length === 0 ? (
-        <p className="text-sm text-gray-400">No hay datos suficientes para mostrar el gráfico.</p>
+        <p className="text-sm text-ink-faint">No hay datos suficientes para mostrar el gráfico.</p>
       ) : (
         <ResponsiveContainer width="100%" height={200}>
           <ComposedChart data={weeks}>
@@ -107,3 +107,5 @@ export default function CashFlowChart() {
     </section>
   );
 }
+
+

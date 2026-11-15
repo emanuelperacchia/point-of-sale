@@ -52,7 +52,7 @@ export default function RegisterPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4">
         <div className="w-full max-w-md">
-          <div className="rounded-xl bg-white/70 p-8 shadow-lift backdrop-blur text-center">
+          <div className="rounded-xl bg-surface/70 p-8 shadow-lift backdrop-blur text-center">
             <div className="mb-4 text-5xl" aria-hidden="true">✅</div>
             <h1 className="mb-2 text-2xl font-bold text-ink">Registro exitoso</h1>
             <p className="mb-6 text-sm text-ink-faint">
@@ -93,7 +93,7 @@ export default function RegisterPage() {
           </span>
         </div>
 
-        <div className="rounded-xl bg-white/70 p-8 shadow-lift backdrop-blur">
+        <div className="rounded-xl bg-surface/70 p-8 shadow-lift backdrop-blur">
           <h1 className="mb-1 text-2xl font-semibold tracking-tight text-ink">
             Crear cuenta
           </h1>
@@ -119,7 +119,7 @@ export default function RegisterPage() {
                 onChange={(e) => handleInputChange('firstName', e.target.value)}
                 required
                 autoFocus
-                className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               />
             </div>
 
@@ -133,7 +133,7 @@ export default function RegisterPage() {
                 value={form.lastName}
                 onChange={(e) => handleInputChange('lastName', e.target.value)}
                 required
-                className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               />
             </div>
 
@@ -147,7 +147,7 @@ export default function RegisterPage() {
                 value={form.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 required
-                className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               />
             </div>
 
@@ -162,7 +162,7 @@ export default function RegisterPage() {
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 required
                 minLength="8"
-                className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               />
             </div>
 
@@ -175,7 +175,7 @@ export default function RegisterPage() {
                 type="tel"
                 value={form.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               />
             </div>
 
@@ -223,3 +223,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+

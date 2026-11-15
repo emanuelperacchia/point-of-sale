@@ -68,9 +68,9 @@ export default function ClientSelector({ client, onChange }: Props) {
   // Si ya hay un cliente seleccionado, mostramos ficha en vez del input
   if (client) {
     return (
-      <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="rounded-lg bg-surface p-4 ">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-gray-700">Cliente</h2>
+          <h2 className="font-semibold text-ink">Cliente</h2>
           <button
             onClick={handleClear}
             className="text-xs text-blue-600 hover:text-blue-800"
@@ -79,20 +79,20 @@ export default function ClientSelector({ client, onChange }: Props) {
             Cambiar
           </button>
         </div>
-        <p className="mt-1 text-sm font-medium text-gray-800">{client.name}</p>
+        <p className="mt-1 text-sm font-medium text-ink">{client.name}</p>
         {client.documentNumber && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-ink-faint">
             {client.documentType ?? 'Doc'}: {client.documentNumber}
           </p>
         )}
-        {client.email && <p className="text-xs text-gray-500">{client.email}</p>}
+        {client.email && <p className="text-xs text-ink-faint">{client.email}</p>}
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm">
-      <label htmlFor="client-search" className="mb-1 block font-semibold text-gray-700">
+    <div className="rounded-lg bg-surface p-4 ">
+      <label htmlFor="client-search" className="mb-1 block font-semibold text-ink">
         Cliente
       </label>
       <input
@@ -110,15 +110,15 @@ export default function ClientSelector({ client, onChange }: Props) {
           selectedIndex >= 0 ? `client-option-${results[selectedIndex]?.id}` : undefined
         }
         aria-autocomplete="list"
-        className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+        className="w-full rounded border border-surface-raised px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
       />
 
       {loading && (
-        <div className="mt-1 text-xs text-gray-400">Buscando…</div>
+        <div className="mt-1 text-xs text-ink-faint">Buscando…</div>
       )}
 
       {!query.trim() && !client && (
-        <p className="mt-2 text-xs text-gray-400">
+        <p className="mt-2 text-xs text-ink-faint">
           Consumidor final — opcional
         </p>
       )}
@@ -128,7 +128,7 @@ export default function ClientSelector({ client, onChange }: Props) {
           id="client-search-results"
           role="listbox"
           aria-label="Clientes encontrados"
-          className="mt-1 max-h-48 overflow-auto rounded border border-gray-200 bg-white shadow-sm"
+          className="mt-1 max-h-48 overflow-auto rounded border border-gray-200 bg-surface "
         >
           {results.map((c, i) => (
             <li
@@ -138,12 +138,12 @@ export default function ClientSelector({ client, onChange }: Props) {
               aria-selected={i === selectedIndex}
               onClick={() => handleSelect(c)}
               className={`cursor-pointer px-3 py-2 text-sm ${
-                i === selectedIndex ? 'bg-blue-100' : 'hover:bg-gray-50'
+                i === selectedIndex ? 'bg-blue-100' : 'hover:bg-surface/50'
               }`}
             >
-              <div className="font-medium text-gray-800">{c.name}</div>
+              <div className="font-medium text-ink">{c.name}</div>
               {c.documentNumber && (
-                <div className="text-xs text-gray-500">{c.documentNumber}</div>
+                <div className="text-xs text-ink-faint">{c.documentNumber}</div>
               )}
             </li>
           ))}
@@ -151,10 +151,12 @@ export default function ClientSelector({ client, onChange }: Props) {
       )}
 
       {results.length === 0 && query.trim().length >= 2 && !loading && (
-        <p className="mt-1 text-xs text-gray-400">
+        <p className="mt-1 text-xs text-ink-faint">
           Sin resultados — se registrará como consumidor final
         </p>
       )}
     </div>
   );
 }
+
+

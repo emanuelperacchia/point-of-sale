@@ -63,9 +63,9 @@ export default function PayrollListPage() {
         )}
 
         {/* ── Filtros ─────────────────────────────────────────────── */}
-        <div className="flex items-end gap-3 rounded-lg bg-white p-4 shadow">
+        <div className="flex items-end gap-3 rounded-lg bg-surface p-4 shadow">
           <div>
-            <label className="block text-xs text-gray-600">Mes</label>
+            <label className="block text-xs text-ink-soft">Mes</label>
             <input
               type="number"
               min={1}
@@ -76,7 +76,7 @@ export default function PayrollListPage() {
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-600">Anio</label>
+            <label className="block text-xs text-ink-soft">Anio</label>
             <input
               type="number"
               value={anio}
@@ -93,22 +93,22 @@ export default function PayrollListPage() {
         </div>
 
         {/* ── Tabla ────────────────────────────────────────────────── */}
-        <div className="overflow-x-auto rounded-lg bg-white shadow">
+        <div className="overflow-x-auto rounded-lg bg-surface shadow">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b bg-gray-50">
-                <th className="px-3 py-2 font-medium text-gray-600">Empleado</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Dias</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Haberes</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Descuentos</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Neto</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Estado</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Acciones</th>
+              <tr className="border-b bg-surface/50">
+                <th className="px-3 py-2 font-medium text-ink-soft">Empleado</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Dias</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Haberes</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Descuentos</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Neto</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Estado</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {payrolls.map((p) => (
-                <tr key={p.id} className="border-b hover:bg-gray-50">
+                <tr key={p.id} className="border-b hover:bg-surface/50">
                   <td className="px-3 py-2">{employeeName(p.employeeId)}</td>
                   <td className="px-3 py-2">{p.diasTrabajados}</td>
                   <td className="px-3 py-2">${p.totalHaberes?.toFixed(2)}</td>
@@ -147,7 +147,7 @@ export default function PayrollListPage() {
               ))}
               {payrolls.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-3 py-8 text-center text-gray-400">
+                  <td colSpan={7} className="px-3 py-8 text-center text-ink-faint">
                     No hay liquidaciones para este periodo
                   </td>
                 </tr>
@@ -158,10 +158,10 @@ export default function PayrollListPage() {
 
         {/* ── Totales ──────────────────────────────────────────────── */}
         {payrolls.length > 0 && (
-          <div className="rounded-lg bg-white p-4 shadow">
-            <p className="text-sm text-gray-600">
+          <div className="rounded-lg bg-surface p-4 shadow">
+            <p className="text-sm text-ink-soft">
               Total liquidado:{' '}
-              <span className="font-semibold text-gray-800">
+              <span className="font-semibold text-ink">
                 ${payrolls.reduce((sum, p) => sum + (p.netoApagar || 0), 0).toFixed(2)}
               </span>
             </p>
@@ -171,3 +171,5 @@ export default function PayrollListPage() {
     </Layout>
   );
 }
+
+

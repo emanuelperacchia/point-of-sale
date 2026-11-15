@@ -44,7 +44,7 @@ export default function LoginPage() {
           </span>
         </div>
 
-        <div className="rounded-xl bg-white/70 p-8 shadow-lift backdrop-blur">
+        <div className="rounded-xl bg-surface/70 p-8 shadow-lift backdrop-blur">
           <h1 className="mb-1 text-2xl font-semibold tracking-tight text-ink">
             Iniciar sesión
           </h1>
@@ -70,7 +70,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoFocus
-                className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               />
             </div>
 
@@ -84,7 +84,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
               />
             </div>
 

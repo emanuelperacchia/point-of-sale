@@ -78,7 +78,7 @@ export default function ProductSearch({ onSelect }: Props) {
           selectedIndex >= 0 ? `product-option-${results[selectedIndex]?.id}` : undefined
         }
         aria-autocomplete="list"
-        className="w-full rounded-lg border border-gray-300 px-4 py-3 text-lg focus:border-blue-500 focus:outline-none"
+        className="w-full rounded-lg border border-surface-raised px-4 py-3 text-lg focus:border-blue-500 focus:outline-none"
       />
 
       {loading && (
@@ -92,7 +92,7 @@ export default function ProductSearch({ onSelect }: Props) {
           id="product-search-results"
           role="listbox"
           aria-label="Resultados de búsqueda"
-          className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg"
+          className="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-lg border border-gray-200 bg-surface "
         >
           {results.map((p, i) => (
             <li
@@ -102,20 +102,20 @@ export default function ProductSearch({ onSelect }: Props) {
               aria-selected={i === selectedIndex}
               onClick={() => handleSelect(p)}
               className={`flex cursor-pointer items-center justify-between px-4 py-3 ${
-                i === selectedIndex ? 'bg-blue-100' : 'hover:bg-gray-50'
+                i === selectedIndex ? 'bg-blue-100' : 'hover:bg-surface/50'
               }`}
             >
               <div>
-                <div className="font-medium text-gray-800">{p.name}</div>
-                <div className="text-xs text-gray-500">
+                <div className="font-medium text-ink">{p.name}</div>
+                <div className="text-xs text-ink-faint">
                   {p.sku} {p.categoryName && `· ${p.categoryName}`}
                 </div>
               </div>
               <div className="text-right">
-                <div className="font-semibold text-gray-800">
+                <div className="font-semibold text-ink">
                   ${p.price.toLocaleString('es-CL')}
                 </div>
-                <div className="text-xs text-gray-500">Stock: {p.stock}</div>
+                <div className="text-xs text-ink-faint">Stock: {p.stock}</div>
               </div>
             </li>
           ))}
@@ -124,3 +124,5 @@ export default function ProductSearch({ onSelect }: Props) {
     </div>
   );
 }
+
+

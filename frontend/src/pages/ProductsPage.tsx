@@ -178,7 +178,7 @@ export default function ProductsPage() {
         )}
 
         {/* Tabla de productos */}
-        <div className="rounded-xl border border-surface-raised bg-white/80 shadow-sm">
+        <div className="rounded-xl border border-surface-raised bg-surface/80 ">
           <table className="w-full text-sm text-left border-collapse">
             <thead>
               <tr className="border-b border-surface-raised bg-surface-raised/50 text-ink-soft">
@@ -257,7 +257,7 @@ export default function ProductsPage() {
               onClick={() => setOpenForm(false)}
               aria-hidden="true"
             />
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-lg border border-surface-raised">
+            <div className="relative w-full max-w-md rounded-xl bg-surface p-6  border border-surface-raised">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-ink">
                   {editing ? 'Editar producto' : 'Nuevo producto'}
@@ -282,7 +282,7 @@ export default function ProductsPage() {
                       value={form.sku}
                       onChange={(e) => handleInputChange('sku', e.target.value)}
                       required
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -295,7 +295,7 @@ export default function ProductsPage() {
                       value={form.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       required
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -307,7 +307,7 @@ export default function ProductsPage() {
                       value={form.description}
                       onChange={(e) => handleInputChange('description', e.target.value)}
                       rows={2}
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     />
                   </div>
 
@@ -322,7 +322,7 @@ export default function ProductsPage() {
                         value={form.price}
                         onChange={(e) => handleInputChange('price', Number(e.target.value) || 0)}
                         required
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                     <div>
@@ -335,7 +335,7 @@ export default function ProductsPage() {
                         value={form.stock}
                         onChange={(e) => handleInputChange('stock', Number(e.target.value) || 0)}
                         required
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       />
                     </div>
                     <div>
@@ -345,7 +345,7 @@ export default function ProductsPage() {
                       <select
                         value={form.tipo}
                         onChange={(e) => handleInputChange('tipo', e.target.value as ProductTipo)}
-                        className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                        className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       >
                         {Object.entries(PRODUCT_TIPO_LABELS).map(([key, label]) => (
                           <option key={key} value={key as ProductTipo}>
@@ -366,7 +366,7 @@ export default function ProductsPage() {
                         const val = e.target.value;
                         handleInputChange('categoryId', val === '' ? undefined : Number(val));
                       }}
-                      className="w-full rounded-md border border-surface-raised bg-white px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
+                      className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                     >
                       <option value="">Sin categoría</option>
                       {categories.map((c) => (
@@ -388,7 +388,7 @@ export default function ProductsPage() {
                   <button
                     type="button"
                     onClick={() => setOpenForm(false)}
-                    className="rounded-md px-4 py-2 text-sm font-medium text-ink-soft bg-white border border-surface-raised hover:bg-surface-raised transition-colors"
+                    className="rounded-md px-4 py-2 text-sm font-medium text-ink-soft bg-surface border border-surface-raised hover:bg-surface-raised transition-colors"
                   >
                     Cancelar
                   </button>
@@ -407,3 +407,4 @@ export default function ProductsPage() {
     </Layout>
   );
 }
+

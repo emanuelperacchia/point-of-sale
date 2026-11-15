@@ -73,9 +73,9 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
   // ── Vista de solo lectura ────────────────────────────────────────
   if (!editing) {
     return (
-      <div className="rounded-lg bg-white p-4 shadow-sm">
+      <div className="rounded-lg bg-surface p-4 ">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-700">Datos fiscales</h3>
+          <h3 className="text-sm font-semibold text-ink">Datos fiscales</h3>
           <button
             onClick={() => setEditing(true)}
             className="text-xs text-blue-600 hover:text-blue-800"
@@ -90,15 +90,15 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
           </p>
         )}
 
-        <div className="mt-1 space-y-0.5 text-xs text-gray-600">
-          {businessName && <p><span className="text-gray-400">Razón social:</span> {businessName}</p>}
+        <div className="mt-1 space-y-0.5 text-xs text-ink-soft">
+          {businessName && <p><span className="text-ink-faint">Razón social:</span> {businessName}</p>}
           <p>
-            <span className="text-gray-400">Cond. IVA:</span>{' '}
+            <span className="text-ink-faint">Cond. IVA:</span>{' '}
             {CONDICION_IVA_LABELS[condicionIva]}
           </p>
-          {taxAddress && <p><span className="text-gray-400">Domicilio fiscal:</span> {taxAddress}</p>}
+          {taxAddress && <p><span className="text-ink-faint">Domicilio fiscal:</span> {taxAddress}</p>}
           <p>
-            <span className="text-gray-400">{documentType}:</span> {documentNumber || '—'}
+            <span className="text-ink-faint">{documentType}:</span> {documentNumber || '—'}
           </p>
         </div>
       </div>
@@ -107,15 +107,15 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
 
   // ── Formulario de edición ────────────────────────────────────────
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+    <div className="rounded-lg bg-surface p-4 ">
+      <h3 className="mb-3 text-sm font-semibold text-ink">
         Editar datos fiscales
       </h3>
 
       <form onSubmit={handleSubmit} className="space-y-3">
         {/* Razón social */}
         <div>
-          <label htmlFor="receptor-business-name" className="mb-0.5 block text-xs font-medium text-gray-600">
+          <label htmlFor="receptor-business-name" className="mb-0.5 block text-xs font-medium text-ink-soft">
             Razón social
           </label>
           <input
@@ -124,20 +124,20 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
             value={businessName}
             onChange={(e) => setBusinessName(e.target.value)}
             placeholder="Nombre o razón social"
-            className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded border border-surface-raised px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
           />
         </div>
 
         {/* Condición IVA */}
         <div>
-          <label htmlFor="receptor-iva" className="mb-0.5 block text-xs font-medium text-gray-600">
+          <label htmlFor="receptor-iva" className="mb-0.5 block text-xs font-medium text-ink-soft">
             Condición IVA
           </label>
           <select
             id="receptor-iva"
             value={condicionIva}
             onChange={(e) => setCondicionIva(e.target.value as CondicionIva)}
-            className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded border border-surface-raised px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
           >
             {IVA_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>
@@ -150,14 +150,14 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
         {/* Tipo y número de documento */}
         <div className="flex gap-2">
           <div className="flex-1">
-            <label htmlFor="receptor-doc-type" className="mb-0.5 block text-xs font-medium text-gray-600">
+            <label htmlFor="receptor-doc-type" className="mb-0.5 block text-xs font-medium text-ink-soft">
               Tipo doc.
             </label>
             <select
               id="receptor-doc-type"
               value={documentType}
               onChange={(e) => setDocumentType(e.target.value)}
-              className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-surface-raised px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
             >
               <option value="DNI">DNI</option>
               <option value="CUIT">CUIT</option>
@@ -166,7 +166,7 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
             </select>
           </div>
           <div className="flex-[2]">
-            <label htmlFor="receptor-doc-number" className="mb-0.5 block text-xs font-medium text-gray-600">
+            <label htmlFor="receptor-doc-number" className="mb-0.5 block text-xs font-medium text-ink-soft">
               N° documento
             </label>
             <input
@@ -175,14 +175,14 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
               value={documentNumber}
               onChange={(e) => setDocumentNumber(e.target.value)}
               placeholder="Número"
-              className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded border border-surface-raised px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
         </div>
 
         {/* Domicilio fiscal */}
         <div>
-          <label htmlFor="receptor-tax-address" className="mb-0.5 block text-xs font-medium text-gray-600">
+          <label htmlFor="receptor-tax-address" className="mb-0.5 block text-xs font-medium text-ink-soft">
             Domicilio fiscal
           </label>
           <input
@@ -191,7 +191,7 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
             value={taxAddress}
             onChange={(e) => setTaxAddress(e.target.value)}
             placeholder="Calle y número"
-            className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
+            className="w-full rounded border border-surface-raised px-2.5 py-1.5 text-sm focus:border-blue-500 focus:outline-none"
           />
         </div>
 
@@ -203,7 +203,7 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
           <button
             type="button"
             onClick={handleCancel}
-            className="flex-1 rounded border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
+            className="flex-1 rounded border border-surface-raised px-3 py-1.5 text-xs font-medium text-ink-soft hover:bg-surface/50"
           >
             Cancelar
           </button>
@@ -219,3 +219,5 @@ export default function ReceptorForm({ client, onUpdate }: Props) {
     </div>
   );
 }
+
+

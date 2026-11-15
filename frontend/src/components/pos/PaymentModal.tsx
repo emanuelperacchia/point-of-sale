@@ -48,13 +48,13 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
       aria-modal="true"
       aria-label="Cobrar venta"
     >
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-xl bg-surface p-6 shadow-xl">
         {/* Título */}
-        <h2 className="mb-4 text-lg font-bold text-gray-800">Cobrar</h2>
+        <h2 className="mb-4 text-lg font-bold text-ink">Cobrar</h2>
 
         {/* Total a cobrar */}
         <div className="mb-4 rounded-lg bg-blue-50 p-3 text-center">
-          <span className="text-sm text-gray-600">Total</span>
+          <span className="text-sm text-ink-soft">Total</span>
           <p className="text-2xl font-bold text-blue-700">
             ${total.toLocaleString('es-CL')}
           </p>
@@ -62,7 +62,7 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
 
         {/* Método de pago */}
         <fieldset className="mb-4">
-          <legend className="mb-2 text-sm font-medium text-gray-700">
+          <legend className="mb-2 text-sm font-medium text-ink">
             Método de pago
           </legend>
           <div className="grid grid-cols-2 gap-2">
@@ -78,7 +78,7 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
                 className={`flex items-center gap-2 rounded-lg border px-3 py-3 text-sm font-medium transition-colors ${
                   method === m.value
                     ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                    : 'border-gray-200 bg-surface text-ink-soft hover:bg-surface/50'
                 }`}
                 aria-pressed={method === m.value}
               >
@@ -92,11 +92,11 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
         {/* Monto recibido (solo efectivo) */}
         {isCash && (
           <div className="mb-4">
-            <label htmlFor="payment-received" className="mb-1 block text-sm font-medium text-gray-700">
+            <label htmlFor="payment-received" className="mb-1 block text-sm font-medium text-ink">
               Monto recibido
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint">$</span>
               <input
                 id="payment-received"
                 type="number"
@@ -108,7 +108,7 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
                   setError('');
                 }}
                 onFocus={(e) => e.target.select()}
-                className="w-full rounded-lg border border-gray-300 py-3 pl-8 pr-4 text-right text-lg focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-surface-raised py-3 pl-8 pr-4 text-right text-lg focus:border-blue-500 focus:outline-none"
               />
             </div>
             {change > 0 && (
@@ -127,8 +127,8 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
         {/* Referencia (card/transfer) */}
         {!isCash && (
           <div className="mb-4">
-            <label htmlFor="payment-reference" className="mb-1 block text-sm font-medium text-gray-700">
-              Referencia <span className="text-gray-400">(opcional)</span>
+            <label htmlFor="payment-reference" className="mb-1 block text-sm font-medium text-ink">
+              Referencia <span className="text-ink-faint">(opcional)</span>
             </label>
             <input
               id="payment-reference"
@@ -136,7 +136,7 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
               value={reference}
               onChange={(e) => setReference(e.target.value)}
               placeholder="N° de autorización, voucher…"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-surface-raised px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
             />
           </div>
         )}
@@ -151,7 +151,7 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="flex-1 rounded-lg border border-surface-raised py-2.5 text-sm font-medium text-ink hover:bg-surface/50"
           >
             Cancelar
           </button>
@@ -168,3 +168,5 @@ export default function PaymentModal({ open, total, onConfirm, onCancel }: Props
     </div>
   );
 }
+
+

@@ -77,7 +77,7 @@ export default function SalesHistoryPage() {
         )}
 
         {/* Tabla de ventas */}
-        <div className="rounded-xl border border-surface-raised bg-white/80 shadow-sm">
+        <div className="rounded-xl border border-surface-raised bg-surface/80 ">
           <table className="w-full text-sm text-left border-collapse">
             <thead>
               <tr className="border-b border-surface-raised bg-surface-raised/50 text-ink-soft">
@@ -139,7 +139,7 @@ export default function SalesHistoryPage() {
               <button
                 onClick={handlePrevPage}
                 disabled={page === 0}
-                className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-soft bg-white border border-surface-raised disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-raised transition-colors"
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-soft bg-surface border border-surface-raised disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-raised transition-colors"
               >
                 Anterior
               </button>
@@ -149,7 +149,7 @@ export default function SalesHistoryPage() {
               <button
                 onClick={handleNextPage}
                 disabled={page >= totalPages - 1}
-                className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-soft bg-white border border-surface-raised disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-raised transition-colors"
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-ink-soft bg-surface border border-surface-raised disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-raised transition-colors"
               >
                 Siguiente
               </button>
@@ -165,7 +165,7 @@ export default function SalesHistoryPage() {
               onClick={() => setViewing(false)}
               aria-hidden="true"
             />
-            <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-lg border border-surface-raised">
+            <div className="relative w-full max-w-lg rounded-xl bg-surface p-6  border border-surface-raised">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-ink">Venta #{currentSale.id}</h2>
                 <button
@@ -271,3 +271,4 @@ export default function SalesHistoryPage() {
     </Layout>
   );
 }
+

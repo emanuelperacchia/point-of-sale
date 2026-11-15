@@ -64,18 +64,18 @@ export default function ProfitabilityPage() {
             <MetricBox label="Margen Bruto" value={fmt(data.margenBruto)} desc={pct(data.margenBrutoPorcentaje)} color="text-green-600" />
             <MetricBox label="Margen Neto" value={fmt(data.margenNeto)} desc={pct(data.margenNetoPorcentaje)} color="text-blue-600" />
             <MetricBox label="Punto Equilibrio" value={fmt(data.puntoEquilibrio)} desc="ventas mínimas" color="text-orange-600" />
-            <MetricBox label="Diferencia" value={fmt(data.margenBruto - data.margenNeto)} desc="gastos + impuestos" color="text-gray-600" />
+            <MetricBox label="Diferencia" value={fmt(data.margenBruto - data.margenNeto)} desc="gastos + impuestos" color="text-ink-soft" />
           </div>
 
           {/* Por producto */}
-          <div className="rounded-lg bg-white shadow-sm">
-            <h3 className="px-4 pt-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
+          <div className="rounded-lg bg-surface ">
+            <h3 className="px-4 pt-4 text-sm font-semibold uppercase tracking-wider text-ink-faint">
               Rentabilidad por Producto
             </h3>
             {data.porProducto.length > 0 ? (
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50 text-left text-xs uppercase text-gray-500">
+                  <tr className="border-b bg-surface/50 text-left text-xs uppercase text-ink-faint">
                     <th className="px-4 py-3">Producto</th>
                     <th className="px-4 py-3 text-right">Ingresos</th>
                     <th className="px-4 py-3 text-right">Costo</th>
@@ -85,8 +85,8 @@ export default function ProfitabilityPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {data.porProducto.map((p, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 font-medium text-gray-800">{p.productName}</td>
+                    <tr key={idx} className="hover:bg-surface/50">
+                      <td className="px-4 py-2 font-medium text-ink">{p.productName}</td>
                       <td className="px-4 py-2 text-right">{fmt(p.ingresos)}</td>
                       <td className="px-4 py-2 text-right">{fmt(p.costo)}</td>
                       <td className={`px-4 py-2 text-right font-medium ${p.margen >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -100,7 +100,7 @@ export default function ProfitabilityPage() {
                 </tbody>
               </table>
             ) : (
-              <p className="p-4 text-sm text-gray-400">Sin datos de producto</p>
+              <p className="p-4 text-sm text-ink-faint">Sin datos de producto</p>
             )}
           </div>
 
@@ -117,10 +117,12 @@ export default function ProfitabilityPage() {
 
 function MetricBox({ label, value, desc, color }: { label: string; value: string; desc?: string; color?: string }) {
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
-      <p className={`mt-1 text-2xl font-bold ${color || 'text-gray-900'}`}>{value}</p>
-      {desc && <p className="mt-0.5 text-xs text-gray-400">{desc}</p>}
+    <div className="rounded-lg bg-surface p-4 ">
+      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint">{label}</p>
+      <p className={`mt-1 text-2xl font-bold ${color || 'text-ink'}`}>{value}</p>
+      {desc && <p className="mt-0.5 text-xs text-ink-faint">{desc}</p>}
     </div>
   );
 }
+
+

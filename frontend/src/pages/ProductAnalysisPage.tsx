@@ -92,21 +92,21 @@ export default function ProductAnalysisPage() {
     <Layout title="Análisis de Productos (ABC)">
       {/* Controles */}
       <div className="mb-6 flex items-center gap-3">
-        <span className="text-sm font-medium text-gray-500">Período:</span>
+        <span className="text-sm font-medium text-ink-faint">Período:</span>
         {['1', '3', '6', '12'].map((m) => (
           <button
             key={m}
             onClick={() => { setMeses(m); load(m); }}
             className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
               meses === m
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-gray-600 hover:bg-gray-100'
+                ? 'bg-blue-600 text-white '
+                : 'bg-surface text-ink-soft hover:bg-surface-raised/30'
             }`}
           >
             {m} {+m === 1 ? 'mes' : 'meses'}
           </button>
         ))}
-        <button onClick={handleRefresh} className="ml-2 rounded-md bg-gray-100 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-200">
+        <button onClick={handleRefresh} className="ml-2 rounded-md bg-surface-raised/30 px-3 py-1.5 text-sm text-ink-soft hover:bg-gray-200">
           ↻
         </button>
       </div>
@@ -140,8 +140,8 @@ export default function ProductAnalysisPage() {
 
           {/* Gráfico Pareto */}
           {paretoData.length > 0 && (
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
+            <div className="rounded-lg bg-surface p-4 ">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-faint">
                 Diagrama de Pareto
               </h3>
               <ResponsiveContainer width="100%" height={300}>
@@ -172,10 +172,10 @@ export default function ProductAnalysisPage() {
           )}
 
           {/* Tabla ABC */}
-          <div className="overflow-x-auto rounded-lg bg-white shadow-sm">
+          <div className="overflow-x-auto rounded-lg bg-surface ">
             <table className="min-w-full text-sm">
               <thead>
-                <tr className="border-b bg-gray-50 text-left text-xs uppercase tracking-wider text-gray-500">
+                <tr className="border-b bg-surface/50 text-left text-xs uppercase tracking-wider text-ink-faint">
                   <th className="px-4 py-3">#</th>
                   <th className="px-4 py-3">Producto</th>
                   <th className="px-4 py-3">SKU</th>
@@ -188,16 +188,16 @@ export default function ProductAnalysisPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {data.clasificacionABC.map((p, idx) => (
-                  <tr key={p.productId} className="hover:bg-gray-50">
-                    <td className="px-4 py-2 text-gray-400">{idx + 1}</td>
-                    <td className="max-w-[200px] truncate px-4 py-2 font-medium text-gray-800">
+                  <tr key={p.productId} className="hover:bg-surface/50">
+                    <td className="px-4 py-2 text-ink-faint">{idx + 1}</td>
+                    <td className="max-w-[200px] truncate px-4 py-2 font-medium text-ink">
                       {p.productName}
                     </td>
-                    <td className="px-4 py-2 text-gray-500">{p.productSku}</td>
-                    <td className="px-4 py-2 text-gray-500">{p.categoria}</td>
+                    <td className="px-4 py-2 text-ink-faint">{p.productSku}</td>
+                    <td className="px-4 py-2 text-ink-faint">{p.categoria}</td>
                     <td className="px-4 py-2 text-right font-medium">{formatCurrency(p.ventas)}</td>
-                    <td className="px-4 py-2 text-right text-gray-500">{p.cantidad}</td>
-                    <td className="px-4 py-2 text-right text-gray-500">{p.porcentajeAcumulado.toFixed(1)}%</td>
+                    <td className="px-4 py-2 text-right text-ink-faint">{p.cantidad}</td>
+                    <td className="px-4 py-2 text-right text-ink-faint">{p.porcentajeAcumulado.toFixed(1)}%</td>
                     <td className="px-4 py-2 text-center">
                       <span className={`inline-block rounded-md border px-2 py-0.5 text-xs font-bold ${classColors[p.clasificacion] || ''}`}>
                         {p.clasificacion}
@@ -211,15 +211,15 @@ export default function ProductAnalysisPage() {
 
           {/* Sin movimiento */}
           {data.sinMovimiento.length > 0 && (
-            <div className="rounded-lg bg-white p-4 shadow-sm">
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
+            <div className="rounded-lg bg-surface p-4 ">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-ink-faint">
                 Productos sin Movimiento ({data.sinMovimiento.length})
               </h3>
               <div className="flex flex-wrap gap-2">
                 {data.sinMovimiento.map((p) => (
                   <span
                     key={p.productId}
-                    className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600"
+                    className="rounded-full bg-surface-raised/30 px-3 py-1 text-xs text-ink-soft"
                     title={p.productName}
                   >
                     {p.productName}
@@ -236,9 +236,11 @@ export default function ProductAnalysisPage() {
 
 function Metric({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div className="rounded-lg bg-white p-3 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
-      <p className={`mt-1 text-lg font-bold ${color || 'text-gray-900'}`}>{value}</p>
+    <div className="rounded-lg bg-surface p-3 ">
+      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint">{label}</p>
+      <p className={`mt-1 text-lg font-bold ${color || 'text-ink'}`}>{value}</p>
     </div>
   );
 }
+
+

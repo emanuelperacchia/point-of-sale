@@ -31,7 +31,7 @@ export default function CouponInput({ onCouponApplied, disabled }: Props) {
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
+      <label className="block text-sm font-medium text-ink">
         Cupón de descuento
       </label>
       <div className="flex gap-2">
@@ -42,7 +42,7 @@ export default function CouponInput({ onCouponApplied, disabled }: Props) {
           onKeyDown={(e) => { if (e.key === 'Enter') handleValidate(); }}
           placeholder="Ingrese código"
           disabled={disabled}
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm uppercase focus:border-blue-500 focus:outline-none disabled:opacity-50"
+          className="flex-1 rounded-lg border border-surface-raised px-3 py-2 text-sm uppercase focus:border-blue-500 focus:outline-none disabled:opacity-50"
         />
         <button
           onClick={handleValidate}
@@ -62,3 +62,4 @@ export default function CouponInput({ onCouponApplied, disabled }: Props) {
     </div>
   );
 }
+

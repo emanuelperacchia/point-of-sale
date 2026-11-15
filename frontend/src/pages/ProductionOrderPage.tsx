@@ -84,7 +84,7 @@ export default function ProductionOrderPage() {
       COMPLETADA: 'bg-green-100 text-green-700',
       CANCELADA: 'bg-red-100 text-red-700',
     };
-    return <span className={`rounded px-2 py-0.5 text-xs font-medium ${colors[estado] || 'bg-gray-100 text-gray-700'}`}>{estado}</span>;
+    return <span className={`rounded px-2 py-0.5 text-xs font-medium ${colors[estado] || 'bg-surface-raised/30 text-ink'}`}>{estado}</span>;
   }
 
   return (
@@ -94,9 +94,9 @@ export default function ProductionOrderPage() {
         {success && <div className="rounded border border-green-300 bg-green-50 px-4 py-2 text-sm text-green-700">{success}</div>}
 
         {/* ── Actions bar ─────────────────────────────────────────── */}
-        <div className="flex items-center gap-3 rounded-lg bg-white p-4 shadow">
+        <div className="flex items-center gap-3 rounded-lg bg-surface p-4 shadow">
           <div>
-            <label className="block text-xs text-gray-600">Filtrar estado</label>
+            <label className="block text-xs text-ink-soft">Filtrar estado</label>
             <select value={estadoFilter} onChange={(e) => { setEstadoFilter(e.target.value); }} className="mt-1 rounded border px-3 py-1.5 text-sm">
               <option value="">Todos</option>
               <option value="PLANIFICADA">Planificadas</option>
@@ -113,11 +113,11 @@ export default function ProductionOrderPage() {
 
         {/* ── Create form ─────────────────────────────────────────── */}
         {showForm && (
-          <form onSubmit={handleCreate} className="rounded-lg bg-white p-4 shadow">
-            <h4 className="mb-3 text-sm font-semibold text-gray-800">Nueva Orden de Produccion</h4>
+          <form onSubmit={handleCreate} className="rounded-lg bg-surface p-4 shadow">
+            <h4 className="mb-3 text-sm font-semibold text-ink">Nueva Orden de Produccion</h4>
             <div className="flex flex-wrap gap-3">
               <div>
-                <label className="block text-xs text-gray-600">Receta</label>
+                <label className="block text-xs text-ink-soft">Receta</label>
                 <select value={recipeId} onChange={(e) => setRecipeId(e.target.value)} required className="mt-1 rounded border px-3 py-1.5 text-sm">
                   <option value="">Seleccionar...</option>
                   {recipes.filter((r) => r.activa).map((r) => (
@@ -126,15 +126,15 @@ export default function ProductionOrderPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Cantidad</label>
+                <label className="block text-xs text-ink-soft">Cantidad</label>
                 <input type="number" min={1} value={cantidad} onChange={(e) => setCantidad(e.target.value)} required className="mt-1 w-20 rounded border px-3 py-1.5 text-sm" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Fecha</label>
+                <label className="block text-xs text-ink-soft">Fecha</label>
                 <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} required className="mt-1 rounded border px-3 py-1.5 text-sm" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Responsable</label>
+                <label className="block text-xs text-ink-soft">Responsable</label>
                 <select value={responsableId} onChange={(e) => setResponsableId(e.target.value)} required className="mt-1 rounded border px-3 py-1.5 text-sm">
                   <option value="">Seleccionar...</option>
                   {employees.map((emp) => (
@@ -143,7 +143,7 @@ export default function ProductionOrderPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Observaciones</label>
+                <label className="block text-xs text-ink-soft">Observaciones</label>
                 <input value={observaciones} onChange={(e) => setObservaciones(e.target.value)} className="mt-1 rounded border px-3 py-1.5 text-sm" />
               </div>
             </div>
@@ -152,24 +152,24 @@ export default function ProductionOrderPage() {
         )}
 
         {/* ── Table ────────────────────────────────────────────────── */}
-        <div className="overflow-x-auto rounded-lg bg-white shadow">
+        <div className="overflow-x-auto rounded-lg bg-surface shadow">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b bg-gray-50">
-                <th className="px-3 py-2 font-medium text-gray-600">#</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Receta</th>
-                <th className="px-3 py-2 font-medium text-gray-600">PT</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Planif.</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Produc.</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Fecha</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Estado</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Lote</th>
-                <th className="px-3 py-2 font-medium text-gray-600">Acciones</th>
+              <tr className="border-b bg-surface/50">
+                <th className="px-3 py-2 font-medium text-ink-soft">#</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Receta</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">PT</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Planif.</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Produc.</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Fecha</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Estado</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Lote</th>
+                <th className="px-3 py-2 font-medium text-ink-soft">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {orders.map((o) => (
-                <tr key={o.id} className="border-b hover:bg-gray-50">
+                <tr key={o.id} className="border-b hover:bg-surface/50">
                   <td className="px-3 py-2">{o.id}</td>
                   <td className="px-3 py-2">{o.recipeNombre || `#${o.recipeId}`}</td>
                   <td className="px-3 py-2">{o.productoTerminadoNombre || '-'}</td>
@@ -192,7 +192,7 @@ export default function ProductionOrderPage() {
                 </tr>
               ))}
               {orders.length === 0 && (
-                <tr><td colSpan={9} className="px-3 py-8 text-center text-gray-400">Sin ordenes de produccion</td></tr>
+                <tr><td colSpan={9} className="px-3 py-8 text-center text-ink-faint">Sin ordenes de produccion</td></tr>
               )}
             </tbody>
           </table>
@@ -201,3 +201,5 @@ export default function ProductionOrderPage() {
     </Layout>
   );
 }
+
+

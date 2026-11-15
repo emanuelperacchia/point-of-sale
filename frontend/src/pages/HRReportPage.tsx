@@ -74,14 +74,14 @@ export default function HRReportPage() {
           )}
 
           {/* Productividad vendedores */}
-          <div className="rounded-lg bg-white shadow-sm">
-            <h3 className="px-4 pt-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
+          <div className="rounded-lg bg-surface ">
+            <h3 className="px-4 pt-4 text-sm font-semibold uppercase tracking-wider text-ink-faint">
               Productividad por Vendedor
             </h3>
             {data.productividadVendedores.length > 0 ? (
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50 text-left text-xs uppercase text-gray-500">
+                  <tr className="border-b bg-surface/50 text-left text-xs uppercase text-ink-faint">
                     <th className="px-4 py-3">Nombre</th>
                     <th className="px-4 py-3">Cargo</th>
                     <th className="px-4 py-3 text-right">Ventas</th>
@@ -92,19 +92,19 @@ export default function HRReportPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {data.productividadVendedores.map((v, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 font-medium text-gray-800">{v.nombre}</td>
-                      <td className="px-4 py-2 text-gray-500">{v.cargo}</td>
+                    <tr key={idx} className="hover:bg-surface/50">
+                      <td className="px-4 py-2 font-medium text-ink">{v.nombre}</td>
+                      <td className="px-4 py-2 text-ink-faint">{v.cargo}</td>
                       <td className="px-4 py-2 text-right font-medium">{fmt(v.ventasPeriodo)}</td>
-                      <td className="px-4 py-2 text-right text-gray-600">{v.transacciones}</td>
-                      <td className="px-4 py-2 text-right text-gray-600">{fmt(v.ventasPorHora)}</td>
-                      <td className="px-4 py-2 text-right text-gray-600">{fmt(v.comisiones)}</td>
+                      <td className="px-4 py-2 text-right text-ink-soft">{v.transacciones}</td>
+                      <td className="px-4 py-2 text-right text-ink-soft">{fmt(v.ventasPorHora)}</td>
+                      <td className="px-4 py-2 text-right text-ink-soft">{fmt(v.comisiones)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <p className="p-4 text-sm text-gray-400">Sin datos de productividad</p>
+              <p className="p-4 text-sm text-ink-faint">Sin datos de productividad</p>
             )}
           </div>
 
@@ -121,9 +121,11 @@ export default function HRReportPage() {
 
 function MetricBox({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
-      <p className={`mt-1 text-2xl font-bold ${color || 'text-gray-900'}`}>{value}</p>
+    <div className="rounded-lg bg-surface p-4 ">
+      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint">{label}</p>
+      <p className={`mt-1 text-2xl font-bold ${color || 'text-ink'}`}>{value}</p>
     </div>
   );
 }
+
+

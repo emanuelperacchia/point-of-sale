@@ -112,15 +112,15 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
       aria-modal="true"
       aria-label="Devolución"
     >
-      <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-lg rounded-xl bg-surface p-6 shadow-xl max-h-[90vh] overflow-y-auto">
         {/* Título */}
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-bold text-gray-800">
+          <h2 className="text-lg font-bold text-ink">
             {result ? 'Resultado' : sale ? 'Seleccionar items a devolver' : 'Devolución'}
           </h2>
           <button
             onClick={onClose}
-            className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+            className="rounded p-1 text-ink-faint hover:bg-surface-raised/30 hover:text-ink-soft"
             aria-label="Cerrar"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -132,7 +132,7 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
         {/* ── PASO 1: Buscar venta ─────────────────────────── */}
         {!sale && !result && (
           <>
-            <p className="mb-3 text-sm text-gray-500">
+            <p className="mb-3 text-sm text-ink-faint">
               Ingrese el ID de la venta para iniciar la devolución.
             </p>
             <div className="flex gap-2">
@@ -144,7 +144,7 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
                 onChange={(e) => setSaleId(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="ID de venta"
-                className="flex-1 rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
+                className="flex-1 rounded-lg border border-surface-raised px-3 py-2.5 text-sm focus:border-blue-500 focus:outline-none"
               />
               <button
                 onClick={handleSearch}
@@ -164,7 +164,7 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
         {sale && !result && (
           <>
             {/* Info de la venta */}
-            <div className="mb-4 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
+            <div className="mb-4 rounded-lg bg-surface/50 p-3 text-sm text-ink-soft">
               <p><strong>Venta #{sale.id}</strong> — {new Date(sale.createdAt).toLocaleDateString('es-CL')}</p>
               <p>Cliente: {sale.client?.name ?? 'Consumidor Final'}</p>
               <p>Total original: <strong>${sale.total.toLocaleString('es-CL')}</strong></p>
@@ -172,7 +172,7 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
 
             {/* Motivo */}
             <div className="mb-4">
-              <label htmlFor="return-motivo" className="mb-1 block text-sm font-medium text-gray-700">
+              <label htmlFor="return-motivo" className="mb-1 block text-sm font-medium text-ink">
                 Motivo de la devolución
               </label>
               <input
@@ -181,13 +181,13 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
                 value={motivo}
                 onChange={(e) => setMotivo(e.target.value)}
                 placeholder="Ej: Producto defectuoso, cambio de talla…"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-surface-raised px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
               />
             </div>
 
             {/* Items de la venta */}
             <div className="mb-4">
-              <h3 className="mb-2 text-sm font-medium text-gray-700">Productos</h3>
+              <h3 className="mb-2 text-sm font-medium text-ink">Productos</h3>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {sale.items.map((item) => {
                   const qty = quantities[item.id] ?? 0;
@@ -199,8 +199,8 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
                       }`}
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="truncate text-sm font-medium text-gray-800">{item.productName}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="truncate text-sm font-medium text-ink">{item.productName}</p>
+                        <p className="text-xs text-ink-faint">
                           ${item.unitPrice.toLocaleString('es-CL')} × {item.quantity} — Subtotal: ${item.subtotal.toLocaleString('es-CL')}
                         </p>
                       </div>
@@ -240,7 +240,7 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
                 })}
               </div>
               {selectedCount > 0 && (
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-ink-faint">
                   {selectedCount} unidad(es) seleccionada(s) para devolución
                 </p>
               )}
@@ -256,7 +256,7 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
               <button
                 type="button"
                 onClick={() => { setSale(null); setSaleId(''); }}
-                className="flex-1 rounded-lg border border-gray-300 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex-1 rounded-lg border border-surface-raised py-2.5 text-sm font-medium text-ink hover:bg-surface/50"
               >
                 Volver
               </button>
@@ -278,20 +278,20 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
             <div className="mb-3 text-4xl" aria-hidden="true">
               {result.estado === 'APROBADA' ? '✅' : result.estado === 'RECHAZADA' ? '❌' : '⏳'}
             </div>
-            <p className="mb-1 text-lg font-bold text-gray-800">
+            <p className="mb-1 text-lg font-bold text-ink">
               {result.estado === 'APROBADA'
                 ? 'Devolución aprobada'
                 : result.estado === 'RECHAZADA'
                   ? 'Devolución rechazada'
                   : 'Pendiente de aprobación'}
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-ink-faint">
               Devolución #{result.id} — Venta #{result.saleId}
             </p>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-ink-soft">
               Monto: <strong>${result.montoTotal.toLocaleString('es-CL')}</strong>
             </p>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-xs text-ink-faint">
               Método: {result.metodoDevolucion}
             </p>
             {result.estado === 'PENDIENTE_APROBACION' && (
@@ -313,3 +313,5 @@ export default function ReturnModal({ open, onClose, onSuccess }: Props) {
     </div>
   );
 }
+
+

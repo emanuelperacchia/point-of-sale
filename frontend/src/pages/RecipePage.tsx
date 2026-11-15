@@ -113,16 +113,16 @@ export default function RecipePage() {
         {success && <div className="rounded border border-green-300 bg-green-50 px-4 py-2 text-sm text-green-700">{success}</div>}
 
         {/* ── Crear Receta ────────────────────────────────────────── */}
-        <section className="rounded-lg bg-white p-4 shadow">
-          <h3 className="mb-3 text-base font-semibold text-gray-800">Nueva Receta</h3>
+        <section className="rounded-lg bg-surface p-4 shadow">
+          <h3 className="mb-3 text-base font-semibold text-ink">Nueva Receta</h3>
           <form onSubmit={handleCreate} className="space-y-3">
             <div className="flex flex-wrap gap-3">
               <div>
-                <label className="block text-xs text-gray-600">Nombre</label>
+                <label className="block text-xs text-ink-soft">Nombre</label>
                 <input value={nombre} onChange={(e) => setNombre(e.target.value)} required className="mt-1 rounded border px-3 py-1.5 text-sm" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Producto Terminado</label>
+                <label className="block text-xs text-ink-soft">Producto Terminado</label>
                 <select value={ptId} onChange={(e) => setPtId(e.target.value)} required className="mt-1 rounded border px-3 py-1.5 text-sm">
                   <option value="">Seleccionar...</option>
                   {products.map((p) => (
@@ -131,33 +131,33 @@ export default function RecipePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Cantidad Producida</label>
+                <label className="block text-xs text-ink-soft">Cantidad Producida</label>
                 <input type="number" step="0.01" value={cantidadProducida} onChange={(e) => setCantidadProducida(e.target.value)} required className="mt-1 w-20 rounded border px-3 py-1.5 text-sm" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Unidad</label>
+                <label className="block text-xs text-ink-soft">Unidad</label>
                 <input value={unidadMedida} onChange={(e) => setUnidadMedida(e.target.value)} required className="mt-1 w-24 rounded border px-3 py-1.5 text-sm" />
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Tiempo (min)</label>
+                <label className="block text-xs text-ink-soft">Tiempo (min)</label>
                 <input type="number" value={tiempo} onChange={(e) => setTiempo(e.target.value)} className="mt-1 w-20 rounded border px-3 py-1.5 text-sm" />
               </div>
             </div>
             <div>
-              <label className="block text-xs text-gray-600">Descripcion</label>
+              <label className="block text-xs text-ink-soft">Descripcion</label>
               <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} className="mt-1 w-full rounded border px-3 py-1.5 text-sm" rows={2} />
             </div>
 
             {/* Componentes */}
             <div>
               <div className="flex items-center justify-between">
-                <label className="text-xs font-medium text-gray-600">Componentes BOM</label>
+                <label className="text-xs font-medium text-ink-soft">Componentes BOM</label>
                 <button type="button" onClick={addComponent} className="text-xs text-blue-600 hover:text-blue-800">+ Agregar componente</button>
               </div>
               {componentes.map((c, idx) => (
-                <div key={idx} className="mt-2 flex flex-wrap items-end gap-2 rounded bg-gray-50 p-2">
+                <div key={idx} className="mt-2 flex flex-wrap items-end gap-2 rounded bg-surface/50 p-2">
                   <div>
-                    <label className="block text-xs text-gray-500">Producto</label>
+                    <label className="block text-xs text-ink-faint">Producto</label>
                     <select value={c.componenteId} onChange={(e) => updateComponent(idx, 'componenteId', e.target.value)} required className="rounded border px-2 py-1 text-xs">
                       <option value="">Seleccionar</option>
                       {products.map((p) => (
@@ -166,20 +166,20 @@ export default function RecipePage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500">Cantidad</label>
+                    <label className="block text-xs text-ink-faint">Cantidad</label>
                     <input type="number" step="0.0001" value={c.cantidad} onChange={(e) => updateComponent(idx, 'cantidad', e.target.value)} required className="w-20 rounded border px-2 py-1 text-xs" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500">Unidad</label>
+                    <label className="block text-xs text-ink-faint">Unidad</label>
                     <input value={c.unidadMedida} onChange={(e) => updateComponent(idx, 'unidadMedida', e.target.value)} required className="w-16 rounded border px-2 py-1 text-xs" />
                   </div>
                   <div className="flex items-center gap-1">
                     <input type="checkbox" checked={c.esMermaEsperada} onChange={(e) => updateComponent(idx, 'esMermaEsperada', e.target.checked)} className="h-3 w-3" />
-                    <label className="text-xs text-gray-500">Merma esperada</label>
+                    <label className="text-xs text-ink-faint">Merma esperada</label>
                   </div>
                   {c.esMermaEsperada && (
                     <div>
-                      <label className="block text-xs text-gray-500">% Merma</label>
+                      <label className="block text-xs text-ink-faint">% Merma</label>
                       <input type="number" step="0.01" value={c.porcentajeMermaEsperado} onChange={(e) => updateComponent(idx, 'porcentajeMermaEsperado', e.target.value)} className="w-16 rounded border px-2 py-1 text-xs" />
                     </div>
                   )}
@@ -193,23 +193,23 @@ export default function RecipePage() {
         </section>
 
         {/* ── Lista ────────────────────────────────────────────────── */}
-        <section className="rounded-lg bg-white p-4 shadow">
-          <h3 className="mb-3 text-base font-semibold text-gray-800">Recetas</h3>
+        <section className="rounded-lg bg-surface p-4 shadow">
+          <h3 className="mb-3 text-base font-semibold text-ink">Recetas</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b bg-gray-50">
-                  <th className="px-3 py-2 font-medium text-gray-600">Nombre</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">PT</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Cantidad</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Costo Est.</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Componentes</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Acciones</th>
+                <tr className="border-b bg-surface/50">
+                  <th className="px-3 py-2 font-medium text-ink-soft">Nombre</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">PT</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Cantidad</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Costo Est.</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Componentes</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {recipes.map((r) => (
-                  <tr key={r.id} className="border-b hover:bg-gray-50">
+                  <tr key={r.id} className="border-b hover:bg-surface/50">
                     <td className="px-3 py-2">{r.nombre}</td>
                     <td className="px-3 py-2">{r.productoTerminadoNombre || `#${r.productoTerminadoId}`}</td>
                     <td className="px-3 py-2">{r.cantidadProducida} {r.unidadMedida}</td>
@@ -220,18 +220,18 @@ export default function RecipePage() {
                     </td>
                   </tr>
                 ))}
-                {recipes.length === 0 && <tr><td colSpan={6} className="px-3 py-4 text-center text-gray-400">Sin recetas</td></tr>}
+                {recipes.length === 0 && <tr><td colSpan={6} className="px-3 py-4 text-center text-ink-faint">Sin recetas</td></tr>}
               </tbody>
             </table>
           </div>
         </section>
 
         {/* ── Explosion BOM ────────────────────────────────────────── */}
-        <section className="rounded-lg bg-white p-4 shadow">
-          <h3 className="mb-3 text-base font-semibold text-gray-800">Explosion BOM</h3>
+        <section className="rounded-lg bg-surface p-4 shadow">
+          <h3 className="mb-3 text-base font-semibold text-ink">Explosion BOM</h3>
           <div className="mb-3 flex items-end gap-3">
             <div>
-              <label className="block text-xs text-gray-600">Receta</label>
+              <label className="block text-xs text-ink-soft">Receta</label>
               <select value={explosionRecipeId} onChange={(e) => setExplosionRecipeId(e.target.value)} className="mt-1 rounded border px-3 py-1.5 text-sm">
                 <option value="">Seleccionar...</option>
                 {recipes.map((r) => (
@@ -240,7 +240,7 @@ export default function RecipePage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-600">Cantidad</label>
+              <label className="block text-xs text-ink-soft">Cantidad</label>
               <input type="number" value={explosionCantidad} onChange={(e) => setExplosionCantidad(e.target.value)} className="mt-1 w-20 rounded border px-3 py-1.5 text-sm" />
             </div>
             <button onClick={handleExplosion} className="rounded bg-green-600 px-4 py-1.5 text-sm text-white hover:bg-green-700">Explotar</button>
@@ -248,17 +248,17 @@ export default function RecipePage() {
 
           {explosion && (
             <div>
-              <p className="mb-2 text-sm text-gray-600">
+              <p className="mb-2 text-sm text-ink-soft">
                 <strong>Receta:</strong> {explosion.recipeNombre} | <strong>Cantidad:</strong> {explosion.cantidadAProducir}
               </p>
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50">
-                    <th className="px-3 py-2 font-medium text-gray-600">Producto</th>
-                    <th className="px-3 py-2 font-medium text-gray-600">Tipo</th>
-                    <th className="px-3 py-2 font-medium text-gray-600">Cantidad</th>
-                    <th className="px-3 py-2 font-medium text-gray-600">Costo</th>
-                    <th className="px-3 py-2 font-medium text-gray-600">Stock</th>
+                  <tr className="border-b bg-surface/50">
+                    <th className="px-3 py-2 font-medium text-ink-soft">Producto</th>
+                    <th className="px-3 py-2 font-medium text-ink-soft">Tipo</th>
+                    <th className="px-3 py-2 font-medium text-ink-soft">Cantidad</th>
+                    <th className="px-3 py-2 font-medium text-ink-soft">Costo</th>
+                    <th className="px-3 py-2 font-medium text-ink-soft">Stock</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -283,8 +283,8 @@ export default function RecipePage() {
 
         {/* ── Cost Estimate ──────────────────────────────────────── */}
         {costEstimate && (
-          <section className="rounded-lg bg-white p-4 shadow">
-            <h3 className="mb-3 text-base font-semibold text-gray-800">Costo Estimado</h3>
+          <section className="rounded-lg bg-surface p-4 shadow">
+            <h3 className="mb-3 text-base font-semibold text-ink">Costo Estimado</h3>
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div><strong>Costo Total:</strong> ${costEstimate.costoTotalEstimado?.toFixed(2)}</div>
               <div><strong>Costo Unitario:</strong> ${costEstimate.costoUnitarioEstimado?.toFixed(2)}</div>
@@ -292,11 +292,11 @@ export default function RecipePage() {
             </div>
             <table className="mt-3 w-full text-left text-sm">
               <thead>
-                <tr className="border-b bg-gray-50">
-                  <th className="px-3 py-2 font-medium text-gray-600">Componente</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Cantidad</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Precio Unit.</th>
-                  <th className="px-3 py-2 font-medium text-gray-600">Subtotal</th>
+                <tr className="border-b bg-surface/50">
+                  <th className="px-3 py-2 font-medium text-ink-soft">Componente</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Cantidad</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Precio Unit.</th>
+                  <th className="px-3 py-2 font-medium text-ink-soft">Subtotal</th>
                 </tr>
               </thead>
               <tbody>
@@ -316,3 +316,5 @@ export default function RecipePage() {
     </Layout>
   );
 }
+
+

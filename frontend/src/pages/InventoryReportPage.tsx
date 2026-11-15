@@ -67,14 +67,14 @@ export default function InventoryReportPage() {
           )}
 
           {/* Movimientos recientes */}
-          <div className="rounded-lg bg-white shadow-sm">
-            <h3 className="px-4 pt-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
+          <div className="rounded-lg bg-surface ">
+            <h3 className="px-4 pt-4 text-sm font-semibold uppercase tracking-wider text-ink-faint">
               Movimientos Recientes
             </h3>
             {data.movimientosRecientes.length > 0 ? (
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-gray-50 text-left text-xs uppercase text-gray-500">
+                  <tr className="border-b bg-surface/50 text-left text-xs uppercase text-ink-faint">
                     <th className="px-4 py-3">Producto</th>
                     <th className="px-4 py-3">Tipo</th>
                     <th className="px-4 py-3 text-right">Cantidad</th>
@@ -84,8 +84,8 @@ export default function InventoryReportPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {data.movimientosRecientes.map((m, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 font-medium text-gray-800">{m.productName}</td>
+                    <tr key={idx} className="hover:bg-surface/50">
+                      <td className="px-4 py-2 font-medium text-ink">{m.productName}</td>
                       <td className="px-4 py-2">
                         <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                           m.tipo.startsWith('ENTRADA') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -94,14 +94,14 @@ export default function InventoryReportPage() {
                         </span>
                       </td>
                       <td className="px-4 py-2 text-right font-medium">{m.cantidad}</td>
-                      <td className="px-4 py-2 text-gray-500">{m.referencia || '—'}</td>
-                      <td className="px-4 py-2 text-gray-500">{m.fecha}</td>
+                      <td className="px-4 py-2 text-ink-faint">{m.referencia || '—'}</td>
+                      <td className="px-4 py-2 text-ink-faint">{m.fecha}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             ) : (
-              <p className="p-4 text-sm text-gray-400">Sin movimientos recientes</p>
+              <p className="p-4 text-sm text-ink-faint">Sin movimientos recientes</p>
             )}
           </div>
 
@@ -118,9 +118,11 @@ export default function InventoryReportPage() {
 
 function MetricBox({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div className="rounded-lg bg-white p-4 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">{label}</p>
-      <p className={`mt-1 text-2xl font-bold ${color || 'text-gray-900'}`}>{value}</p>
+    <div className="rounded-lg bg-surface p-4 ">
+      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint">{label}</p>
+      <p className={`mt-1 text-2xl font-bold ${color || 'text-ink'}`}>{value}</p>
     </div>
   );
 }
+
+
