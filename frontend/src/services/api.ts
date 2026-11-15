@@ -18,6 +18,10 @@ import type {
   SupplierRequest,
   CategoryResponse,
   CategoryRequest,
+  ProductResponse,
+  ProductCreateRequest,
+  ProductUpdateRequest,
+  ProductStockUpdate,
   CondicionIva,
   SaleReturnResponse,
   CreateReturnRequest,
@@ -331,6 +335,43 @@ export const categoryApi = {
 
   delete: (id: number) =>
     api.delete<void>(`/categories/${id}`),
+};
+
+// ---------------------------------------------------------------------------
+// Productos
+// ---------------------------------------------------------------------------
+
+export const productApi = {
+  getAll: (params?: {
+    page?: number;
+    size?: number;
+    sortBy?: string;
+    sortDir?: string;
+    search?: string;
+    tipo?: string;
+  }) =>
+    api.get<{ content: ProductResponse[]; totalElements: number; totalPages: number }>('/products', { params }),
+
+  getAllActive: () =>
+    api.get<ProductResponse[]>('/products'),
+
+  searchForPos: (q: string, limit = 10) =>
+    api.get<ProductResponse[]>('/products/search', { params: { q, limit } }),
+
+  getById: (id: number) =>
+    api.get<ProductResponse>(`/products/${id}`),
+
+  create: (data: ProductCreateRequest) =>
+    api.post<ProductResponse>('/products', data),
+
+  update: (id: number, data: ProductUpdateRequest) =>
+    api.put<ProductResponse>(`/products/${id}`, data),
+
+  updateStock: (id: number, quantity: number) =>
+    api.patch<void>(`/products/${id}/stock`, undefined, { params: { quantity } }),
+
+  delete: (id: number) =>
+    api.delete<void>(`/products/${id}`),
 };
 
 // ---------------------------------------------------------------------------

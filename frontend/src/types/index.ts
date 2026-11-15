@@ -45,12 +45,16 @@ export interface ProductResponse {
   id: number;
   name: string;
   sku: string;
+  description: string | null;
   price: number;
   stock: number;
-  categoryId: number | null;
-  categoryName: string | null;
+  tipo: ProductTipo;
+  costoProduccion: number | null;
+  stockReservado: number | null;
+  category: ProductCategory | null;
   active: boolean;
-  tipo: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CartItem {
@@ -299,6 +303,43 @@ export interface CategoryRequest {
   name: string;
   description?: string;
   active?: boolean;
+}
+
+// ──────────────────────────────────────────────
+// Productos
+// ──────────────────────────────────────────────
+
+export type ProductTipo = 'PRODUCTO' | 'SERVICIO' | 'MATERIA_PRIMA';
+
+export interface ProductCategory {
+  id: number;
+  name: string;
+}
+
+export interface ProductCreateRequest {
+  sku: string;
+  name: string;
+  description?: string;
+  price: number;
+  stock: number;
+  tipo?: ProductTipo;
+  costoProduccion?: number;
+  categoryId?: number;
+}
+
+export interface ProductUpdateRequest {
+  sku?: string;
+  name?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  tipo?: ProductTipo;
+  costoProduccion?: number;
+  categoryId?: number;
+}
+
+export interface ProductStockUpdate {
+  quantity: number;
 }
 
 // ──────────────────────────────────────────────
