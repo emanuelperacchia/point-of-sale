@@ -16,6 +16,8 @@ import type {
   BranchRequest,
   SupplierResponse,
   SupplierRequest,
+  CategoryResponse,
+  CategoryRequest,
   CondicionIva,
   SaleReturnResponse,
   CreateReturnRequest,
@@ -305,6 +307,30 @@ export const supplierApi = {
 
   delete: (id: number) =>
     api.delete<void>(`/suppliers/${id}`),
+};
+
+// ---------------------------------------------------------------------------
+// Categorías
+// ---------------------------------------------------------------------------
+
+export const categoryApi = {
+  getAll: (params?: { page?: number; size?: number; sortBy?: string; sortDir?: string; search?: string }) =>
+    api.get<{ content: CategoryResponse[]; totalElements: number; totalPages: number }>('/categories', { params }),
+
+  getAllActive: () =>
+    api.get<CategoryResponse[]>('/categories/active'),
+
+  getById: (id: number) =>
+    api.get<CategoryResponse>(`/categories/${id}`),
+
+  create: (data: CategoryRequest) =>
+    api.post<CategoryResponse>('/categories', data),
+
+  update: (id: number, data: CategoryRequest) =>
+    api.put<CategoryResponse>(`/categories/${id}`, data),
+
+  delete: (id: number) =>
+    api.delete<void>(`/categories/${id}`),
 };
 
 // ---------------------------------------------------------------------------

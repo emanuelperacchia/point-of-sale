@@ -283,6 +283,25 @@ export interface SupplierRequest {
 }
 
 // ──────────────────────────────────────────────
+// Categorías
+// ──────────────────────────────────────────────
+
+export interface CategoryResponse {
+  id: number;
+  name: string;
+  description: string | null;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CategoryRequest {
+  name: string;
+  description?: string;
+  active?: boolean;
+}
+
+// ──────────────────────────────────────────────
 // Devoluciones (US-019a)
 // ──────────────────────────────────────────────
 
