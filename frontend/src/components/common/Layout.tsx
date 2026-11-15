@@ -15,6 +15,8 @@ const navItems = [
   { to: '/productos', label: 'Productos' },
   { to: '/precios', label: 'Precios' },
   { to: '/usuarios', label: 'Usuarios' },
+  { to: '/empleados', label: 'Empleados' },
+  { to: '/ventas', label: 'Ventas' },
   { to: '/reports/consolidated', label: 'Corporativo' },
   { to: '/reports/sales-advanced', label: 'Reportes Ventas' },
   { to: '/analysis/products', label: 'Análisis ABC' },

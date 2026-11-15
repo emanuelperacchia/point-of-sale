@@ -9,6 +9,8 @@ import CategoriesPage from './pages/CategoriesPage';
 import ProductsPage from './pages/ProductsPage';
 import PricesPage from './pages/PricesPage';
 import UsersPage from './pages/UsersPage';
+import EmployeesPage from './pages/EmployeesPage';
+import SalesHistoryPage from './pages/SalesHistoryPage';
 import RegisterPage from './pages/RegisterPage';
 import CommissionPage from './pages/CommissionPage';
 import PayrollListPage from './pages/PayrollListPage';
@@ -79,6 +81,22 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <UsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/empleados"
+            element={
+              <ProtectedRoute>
+                <EmployeesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ventas"
+            element={
+              <ProtectedRoute>
+                <SalesHistoryPage />
               </ProtectedRoute>
             }
           />
