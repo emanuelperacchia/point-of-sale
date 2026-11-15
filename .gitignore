@@ -37,3 +37,9 @@ test-output.txt
 
 ### Security reports ###
 zap-reports/
+
+### Android ###
+android/app/*.jks
+android/app/*.keystore
+android/app/signing.properties
+android/local.properties

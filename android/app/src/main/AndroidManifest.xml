@@ -16,7 +16,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.POSAndroid"
-        android:usesCleartextTraffic="true"
         tools:targetApi="34">
 
         <activity

@@ -10,6 +10,33 @@ android {
     namespace = "com.pos.android"
     compileSdk = 35
 
+    // ── Signing configuration ──
+    val signingProperties = file("signing.properties")
+    val signingProps = java.util.Properties()
+    if (signingProperties.exists()) {
+        signingProps.load(java.io.FileInputStream(signingProperties))
+    }
+
+    val releaseStoreFile = signingProps.getProperty("nivex.release.storeFile", "")
+    val releaseStorePassword = signingProps.getProperty("nivex.release.storePassword", "")
+    val releaseKeyAlias = signingProps.getProperty("nivex.release.keyAlias", "")
+    val releaseKeyPassword = signingProps.getProperty("nivex.release.keyPassword", "")
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(releaseStoreFile)
+            storePassword = releaseStorePassword
+            keyAlias = releaseKeyAlias
+            keyPassword = releaseKeyPassword
+        }
+        create("debug") {
+            storeFile = file(debugStoreFile)
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.pos.android"
         minSdk = 26
@@ -30,12 +57,18 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"https://api.pos.com/api/\"")
-            buildConfigField("String", "PUBLIC_URL", "\"https://api.pos.com/public/v1/\"")
+            buildConfigField("String", "BASE_URL", "\"https://api.nivex.com/api/\"")
+            buildConfigField("String", "PUBLIC_URL", "\"https://api.nivex.com/public/v1/\"")
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/api/\"")
+            buildConfigField("String", "PUBLIC_URL", "\"http://10.0.2.2:8080/public/v1/\"")
         }
     }
 
