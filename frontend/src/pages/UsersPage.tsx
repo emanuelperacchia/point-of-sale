@@ -106,15 +106,13 @@ export default function UsersPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {userPermissions.length > 0 ? (
-              userPermissions.map((perm) => (
-                <span key={perm} className="px-2.5 py-1 rounded-md text-xs font-medium bg-accent/10 text-accent border border-accent/20">
-                  {perm}
-                </span>
-              ))
-            : (
-              <span className="text-xs text-ink-faint">Sin permisos asignados</span>
-            )}
+            {userPermissions.length > 0
+              ? userPermissions.map((perm) => (
+                  <span key={perm} className="px-2.5 py-1 rounded-md text-xs font-medium bg-accent/10 text-accent border border-accent/20">
+                    {perm}
+                  </span>
+                ))
+              : <span className="text-xs text-ink-faint">Sin permisos asignados</span>}
           </div>
         </div>
 
