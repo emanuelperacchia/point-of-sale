@@ -166,7 +166,7 @@ export default function ShiftsPage() {
                     <label className="mb-1 block text-sm font-medium text-ink-soft">
                       Cajero
                     </label>
-                    <p className="text-ink">{currentShift.cajeroNombre}</td>
+                    <p className="text-ink">{currentShift.cajeroNombre}</p>
                   </div>
                   <div>
                     <label className="mb-1 block text-sm font-medium text-ink-soft">
