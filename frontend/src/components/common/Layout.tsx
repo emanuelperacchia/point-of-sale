@@ -9,6 +9,12 @@ interface LayoutProps {
 const navItems = [
   { to: '/pos', label: 'POS' },
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/sucursales', label: 'Sucursales' },
+  { to: '/proveedores', label: 'Proveedores' },
+  { to: '/categorias', label: 'Categorías' },
+  { to: '/productos', label: 'Productos' },
+  { to: '/precios', label: 'Precios' },
+  { to: '/usuarios', label: 'Usuarios' },
   { to: '/reports/consolidated', label: 'Corporativo' },
   { to: '/reports/sales-advanced', label: 'Reportes Ventas' },
   { to: '/analysis/products', label: 'Análisis ABC' },
