@@ -9,6 +9,7 @@ import CategoriesPage from './pages/CategoriesPage';
 import ProductsPage from './pages/ProductsPage';
 import PricesPage from './pages/PricesPage';
 import UsersPage from './pages/UsersPage';
+import RegisterPage from './pages/RegisterPage';
 import CommissionPage from './pages/CommissionPage';
 import PayrollListPage from './pages/PayrollListPage';
 import PayrollDetailPage from './pages/PayrollDetailPage';
@@ -32,6 +33,7 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/registro" element={<RegisterPage />} />
           <Route
             path="/sucursales"
             element={

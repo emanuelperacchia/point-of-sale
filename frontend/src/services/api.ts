@@ -26,6 +26,7 @@ import type {
   BranchPriceResponse,
   BranchPriceRequest,
   UserResponse,
+  RegisterRequest,
   CondicionIva,
   SaleReturnResponse,
   CreateReturnRequest,
@@ -188,6 +189,9 @@ export const authApi = {
     api.post('/auth/logout', { refreshToken }),
 
   me: () => api.get<User>('/auth/me'),
+
+  register: (data: RegisterRequest) =>
+    api.post<AuthResponse>('/auth/register', data),
 };
 
 // ---------------------------------------------------------------------------

@@ -397,6 +397,19 @@ export interface UserResponse {
 }
 
 // ──────────────────────────────────────────────
+// Registro (Ley 25.326)
+// ──────────────────────────────────────────────
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  termsAccepted: boolean;
+}
+
+// ──────────────────────────────────────────────
 // Devoluciones (US-019a)
 // ──────────────────────────────────────────────
 
