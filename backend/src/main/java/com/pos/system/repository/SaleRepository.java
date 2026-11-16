@@ -65,7 +65,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     List<Object[]> findTopProducts(@Param("desde") LocalDateTime desde, @Param("hasta") LocalDateTime hasta);
 
     @Query(value = """
-            SELECT u.id, COALESCE(CONCAT(e.nombre, ' ', e.apellido), u.username),
+            SELECT u.id, COALESCE(CONCAT(e.nombre, ' ', e.apellido), u.email),
                    COALESCE(SUM(s.total), 0), COUNT(DISTINCT s.id)
             FROM sales s
             JOIN users u ON u.id = s.user_id
@@ -73,7 +73,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             WHERE s.status = 'COMPLETED'
               AND s.created_at >= :desde
               AND s.created_at < :hasta
-            GROUP BY u.id, e.nombre, e.apellido, u.username
+            GROUP BY u.id, e.nombre, e.apellido, u.email
             ORDER BY COALESCE(SUM(s.total), 0) DESC
             LIMIT 5
             """, nativeQuery = true)
