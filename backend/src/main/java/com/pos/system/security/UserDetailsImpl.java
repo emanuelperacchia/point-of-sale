@@ -23,11 +23,22 @@ public class UserDetailsImpl implements UserDetails {
         this.id = user.getId();
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().name()))
-                .collect(Collectors.toList());
         this.enabled = user.getActive();
         this.user = user;
+
+        // Mapear roles como ROLE_* y permisos del rol como autoridades
+        this.authorities = user.getRoles().stream()
+                .flatMap(role -> {
+                    // Agregar el rol como autoridad (ROLE_ADMIN, etc.)
+                    java.util.stream.Stream<SimpleGrantedAuthority> roleAuth =
+                            java.util.stream.Stream.of(new SimpleGrantedAuthority("ROLE_" + role.getName().name()));
+                    // Agregar los permisos del rol como autoridades (COMPRAS_READ, ADMIN_ALL, etc.)
+                    java.util.stream.Stream<SimpleGrantedAuthority> permAuth =
+                            role.getPermissions().stream()
+                                    .map(perm -> new SimpleGrantedAuthority(perm.getName().name()));
+                    return java.util.stream.Stream.concat(roleAuth, permAuth);
+                })
+                .collect(Collectors.toList());
     }
 
     @Override

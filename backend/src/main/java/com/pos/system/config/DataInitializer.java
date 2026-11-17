@@ -79,7 +79,16 @@ public class DataInitializer implements CommandLineRunner {
         Role adminRole = Role.builder()
                 .name(RoleName.ADMIN)
                 .description("Administrador del sistema")
-                .permissions(Set.of(adminPerm))
+                .permissions(Set.of(
+                        // ADMIN_ALL cubre todo, pero agregamos permisos específicos para compatibilidad
+                        adminPerm,
+                        ventasPerm, ventasCreate, ventasUpdate, ventasDelete, ventasRefund,
+                        comprasRead, comprasCreate, comprasUpdate, comprasDelete,
+                        inventarioPerm, inventarioCreate, inventarioUpdate, inventarioDelete, inventarioAjuste,
+                        usuariosRead, usuariosCreate, usuariosUpdate, usuariosDelete,
+                        reportesRead, reportesExport,
+                        finanzasRead, finanzasCreate, finanzasUpdate
+                ))
                 .build();
 
         Role gerenteRole = Role.builder()
