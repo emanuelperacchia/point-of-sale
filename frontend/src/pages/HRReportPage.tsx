@@ -78,7 +78,7 @@ export default function HRReportPage() {
             <h3 className="px-4 pt-4 text-sm font-semibold uppercase tracking-wider text-ink-faint">
               Productividad por Vendedor
             </h3>
-            {data.productividadVendedores.length > 0 ? (
+            {(data.productividadVendedores || []).length > 0 ? (
               <table className="min-w-full text-sm">
                 <thead>
                   <tr className="border-b bg-surface/50 text-left text-xs uppercase text-ink-faint">

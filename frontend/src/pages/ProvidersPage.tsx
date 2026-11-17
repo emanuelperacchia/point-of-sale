@@ -428,7 +428,7 @@ export default function ProvidersPage() {
                         onChange={(e) => handleInputChange('paymentTerm', e.target.value as PaymentTerm)}
                         className="w-full rounded-md border border-surface-raised bg-surface px-3 py-2 text-ink focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
                       >
-                        {Object.entries(PAYMENT_TERM_LABELS).map(([key, label]) => (
+                        {Object.entries(PAYMENT_TERM_LABELS || {}).map(([key, label]) => (
                           <option key={key} value={key as PaymentTerm}>
                             {label}
                           </option>
