@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import Layout from '../components/common/Layout';
 import { supplierApi } from '../services/api';
-import type { SupplierResponse, SupplierRequest, PaymentTerm, PAYMENT_TERM_LABELS } from '../types';
+import type { SupplierResponse, SupplierRequest, PaymentTerm } from '../types';
+import { PAYMENT_TERM_LABELS } from '../types';
 
 export default function ProvidersPage() {
   const [suppliers, setSuppliers] = useState<SupplierResponse[]>([]);
