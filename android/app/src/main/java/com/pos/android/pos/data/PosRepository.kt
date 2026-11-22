@@ -103,4 +103,72 @@ class PosRepository @Inject constructor(
     }
 
     fun isOnline(): Boolean = connectivityObserver.isCurrentlyConnected()
+
+    // ── Clients ──
+
+    suspend fun searchClients(query: String): ApiResult<List<ClientSearchResponse>> {
+        return try {
+            val response = posApi.searchClients(query)
+            ApiResult.success(response)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Error al buscar clientes")
+        }
+    }
+
+    // ── Invoices ──
+
+    suspend fun getInvoiceBySaleId(saleId: Long): ApiResult<InvoiceResponse?> {
+        return try {
+            val invoices = posApi.getInvoicesBySaleId(saleId)
+            ApiResult.success(invoices.firstOrNull())
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Error al obtener comprobante")
+        }
+    }
+
+    // ── Promotions ──
+
+    suspend fun getActivePromotions(): ApiResult<List<PromotionResponse>> {
+        return try {
+            val promotions = posApi.getPromotions()
+            ApiResult.success(promotions.filter { it.activa == true })
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Error al obtener promociones")
+        }
+    }
+
+    // ── Sales History ──
+
+    suspend fun getSales(page: Int = 0, size: Int = 20): ApiResult<SalesPage> {
+        return try {
+            val response = posApi.getSales(page, size)
+            val contentList = (response["content"] as? List<Map<String, Any>>)?.mapNotNull { map ->
+                gson.fromJson(gson.toJson(map), SaleResponse::class.java)
+            } ?: emptyList()
+            val totalPages = (response["totalPages"] as? Double)?.toInt() ?: 0
+            val totalElements = (response["totalElements"] as? Double)?.toLong() ?: 0L
+            val currentPage = (response["number"] as? Double)?.toInt() ?: 0
+            ApiResult.success(SalesPage(contentList, totalPages, totalElements, currentPage))
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Error al obtener historial de ventas")
+        }
+    }
+
+    suspend fun getSaleDetail(id: Long): ApiResult<SaleResponse> {
+        return try {
+            val response = posApi.getSaleDetail(id)
+            ApiResult.success(response)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Error al obtener detalle de venta")
+        }
+    }
+}
+
+data class SalesPage(
+    val content: List<SaleResponse>,
+    val totalPages: Int,
+    val totalElements: Long,
+    val currentPage: Int
+) {
+    val hasMore: Boolean get() = currentPage < totalPages - 1
 }

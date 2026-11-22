@@ -40,6 +40,9 @@ import com.pos.android.inventory.ui.scanner.BarcodeScannerScreen
 import com.pos.android.pos.ui.PosScreen
 import com.pos.android.pos.ui.PosViewModel
 import com.pos.android.pos.ui.PaymentScreen
+import com.pos.android.pos.ui.saleshistory.SaleDetailScreen
+import com.pos.android.pos.ui.saleshistory.SalesHistoryScreen
+import com.pos.android.cashshift.ui.CashShiftScreen
 import com.pos.android.shifts.ui.ShiftScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -91,6 +94,7 @@ fun POSNavHost(tokenStorage: TokenStorage) {
     val bottomNavItems = remember(posUiState.pendingSaleCount, notificationState.unreadCount) {
         listOf(
             BottomNavItem(Routes.DASHBOARD, "Dashboard", Icons.Default.Dashboard, badgeCount = notificationState.unreadCount),
+            BottomNavItem(Routes.CASH_SHIFT, "Caja", Icons.Default.AccountBalance),
             BottomNavItem(Routes.POS, "POS", Icons.Default.PointOfSale, badgeCount = posUiState.pendingSaleCount),
             BottomNavItem(Routes.INVENTORY_SEARCH, "Stock", Icons.Default.Inventory2),
             BottomNavItem(Routes.ATTENDANCE, "Asistencia", Icons.Default.Fingerprint),
@@ -256,6 +260,36 @@ fun POSNavHost(tokenStorage: TokenStorage) {
             // ── Attendance ──
             composable(Routes.ATTENDANCE) {
                 AttendanceScreen()
+            }
+
+            // ── Cash Shift (Caja) ──
+            composable(Routes.CASH_SHIFT) {
+                CashShiftScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToSalesHistory = {
+                        navController.navigate(Routes.SALES_HISTORY)
+                    }
+                )
+            }
+
+            // ── Sales History ──
+            composable(Routes.SALES_HISTORY) {
+                SalesHistoryScreen(
+                    onBack = { navController.popBackStack() },
+                    onSaleClick = { saleId ->
+                        navController.navigate(Routes.saleDetail(saleId))
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.SALE_DETAIL,
+                arguments = listOf(navArgument("saleId") { type = NavType.LongType })
+            ) {
+                SaleDetailScreen(
+                    saleId = it.arguments?.getLong("saleId") ?: return@composable,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             // ── Shifts ──

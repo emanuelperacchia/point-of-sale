@@ -33,7 +33,15 @@ object Routes {
     // Shifts
     const val SHIFTS = "shifts"
 
+    // Cash Shift (Caja)
+    const val CASH_SHIFT = "cash-shift"
+
+    // Sales History
+    const val SALES_HISTORY = "sales-history"
+    const val SALE_DETAIL = "sales-history/{saleId}"
+
     // Helpers
     fun payment(total: Double) = "pos/payment/$total"
     fun inventoryDetail(productId: Long) = "inventory/detail/$productId"
+    fun saleDetail(saleId: Long) = "sales-history/$saleId"
 }

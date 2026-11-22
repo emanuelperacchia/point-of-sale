@@ -76,6 +76,46 @@ data class CartValidationItemResult(
     @SerializedName("error") val error: String?
 )
 
+// ── Client ──
+
+data class ClientSearchResponse(
+    @SerializedName("id") val id: Long,
+    @SerializedName("name") val name: String,
+    @SerializedName("documentType") val documentType: String?,
+    @SerializedName("documentNumber") val documentNumber: String?,
+    @SerializedName("email") val email: String?,
+    @SerializedName("phone") val phone: String?,
+    @SerializedName("condicionIva") val condicionIva: String?
+)
+
+// ── Invoice ──
+
+data class InvoiceResponse(
+    @SerializedName("id") val id: Long,
+    @SerializedName("saleId") val saleId: Long,
+    @SerializedName("tipoComprobante") val tipoComprobante: String?,
+    @SerializedName("puntoVenta") val puntoVenta: Int?,
+    @SerializedName("numero") val numero: Long?,
+    @SerializedName("cae") val cae: String?,
+    @SerializedName("fechaCae") val fechaCae: String?,
+    @SerializedName("estado") val estado: String?,
+    @SerializedName("motivoRechazo") val motivoRechazo: String?,
+    @SerializedName("receptorNombre") val receptorNombre: String?,
+    @SerializedName("receptorDocumento") val receptorDocumento: String?,
+    @SerializedName("receptorCondicionIva") val receptorCondicionIva: String?,
+    @SerializedName("createdAt") val createdAt: String?
+)
+
+// ── Promotion ──
+
+data class PromotionResponse(
+    @SerializedName("id") val id: Long,
+    @SerializedName("nombre") val nombre: String?,
+    @SerializedName("tipo") val tipo: String?,
+    @SerializedName("valor") val valor: Double?,
+    @SerializedName("activa") val activa: Boolean?
+)
+
 // ── Error ──
 
 data class ErrorResponse(

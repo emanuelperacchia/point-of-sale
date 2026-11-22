@@ -1,3 +1,7 @@
+import java.io.File
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -11,30 +15,30 @@ android {
     compileSdk = 35
 
     // ── Signing configuration ──
-    val signingProperties = file("signing.properties")
-    val signingProps = java.util.Properties()
-    if (signingProperties.exists()) {
-        signingProps.load(java.io.FileInputStream(signingProperties))
-    }
+    val signingProperties = project.file("signing.properties")
+    val signingProps = Properties()
 
-    val releaseStoreFile = signingProps.getProperty("nivex.release.storeFile", "")
-    val releaseStorePassword = signingProps.getProperty("nivex.release.storePassword", "")
-    val releaseKeyAlias = signingProps.getProperty("nivex.release.keyAlias", "")
-    val releaseKeyPassword = signingProps.getProperty("nivex.release.keyPassword", "")
+    var releaseStoreFile = ""
+    var releaseStorePassword = ""
+    var releaseKeyAlias = ""
+    var releaseKeyPassword = ""
+
+    if (signingProperties.exists()) {
+        signingProps.load(FileInputStream(signingProperties))
+        releaseStoreFile = signingProps.getProperty("nivex.release.storeFile", "")
+        releaseStorePassword = signingProps.getProperty("nivex.release.storePassword", "")
+        releaseKeyAlias = signingProps.getProperty("nivex.release.keyAlias", "")
+        releaseKeyPassword = signingProps.getProperty("nivex.release.keyPassword", "")
+    }
 
     signingConfigs {
         create("release") {
-            storeFile = file(releaseStoreFile)
-            storePassword = releaseStorePassword
-            keyAlias = releaseKeyAlias
-            keyPassword = releaseKeyPassword
+            storeFile = if (releaseStoreFile.isNotEmpty()) file(releaseStoreFile) else file("debug.keystore")
+            storePassword = if (releaseStorePassword.isNotEmpty()) releaseStorePassword else "android"
+            keyAlias = if (releaseKeyAlias.isNotEmpty()) releaseKeyAlias else "androiddebugkey"
+            keyPassword = if (releaseKeyPassword.isNotEmpty()) releaseKeyPassword else "android"
         }
-        create("debug") {
-            storeFile = file(debugStoreFile)
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
+        // NO crear "debug" - Android ya lo crea automáticamente
     }
 
     defaultConfig {
@@ -94,13 +98,10 @@ android {
 }
 
 dependencies {
-    // Core
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
-
-    // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
@@ -109,52 +110,29 @@ dependencies {
     implementation(libs.compose.material.icons)
     implementation(libs.compose.activity)
     debugImplementation(libs.compose.ui.tooling)
-
-    // Navigation
     implementation(libs.navigation.compose)
-
-    // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
-
-    // Retrofit + OkHttp
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
-
-    // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
-
-    // ML Kit
     implementation(libs.mlkit.barcode)
-
-    // CameraX
     implementation(libs.camerax.core)
     implementation(libs.camerax.camera2)
     implementation(libs.camerax.lifecycle)
     implementation(libs.camerax.view)
-
-    // Coil
     implementation(libs.coil.compose)
-
-    // WorkManager
     implementation(libs.work.runtime.ktx)
     implementation(libs.hilt.work)
-
-    // Vico Charts
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
     implementation(libs.vico.core)
-
-    // Security
     implementation(libs.security.crypto)
-
-
-    // ── Testing ──
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.coroutines.test)

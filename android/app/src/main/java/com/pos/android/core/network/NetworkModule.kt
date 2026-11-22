@@ -13,6 +13,7 @@ import com.pos.android.inventory.data.ProductApi
 import com.pos.android.notification.data.NotificationApi
 import com.pos.android.pos.data.PosApi
 import com.pos.android.shifts.data.ShiftApi
+import com.pos.android.cashshift.data.CashShiftApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -158,5 +159,11 @@ object NetworkModule {
     @Singleton
     fun provideNotificationApi(retrofit: Retrofit): NotificationApi {
         return retrofit.create(NotificationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCashShiftApi(retrofit: Retrofit): CashShiftApi {
+        return retrofit.create(CashShiftApi::class.java)
     }
 }

@@ -6,11 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.pos.android.core.network.ApiResult
 import com.pos.android.pos.data.PosRepository
 import com.pos.android.pos.data.local.CartItemEntity
+import com.pos.android.pos.data.model.ClientSearchResponse
+import com.pos.android.pos.data.model.InvoiceResponse
 import com.pos.android.pos.data.model.PaymentRequest
+import com.pos.android.pos.data.model.PromotionResponse
 import com.pos.android.pos.domain.CalculateChangeUseCase
 import com.pos.android.pos.domain.ProcessSaleUseCase
 import com.pos.android.pos.domain.SaleResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +33,19 @@ data class PaymentUiState(
     val isInsufficient: Boolean = false,
     val isProcessing: Boolean = false,
     val saleResult: SaleResult? = null,
-    val error: String? = null
+    val error: String? = null,
+    // Client
+    val searchQuery: String = "",
+    val clientResults: List<ClientSearchResponse> = emptyList(),
+    val isSearchingClient: Boolean = false,
+    val selectedClient: ClientSearchResponse? = null,
+    // Coupon
+    val couponCode: String = "",
+    // Promotions
+    val promotions: List<PromotionResponse> = emptyList(),
+    // Invoice
+    val invoice: InvoiceResponse? = null,
+    val isLoadingInvoice: Boolean = false
 )
 
 @HiltViewModel
@@ -44,14 +61,30 @@ class PaymentViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PaymentUiState(total = total))
     val uiState: StateFlow<PaymentUiState> = _uiState.asStateFlow()
 
+    private var searchJob: Job? = null
+
     init {
         loadCart()
+        loadPromotions()
     }
 
     private fun loadCart() {
         viewModelScope.launch {
             val items = posRepository.getCartItems()
             _uiState.value = _uiState.value.copy(cartItems = items)
+        }
+    }
+
+    private fun loadPromotions() {
+        viewModelScope.launch {
+            when (val result = posRepository.getActivePromotions()) {
+                is ApiResult.Success -> {
+                    _uiState.value = _uiState.value.copy(promotions = result.data)
+                }
+                is ApiResult.Error -> {
+                    // Silencio — las promos son optativas
+                }
+            }
         }
     }
 
@@ -79,6 +112,60 @@ class PaymentViewModel @Inject constructor(
         )
     }
 
+    // ── Client Search ──
+
+    fun onClientSearchQueryChanged(query: String) {
+        _uiState.value = _uiState.value.copy(searchQuery = query)
+        searchJob?.cancel()
+        if (query.length < 2) {
+            _uiState.value = _uiState.value.copy(
+                clientResults = emptyList(),
+                isSearchingClient = false
+            )
+            return
+        }
+        searchJob = viewModelScope.launch {
+            delay(300) // debounce
+            _uiState.value = _uiState.value.copy(isSearchingClient = true)
+            when (val result = posRepository.searchClients(query)) {
+                is ApiResult.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        clientResults = result.data,
+                        isSearchingClient = false
+                    )
+                }
+                is ApiResult.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        clientResults = emptyList(),
+                        isSearchingClient = false
+                    )
+                }
+            }
+        }
+    }
+
+    fun onClientSelected(client: ClientSearchResponse) {
+        _uiState.value = _uiState.value.copy(
+            selectedClient = client,
+            searchQuery = "",
+            clientResults = emptyList()
+        )
+    }
+
+    fun onClearClient() {
+        _uiState.value = _uiState.value.copy(
+            selectedClient = null
+        )
+    }
+
+    // ── Coupon ──
+
+    fun onCouponCodeChanged(code: String) {
+        _uiState.value = _uiState.value.copy(couponCode = code)
+    }
+
+    // ── Payment ──
+
     fun processPayment() {
         val state = _uiState.value
         if (state.cartItems.isEmpty()) {
@@ -102,7 +189,9 @@ class PaymentViewModel @Inject constructor(
 
             val result = processSaleUseCase(
                 cartItems = state.cartItems,
-                payments = payments
+                payments = payments,
+                clientId = state.selectedClient?.id,
+                couponCode = state.couponCode.ifBlank { null }
             )
 
             _uiState.value = _uiState.value.copy(
@@ -110,7 +199,46 @@ class PaymentViewModel @Inject constructor(
                 saleResult = result,
                 error = result.errorMessage
             )
+
+            // Si la venta fue exitosa online, obtener comprobante
+            if (result.isSuccess) {
+                result.saleResponse?.id?.let { saleId ->
+                    loadInvoice(saleId)
+                }
+            }
         }
+    }
+
+    private suspend fun loadInvoice(saleId: Long) {
+        _uiState.value = _uiState.value.copy(isLoadingInvoice = true)
+        when (val result = posRepository.getInvoiceBySaleId(saleId)) {
+            is ApiResult.Success -> {
+                _uiState.value = _uiState.value.copy(
+                    invoice = result.data,
+                    isLoadingInvoice = false
+                )
+            }
+            is ApiResult.Error -> {
+                _uiState.value = _uiState.value.copy(isLoadingInvoice = false)
+            }
+        }
+    }
+
+    fun clearSaleResult() {
+        _uiState.value = _uiState.value.copy(
+            saleResult = null,
+            invoice = null,
+            selectedClient = null,
+            couponCode = "",
+            searchQuery = "",
+            clientResults = emptyList(),
+            receivedText = "",
+            received = 0.0,
+            change = 0.0,
+            isExact = false,
+            isInsufficient = false,
+            selectedPayment = "EFECTIVO"
+        )
     }
 
     fun clearError() {
