@@ -40,6 +40,23 @@ object Routes {
     const val SALES_HISTORY = "sales-history"
     const val SALE_DETAIL = "sales-history/{saleId}"
 
+    // Categorías
+    const val CATEGORIES = "categories"
+
+    // Proveedores
+    const val SUPPLIERS = "suppliers"
+
+    // Precios
+    const val PRICES = "prices"
+
+    // Usuarios
+    const val USERS = "users"
+
+    // Helpers
+    fun payment(total: Double) = "pos/payment/$total"
+    fun inventoryDetail(productId: Long) = "inventory/detail/$productId"
+    fun saleDetail(saleId: Long) = "sales-history/$saleId"
+
     // Helpers
     fun payment(total: Double) = "pos/payment/$total"
     fun inventoryDetail(productId: Long) = "inventory/detail/$productId"

@@ -13,7 +13,11 @@ import com.pos.android.inventory.data.ProductApi
 import com.pos.android.notification.data.NotificationApi
 import com.pos.android.pos.data.PosApi
 import com.pos.android.shifts.data.ShiftApi
+import com.pos.android.categories.data.CategoryApi
 import com.pos.android.cashshift.data.CashShiftApi
+import com.pos.android.prices.data.PriceApi
+import com.pos.android.suppliers.data.SupplierApi
+import com.pos.android.users.data.UserApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -165,5 +169,29 @@ object NetworkModule {
     @Singleton
     fun provideCashShiftApi(retrofit: Retrofit): CashShiftApi {
         return retrofit.create(CashShiftApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCategoryApi(retrofit: Retrofit): CategoryApi {
+        return retrofit.create(CategoryApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSupplierApi(retrofit: Retrofit): SupplierApi {
+        return retrofit.create(SupplierApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePriceApi(retrofit: Retrofit): PriceApi {
+        return retrofit.create(PriceApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApi(retrofit: Retrofit): UserApi {
+        return retrofit.create(UserApi::class.java)
     }
 }
