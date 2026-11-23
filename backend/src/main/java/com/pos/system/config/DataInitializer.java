@@ -1,90 +1,85 @@
 package com.pos.system.config;
 
-import com.pos.system.entity.Branch;
-import com.pos.system.entity.Permission;
-import com.pos.system.entity.Permission.PermissionName;
-import com.pos.system.entity.Role;
-import com.pos.system.entity.Role.RoleName;
-import com.pos.system.entity.User;
-import com.pos.system.entity.UserBranch;
-import com.pos.system.repository.BranchRepository;
-import com.pos.system.repository.PermissionRepository;
-import com.pos.system.repository.RoleRepository;
-import com.pos.system.repository.UserBranchRepository;
-import com.pos.system.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.pos.system.entity.permission.Permission;
+import com.pos.system.entity.system.Role;
+import com.pos.system.entity.system.User;
+import com.pos.system.repository.permission.PermissionRepository;
+import com.pos.system.repository.system.RoleRepository;
+import com.pos.system.repository.system.UserRepository;
+import com.pos.system.security.PasswordEncoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Component
-@RequiredArgsConstructor
-@Slf4j
 @Profile("!test")
 public class DataInitializer implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final UserRepository userRepository;
-    private final BranchRepository branchRepository;
-    private final UserBranchRepository userBranchRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public DataInitializer(RoleRepository roleRepository,
+                           PermissionRepository permissionRepository,
+                           UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
+        this.roleRepository = roleRepository;
+        this.permissionRepository = permissionRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional
-    public void run(String... args) {
+    public void run(String... args) throws Exception {
         if (roleRepository.count() > 0) {
-            log.info("Los datos iniciales ya existen, omitiendo inicialización");
-            return;
+            return; // Ya existe inicialización
         }
 
-        log.info("Inicializando roles y permisos...");
+        // Crear permisos
+        Permission adminAll = createPermission("ADMIN_ALL", "Acceso total");
+        Permission ventasRead = createPermission("VENTAS_READ", "Ver ventas");
+        Permission ventasCreate = createPermission("VENTAS_CREATE", "Crear ventas");
+        Permission ventasUpdate = createPermission("VENTAS_UPDATE", "Actualizar ventas");
+        Permission ventasDelete = createPermission("VENTAS_DELETE", "Eliminar ventas");
+        Permission ventasRefund = createPermission("VENTAS_REFUND", "Reembolsar ventas");
 
-        Permission adminPerm = createPermission(PermissionName.ADMIN_ALL, "Acceso total");
+        Permission comprasRead = createPermission("COMPRAS_READ", "Ver compras");
+        Permission comprasCreate = createPermission("COMPRAS_CREATE", "Crear compras");
+        Permission comprasUpdate = createPermission("COMPRAS_UPDATE", "Actualizar compras");
+        Permission comprasDelete = createPermission("COMPRAS_DELETE", "Eliminar compras");
 
-        Permission ventasPerm = createPermission(PermissionName.VENTAS_READ, "Ver ventas");
-        Permission ventasCreate = createPermission(PermissionName.VENTAS_CREATE, "Crear ventas");
-        Permission ventasUpdate = createPermission(PermissionName.VENTAS_UPDATE, "Actualizar ventas");
-        Permission ventasDelete = createPermission(PermissionName.VENTAS_DELETE, "Eliminar ventas");
-        Permission ventasRefund = createPermission(PermissionName.VENTAS_REFUND, "Reembolsar ventas");
+        Permission inventarioRead = createPermission("INVENTARIO_READ", "Ver inventario");
+        Permission inventarioCreate = createPermission("INVENTARIO_CREATE", "Crear inventario");
+        Permission inventarioUpdate = createPermission("INVENTARIO_UPDATE", "Actualizar inventario");
+        Permission inventarioDelete = createPermission("INVENTARIO_DELETE", "Eliminar inventario");
+        Permission inventarioAjuste = createPermission("INVENTARIO_AJUSTE", "Ajustar inventario");
 
-        Permission comprasRead = createPermission(PermissionName.COMPRAS_READ, "Ver compras");
-        Permission comprasCreate = createPermission(PermissionName.COMPRAS_CREATE, "Crear compras");
-        Permission comprasUpdate = createPermission(PermissionName.COMPRAS_UPDATE, "Actualizar compras");
-        Permission comprasDelete = createPermission(PermissionName.COMPRAS_DELETE, "Eliminar compras");
+        Permission usuariosRead = createPermission("USUARIOS_READ", "Ver usuarios");
+        Permission usuariosCreate = createPermission("USUARIOS_CREATE", "Crear usuarios");
+        Permission usuariosUpdate = createPermission("USUARIOS_UPDATE", "Actualizar usuarios");
+        Permission usuariosDelete = createPermission("USUARIOS_DELETE", "Eliminar usuarios");
 
-        Permission inventarioPerm = createPermission(PermissionName.INVENTARIO_READ, "Ver inventario");
-        Permission inventarioCreate = createPermission(PermissionName.INVENTARIO_CREATE, "Crear inventario");
-        Permission inventarioUpdate = createPermission(PermissionName.INVENTARIO_UPDATE, "Actualizar inventario");
-        Permission inventarioDelete = createPermission(PermissionName.INVENTARIO_DELETE, "Eliminar inventario");
-        Permission inventarioAjuste = createPermission(PermissionName.INVENTARIO_AJUSTE, "Ajustar inventario");
+        Permission reportesRead = createPermission("REPORTES_READ", "Ver reportes");
+        Permission reportesExport = createPermission("REPORTES_EXPORT", "Exportar reportes");
 
-        Permission usuariosRead = createPermission(PermissionName.USUARIOS_READ, "Ver usuarios");
-        Permission usuariosCreate = createPermission(PermissionName.USUARIOS_CREATE, "Crear usuarios");
-        Permission usuariosUpdate = createPermission(PermissionName.USUARIOS_UPDATE, "Actualizar usuarios");
-        Permission usuariosDelete = createPermission(PermissionName.USUARIOS_DELETE, "Eliminar usuarios");
+        Permission finanzasRead = createPermission("FINANZAS_READ", "Ver finanzas");
+        Permission finanzasCreate = createPermission("FINANZAS_CREATE", "Crear finanzas");
+        Permission finanzasUpdate = createPermission("FINANZAS_UPDATE", "Actualizar finanzas");
 
-        Permission reportesRead = createPermission(PermissionName.REPORTES_READ, "Ver reportes");
-        Permission reportesExport = createPermission(PermissionName.REPORTES_EXPORT, "Exportar reportes");
-
-        Permission finanzasRead = createPermission(PermissionName.FINANZAS_READ, "Ver finanzas");
-        Permission finanzasCreate = createPermission(PermissionName.FINANZAS_CREATE, "Crear finanzas");
-        Permission finanzasUpdate = createPermission(PermissionName.FINANZAS_UPDATE, "Actualizar finanzas");
-
+        // Crear roles
         Role adminRole = Role.builder()
-                .name(RoleName.ADMIN)
+                .name(Role.RoleName.ADMIN)
                 .description("Administrador del sistema")
-                .permissions(Set.of(
-                        // ADMIN_ALL cubre todo, pero agregamos permisos específicos para compatibilidad
-                        adminPerm,
-                        ventasPerm, ventasCreate, ventasUpdate, ventasDelete, ventasRefund,
+                .permissions(java.util.Set.of(
+                        adminAll, ventasRead, ventasCreate, ventasUpdate, ventasDelete, ventasRefund,
                         comprasRead, comprasCreate, comprasUpdate, comprasDelete,
-                        inventarioPerm, inventarioCreate, inventarioUpdate, inventarioDelete, inventarioAjuste,
+                        inventarioRead, inventarioCreate, inventarioUpdate, inventarioDelete, inventarioAjuste,
                         usuariosRead, usuariosCreate, usuariosUpdate, usuariosDelete,
                         reportesRead, reportesExport,
                         finanzasRead, finanzasCreate, finanzasUpdate
@@ -92,12 +87,12 @@ public class DataInitializer implements CommandLineRunner {
                 .build();
 
         Role gerenteRole = Role.builder()
-                .name(RoleName.GERENTE)
+                .name(Role.RoleName.GERENTE)
                 .description("Gerente de tienda")
-                .permissions(Set.of(
-                        ventasPerm, ventasCreate, ventasUpdate, ventasDelete, ventasRefund,
+                .permissions(java.util.Set.of(
+                        ventasRead, ventasCreate, ventasUpdate, ventasDelete, ventasRefund,
                         comprasRead, comprasCreate, comprasUpdate, comprasDelete,
-                        inventarioPerm, inventarioCreate, inventarioUpdate, inventarioDelete, inventarioAjuste,
+                        inventarioRead, inventarioCreate, inventarioUpdate, inventarioDelete, inventarioAjuste,
                         usuariosRead,
                         reportesRead, reportesExport,
                         finanzasRead, finanzasCreate, finanzasUpdate
@@ -105,23 +100,23 @@ public class DataInitializer implements CommandLineRunner {
                 .build();
 
         Role cajeroRole = Role.builder()
-                .name(RoleName.CAJERO)
+                .name(Role.RoleName.CAJERO)
                 .description("Cajero")
-                .permissions(Set.of(ventasPerm, ventasCreate))
+                .permissions(java.util.Set.of(ventasRead, ventasCreate))
                 .build();
 
         Role vendedorRole = Role.builder()
-                .name(RoleName.VENDEDOR)
+                .name(Role.RoleName.VENDEDOR)
                 .description("Vendedor")
-                .permissions(Set.of(ventasPerm))
+                .permissions(java.util.Set.of(ventasRead))
                 .build();
 
         Role inventarioRole = Role.builder()
-                .name(RoleName.INVENTARIO)
+                .name(Role.RoleName.INVENTARIO)
                 .description("Encargado de inventario")
-                .permissions(Set.of(
+                .permissions(java.util.Set.of(
                         comprasRead,
-                        inventarioPerm, inventarioCreate, inventarioUpdate, inventarioDelete, inventarioAjuste
+                        inventarioRead, inventarioCreate, inventarioUpdate, inventarioDelete, inventarioAjuste
                 ))
                 .build();
 
@@ -131,6 +126,7 @@ public class DataInitializer implements CommandLineRunner {
         roleRepository.save(vendedorRole);
         roleRepository.save(inventarioRole);
 
+        // Crear usuario admin
         User admin = User.builder()
                 .email("admin@pos.com")
                 .password(passwordEncoder.encode("admin123"))
@@ -138,35 +134,21 @@ public class DataInitializer implements CommandLineRunner {
                 .lastName("System")
                 .active(true)
                 .emailVerified(true)
+                .termsAccepted(true)
+                .roles(java.util.Set.of(adminRole))
                 .build();
-        admin.getRoles().add(adminRole);
         userRepository.save(admin);
 
-        // Sucursal principal por defecto (multi-sucursal: el admin necesita al menos una)
-        if (branchRepository.count() == 0) {
-            Branch defaultBranch = Branch.builder()
-                    .nombre("Sucursal Principal")
-                    .direccion("Direccion Principal")
-                    .timezone("America/Argentina/Buenos_Aires")
-                    .puntoVentaFiscal("00001")
-                    .build();
-            branchRepository.save(defaultBranch);
-            log.info("Sucursal principal creada");
-        }
-
-        // Vincular admin a la primera sucursal activa
-        branchRepository.findByActivaTrue().stream().findFirst().ifPresent(branch ->
-                userBranchRepository.save(UserBranch.builder()
-                        .id(new UserBranch.UserBranchId(admin.getId(), branch.getId()))
-                        .activo(true)
-                        .build()));
-
-        log.info("Datos inicializados correctamente. Usuario admin creado: {}", admin.getEmail());
+        System.out.println("================================================");
+        System.out.println("Sistema Nivex POS inicializado correctamente");
+        System.out.println("Usuario: admin@pos.com");
+        System.out.println("Contraseña: admin123");
+        System.out.println("================================================");
     }
 
-    private Permission createPermission(PermissionName name, String description) {
+    private Permission createPermission(String name, String description) {
         return permissionRepository.save(Permission.builder()
-                .name(name)
+                .name(com.pos.system.entity.system.Permission.PermissionName.valueOf(name))
                 .description(description)
                 .build());
     }
