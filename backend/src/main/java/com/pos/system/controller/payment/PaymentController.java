@@ -49,7 +49,7 @@ public class PaymentController {
     @PutMapping("/{paymentId}/status")
     public ResponseEntity<PaymentResponse> updatePaymentStatus(
             @PathVariable Long paymentId,
-            @RequestParam PaymentStatus status) {
+            @PathVariable PaymentStatus status) {
         PaymentResponse payment = paymentService.updatePaymentStatus(paymentId, status);
         return ResponseEntity.ok(payment);
     }

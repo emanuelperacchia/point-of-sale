@@ -1,5 +1,7 @@
 package com.pos.system.dto.payment;
 
+import java.math.BigDecimal;
+
 public class PaymentRequest {
 
     private String paymentType;

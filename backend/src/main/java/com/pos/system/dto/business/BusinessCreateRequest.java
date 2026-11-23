@@ -1,5 +1,7 @@
 package com.pos.system.dto.business;
 
+import java.math.BigDecimal;
+
 public class BusinessCreateRequest {
 
     private String businessName;
