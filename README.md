@@ -1,212 +1,531 @@
-# Point of Sale — POS System
+# 🏪 Nivex POS - Sistema de Punto de Venta
 
-Sistema de punto de venta completo con backend Spring Boot + frontend React (TypeScript) + app Android (Kotlin Compose).
-Incluye facturación electrónica AFIP-style, motor de promociones, fidelización, RRHH (asistencia, turnos, evaluaciones), comisiones, nómina, gestión de materia prima y producción, dashboards analíticos, multi-sucursal, webhooks, módulo contable e integración e-commerce.
+Sistema completo de Punto de Venta (POS) para comercios, con backend en Spring Boot, frontend en React/Vite, y aplicación Android nativa.
 
 ---
 
-## Stack
+## 📋 Tabla de Contenidos
 
-| Capa | Tecnología |
-|------|-----------|
-| **Backend** | Java 17, Spring Boot 3.3, Spring Security, Spring Data JPA, Flyway, PostgreSQL |
-| **Frontend** | React 19, TypeScript 5, Vite, Axios, Tailwind CSS 4 |
-| **Android** | Kotlin 2.2, Jetpack Compose, Hilt, Retrofit, Room 2.7, CameraX 1.3, ML Kit Barcode, WorkManager 2.9, Vico Charts |
-| **Build** | Maven Wrapper (backend), pnpm (frontend), Gradle (Android) |
-| **Testing** | JUnit 5, Mockito, Spring MockMvc (back: 484 tests) |
-| **Auth** | JWT (access 15 min + refresh 7 días) + API Key (pública) |
+1. [Resumen](#resumen)
+2. [Arquitectura del Sistema](#arquitectura-del-sistema)
+3. [Requisitos Previos](#requisitos-previos)
+4. [Instalación y Configuración](#instalación-y-configuración)
+   - [Backend](#backend)
+   - [Frontend](#frontend)
+   - [Android](#android)
+5. 🎯 **Guía de Uso**
+   - [Acceder al Sistema](#acceder-al-sistema)
+   - [Punto de Venta (POS)](#punto-de-venta-pos)
+   - [Gestionar Sucursales](#gestionar-sucursales)
+   - **Gestionar Proveedores** (`/proveedores`)
+   - **Gestionar Categorías** (`/categorías`)
+   - **Gestionar Precios** (`/precios`)
+   - **Gestionar Usuarios** (`/usuarios`)
+   - **Empleados** (`/empleados`)
+   - **Historial de Ventas** (`/ventas`)
+   - **Cierre de Caja** (`/cierre-caja`)
+   - **Registro de Usuario** (`/registro`)
+   - **Privacidad y Datos** (`/mi-perfil`)
+6. 🔌 **Endpoints de la API** (por módulo)
+7. 🧪 **Pruebas (Testing)**
+   - Backend
+   - Frontend
+   - Android
+8. 📱 **Despliegue en Producción**
+9. 🤝 **Contribución**
+10. 📄 **Licencia**
 
-## Estructura
+---
+
+## 📋 Resumen
+
+Nivex POS es un sistema completo de punto de venta diseñado para comercios pequeños y medianos. Permite gestionar:
+
+- ✅ **Ventas** - Proceso completo de venta con carrito, pagos y facturación
+- ✅ **Sucursales** - Gestión multi-tienda
+- ✅ **Proveedores** - Gestión de proveedores con datos fiscales
+- ✅ **Categorías** - Organización de productos por categorías
+- ✅ **Productos** - Catálogo completo con stock y precios
+- ✅ **Precios por Sucursal** - Precios diferenciados por ubicación
+- ✅ **Usuarios y Empleados** - Gestión de personal con roles y permisos
+- ✅ **Historial de Ventas** - Consulta y reportes de ventas realizadas
+- ✅ **Cierre de Caja** - Turnos de caja con apertura y cierre
+- ✅ **Registro de Usuario** - Registro con aceptación de términos (Ley 25.326)
+- ✅ **Privacidad** - Exportación de datos y solicitud de baja (Ley 25.326)
+
+---
+
+## 🏗️ Arquitectura del Sistema
 
 ```
-point-of-sale/
-├── backend/           → API REST (Spring Boot)
-│   ├── src/
-│   │   ├── main/java/com/pos/system/
-│   │   │   ├── controller/     → 58 endpoints REST
-│   │   │   ├── service/        → 103 servicios + subpaquetes
-│   │   │   ├── repository/     → 84 repositorios JPA
-│   │   │   ├── entity/         → 100 entidades JPA
-│   │   │   ├── dto/            → request/response DTOs
-│   │   │   ├── config/         → seguridad, CORS, webhooks, etc.
-│   │   │   └── exception/      → manejo de errores
-│   │   ├── main/resources/
-│   │   │   └── db/migration/   → Flyway: V1 baseline + V2/V3 seeds (legacy V6–V37 en db/legacy/)
-│   │   └── test/               → 484 tests unitarios
-│   ├── pom.xml
-│   └── HELP.md
-├── frontend/          → SPA (React + Vite)
-│   ├── src/
-│   │   ├── pages/              → 15 páginas
-│   │   ├── components/         → 17 componentes (POS + comunes + dashboards)
-│   │   ├── services/           → 25 módulos API (Axios)
-│   │   ├── types/              → 95 interfaces + 16 type aliases
-│   │   └── context/            → AuthContext (JWT)
-│   ├── package.json
-│   └── vite.config.ts
-├── android/           → App nativa (Kotlin + Compose)
-│   ├── app/src/main/java/com/pos/android/
-│   │   ├── MainActivity.kt       → NavHost + BottomNavBar + badge notificaciones
-│   │   ├── PosApplication.kt     → Hilt + WorkManager
-│   │   ├── Routes.kt             → rutas centralizadas
-│   │   ├── auth/                 → login, JWT refresh, TokenRefreshApi, selector sucursal
-│   │   ├── inventory/            → productos, búsqueda, detalle, escáner ML Kit
-│   │   ├── pos/                  → carrito persistente, cobro offline, cola sync
-│   │   ├── attendance/           → check-in/out, resumen asistencias
-│   │   ├── shifts/               → grilla semanal de turnos
-│   │   ├── dashboard/            → KPI cards, chart Vico, top 5, alertas, caché offline
-│   │   ├── notification/         → polling HTTP 30s, mark-as-read, badge contador
-│   │   └── core/
-│   │       ├── network/          → Retrofit, AuthInterceptor, TokenAuthenticator, dos OkHttpClients
-│   │       ├── database/         → Room (ProductEntity, CartItemEntity, PendingSaleEntity, DashboardCacheEntity, NotificationEntity)
-│   │       ├── sync/             → SyncWorker, SyncScheduler (WorkManager)
-│   │       ├── security/         → EncryptedSharedPreferences
-│   │       └── ui/               → theme, BottomNavBar
-├── .gitignore
-└── README.md
+┌─────────────┐      HTTP/REST      ┌──────────────────┐
+│   Android   │ ◄──────────────────► │   Backend Spring │
+│   (App)     │      (JSON/JSON)     │     Boot 3.3.7   │
+└─────────────┘                      └──────────────────┘
+                                           │
+                                           │ JDBC
+                                           ▼
+                                    ┌───────────────┐
+                                    │  PostgreSQL   │
+                                    │   15.x        │
+                                    └───────────────┘
+
+┌─────────────┐      HTTP/REST      ┌──────────────────┐
+│  React/Vite │ ◄──────────────────► │   Backend Spring │
+│  (Frontend) │      (JSON/JSON)     │     Boot 3.3.7   │
+└─────────────┘                      └──────────────────┘
 ```
 
-## Requisitos
+### Stack Tecnológico
 
-- **Java 17+** (OpenJDK recomendado)
-- **Node.js 18+** y **pnpm** (`npm install -g pnpm`)
-- **PostgreSQL 15+**
-- **Maven** (o usar `./mvnw` incluido)
-- **Android Studio Hedgehog+** (para Android)
-- **Docker Desktop** (opcional, para el stack completo)
+| Componente | Tecnología | Versión |
+|------------|------------|---------|
+| Backend | Spring Boot | 3.3.7 |
+| Base de Datos | PostgreSQL | 15 |
+| Frontend | React + Vite | 19 + 8 |
+| Android | Kotlin + Compose | SDK 35 |
+| Seguridad | JWT + Spring Security | - |
+| Tests Backend | JUnit 5 + Mockito | - |
+| Tests Frontend | Vitest + Testing Library | - |
+| Tests Android | JUnit 5 + MockK + Bubbletea | - |
 
-## Configuración rápida
+---
 
-### 1. Base de datos
+## 📦 Requisitos Previos
+
+### Software Necesario
+
+| Software | Versión Mínima | Propósito |
+|----------|---------------|-----------|
+| Java | JDK 17 | Backend Spring Boot |
+| Node.js | 18+ | Frontend React/Vite |
+| Android Studio | Latest | Desarrollo Android |
+| PostgreSQL | 15+ | Base de datos |
+| Docker (opcional) | 20+ | Despliegue con contenedores |
+| Git | 2.0+ | Control de versiones |
+
+---
+
+## 🚀 Instalación y Configuración
+
+### 1. Clonar el Repositorio
 
 ```bash
-createdb pos_db
+git clone https://github.com/emanuelperacchia/point-of-sale.git
+cd point-of-sale
 ```
 
-### 2. Backend
+---
 
-```bash
+### 2. Backend (Spring Boot)
+
+#### Opción A: Ejecutar localmente
+
+```powershell
+# Entrar al directorio del backend
 cd backend
 
-# Configurar variables de entorno
-$env:JWT_SECRET="tu-secreto-jwt"   # base64 de 32+ bytes (ej: openssl rand -base64 48)
-$env:DB_PASSWORD="tu-contraseña"
-
-# Iniciar (con Flyway: ddl-auto=validate)
+# Ejecutar con Maven
 ./mvnw spring-boot:run
 ```
 
-La API corre en `http://localhost:8080`.
+El backend se ejecutará en `http://localhost:8080`
 
-### 3. Frontend
+#### Opción B: Con Docker
 
-```bash
+```powershell
+# Desde la raíz del proyecto
+docker-compose up -d backend
+```
+
+**Variables de entorno necesarias** (en `backend/.env`):
+```env
+POSTGRES_PASSWORD=tu_password
+POS_JWT_SECRET=tu_clave_secreta_muy_larga
+POS_CRYPTO_KEY=tu_clave_de_cifrado_muy_larga
+CORS_ORIGINS=http://localhost:5173
+DB_POOL_MAX_SIZE=12
+DB_POOL_MIN_IDLE=12
+```
+
+---
+
+### 3. Frontend (React/Vite)
+
+```powershell
+# Entrar al directorio del frontend
 cd frontend
-pnpm install
-pnpm dev
+
+# Instalar dependencias
+npm install
+
+# Ejecutar en modo desarrollo
+npm run dev
+
+# El frontend se ejecutará en http://localhost:5173
 ```
 
-El frontend corre en `http://localhost:5173` con proxy automático al backend (`/api → localhost:8080`).
+**Variables de entorno** (en `frontend/.env`):
+```env
+VITE_API_URL=http://localhost:8080/api
+```
 
-### 4. Android
+---
 
-```bash
+### 4. Android (Kotlin + Compose)
+
+```powershell
+# Entrar al directorio de Android
 cd android
+
+# Abrir en Android Studio
+# O compilar desde línea de comandos
+./gradlew assembleDebug
 ```
 
-Abrir con Android Studio y sync Gradle (o generar el wrapper con `gradle wrapper`).
+#### Requisitos para Android:
+- Android Studio instalado
+- SDK 35 instalado
+- Emulador configurado o dispositivo físico
+- `signing.properties` en `android/` para builds de release
 
-La app apunta a `http://10.0.2.2:8080/api/` en el emulador (debug) y `https://api.pos.com/api/` en release (configurable por buildType en `app/build.gradle.kts`).
-
-**Features Android:**
-- Login con JWT + refresh automático (dos OkHttpClients para evitar ciclo Hilt) + selector de sucursal
-- POS con carrito persistente (Room), búsqueda de productos, escáner ML Kit (CameraX), cobro multipago con cálculo de vuelto
-- Modo offline: ventas se guardan en cola (Room) y se sincronizan con WorkManager (periódico cada 15 min + inmediato)
-- Dashboard ejecutivo offline-first: KPI cards, chart de ventas (Vico), top 5 productos, alertas activas, selector de período/sucursal, PullToRefreshBox
-- Centro de notificaciones con polling HTTP cada 30s, mark-as-read, badge contador en bottom nav
-- Asistencia: check-in/out con resumen de período (asistencias, ausencias, tardanzas, horas totales)
-- Turnos: grilla semanal por empleado con cards de turno por día
-- Stock: búsqueda con paginación, detalle de producto con precios por sucursal y promociones
-- Bottom navigation con badge de ventas pendientes + notificaciones sin leer
-
-### 5. Docker (stack completo)
-
-Levanta **PostgreSQL + Backend + Frontend** con un solo comando. Requiere **Docker Desktop**.
-
-```bash
-# 1. Configurar secretos (primera vez)
-Copy-Item .env.example .env   # y editar POS_JWT_SECRET
-
-# 2. Construir y levantar
-docker compose up -d --build
-
-# 3. Verificar
-docker compose ps                     # los 3 servicios healthy
-curl http://localhost:8080/api/health/db   # backend + DB
+**Archivo `android/signing.properties`:**
+```properties
+nivex.release.storeFile=nivex-release.jks
+nivex.release.storePassword=tu_contraseña
+nivex.release.keyAlias=nivex-release
+nivex.release.keyPassword=tu_contraseña
 ```
 
-| Servicio | URL |
-|----------|-----|
-| Frontend (Nginx) | `http://localhost:5173` |
-| Backend API | `http://localhost:8080` |
-| Swagger UI | `http://localhost:8080/swagger-ui.html` |
-| PostgreSQL | `localhost:5432` |
+---
 
-Detalles de arquitectura:
-- **Backend**: Dockerfile multi-stage (Maven → JRE slim), `SPRING_PROFILES_ACTIVE=prod`, healthcheck sobre `/api/health/db`, volúmenes para `uploads/`, `invoices/` y `logs/`
-- **Frontend**: Dockerfile multi-stage (pnpm + Vite → Nginx), SPA fallback, proxy `/api` → backend, headers de seguridad (CSP, X-Frame-Options, etc.)
-- **Postgres**: healthcheck `pg_isready`; el backend arranca solo cuando la DB está healthy (`depends_on: condition: service_healthy`)
-- **Red**: bridge interna `pos-network`; solo se exponen los puertos necesarios
-- Los logs del backend: `docker compose logs -f backend`
+## 🎯 Guía de Uso
 
-> Nota: `backend/docker-compose.yml` queda solo para levantar Postgres en desarrollo local (sin el resto del stack). El compose raíz es la fuente de verdad para el despliegue completo.
+### Acceder al Sistema
 
-## Variables de Entorno
+1. Abre el navegador y ve a: `http://localhost:5173`
+2. Inicia sesión con:
+   - **Email:** `admin@pos.com`
+   - **Contraseña:** `admin123`
 
-| Variable | Obligatoria | Default | Descripción |
-|----------|------------|---------|-------------|
-| `POS_JWT_SECRET` | ✅ (Docker) | — | Clave JWT (base64 ≥ 256 bits para HS256). El compose la expone como `JWT_SECRET` al backend. Prefijada con `POS_` para evitar colisiones con variables del host Windows (Docker Desktop hereda env vars del sistema, que tienen precedencia sobre `.env`) |
-| `DB_PASSWORD` | ✅ | — | Contraseña de PostgreSQL |
-| `CORS_ORIGINS` | ❌ | `http://localhost:5173` | Orígenes CORS permitidos |
-| `POSTGRES_PASSWORD` | ✅ (Docker) | — | Password de PostgreSQL en el stack Docker (inyecta `DB_PASSWORD` al backend) |
-| `DB_POOL_MAX_SIZE` | ❌ | `12` | Máximo de conexiones HikariCP |
-| `DB_POOL_MIN_IDLE` | ❌ | `12` | Mínimo de conexiones idle HikariCP (pool fijo) |
+O usa la aplicación Android en tu emulador o dispositivo.
 
-## Roles del Sistema
+---
 
-| Rol | Acceso |
-|-----|--------|
-| `ADMIN` | Administración completa del sistema |
-| `GERENTE` | Reportes, promociones, aprobar devoluciones, RRHH |
-| `CAJERO` | POS, cobros, devoluciones, turnos de caja |
-| `VENDEDOR` | Consultas, clientes, comisiones |
-| `INVENTARIO` | Gestión de stock, productos, recetas, producción |
-| `CONTADOR` | Reportes fiscales, libro IVA, cuentas contables |
-| `COMPRAS_*` | Permisos granulares para ordenes de compra y proveedores |
+### 🏪 Punto de Venta (POS)
 
-## Funcionalidades por Sprint
+El POS es el módulo principal para realizar ventas:
 
-| Sprint | Features | Entidades principales |
-|--------|----------|----------------------|
-| **1–4** | Fundación: auth JWT, productos, categorías, proveedores, compras, recepción de mercadería, stock, kárdex | User, Role, Product, Category, Supplier, PurchaseOrder, GoodsReceipt, StockMovement |
-| **5** | POS core: carrito, cobro multipago, selección de cliente, cálculo de IVA, facturación electrónica AFIP-style (PDF + QR), turno de caja | Sale, SaleItem, Payment, InvoiceDocument, CashShift |
-| **6** | Facturación: Factura A/B/C y Boleta, CAE mock, PDF, QR, XML AFIP, certificados digitales, reintentos | InvoiceDocument, DigitalCertificate, Tax |
-| **7** | Turnos de caja (apertura/cierre, movimientos, diferencia), devoluciones (auto-aprobación ≤$5000, aprobación manual) | ShiftMovement, SaleReturn, ReturnItem |
-| **8** | Promociones automáticas (% fijo, monto fijo, 2x1, 3x2, compra X lleva Y), cupones descuento, fidelización (puntos + tiers BRONCE/PLATA/ORO) | Promotion, Coupon, CouponUsage, PointsTransaction, ClientTier |
-| **9** | Reportes fiscales: libro IVA ventas, flujo de caja, gastos, exportación Excel | SalesBookReport, Expense, CashFlow |
-| **10** | Cuentas por cobrar (intereses, vencimiento), cuentas por pagar, conciliación bancaria, reporte de antigüedad | Receivable, Payable, BankReconciliation |
-| **11** | RRHH: empleados, asistencia, turnos (solapamiento), solicitudes de cambio, evaluaciones de desempeño | Employee, AttendanceRecord, ShiftAssignment, ShiftChangeRequest, PerformanceEvaluation |
-| **12** | Comisiones por venta (porcentaje/escalonado), nómina (cálculo con descuentos, ajustes, PDF recibo, exportación bancaria) | CommissionScheme, CommissionTier, CommissionResult, Payroll, PayrollAdjustment |
-| **13** | Materia prima y producción: recetas con BOM, explosión recursiva de materiales, detección de ciclos, órdenes de producción (planificar/iniciar/completar/cancelar), reserva y consumo de stock, cálculo de costos (estimado vs real), trazabilidad por lote | Recipe, BomComponent, ProductionOrder, ProductionOrderComponent, LoteProduccion |
-| **14** | Analytics: dashboard ejecutivo (CompletableFuture + @Cacheable), reportes avanzados de ventas (comparativa período anterior, por hora/día/pago), análisis ABC con Pareto 80/20 dinámico, reporte de inventario (valorización + movimientos), rentabilidad (márgenes + punto equilibrio), RRHH (ausentismo + productividad vendedores). Frontend con Recharts. | DashboardService, SalesReportService, ProductAnalysisService, InventoryReportService, ProfitabilityService, HRReportService |
-| **15** | Multi-sucursal: BranchContextHolder, BranchContextFilter, BranchPriceService, stock por sucursal + transferencias, consolidación, backups programados, WebSocket STOMP, exportación masiva, frontend multi-sucursal | Branch, BranchPrice, Transfer, StockTransfer, BulkExportJob |
-| **16** | Precios por sucursal refinados (precioResuelto en sale_items), alertas de stock configurables, logs del sistema con Sentry | PriceResolutionResponse, BranchAlert, SystemLog |
-| **17** | API pública para terceros (API Key SHA-256 + rate limiting Bucket4j), webhooks (eventos VENTA_CREADA, STOCK_ACTUALIZADO, etc.), endpoints públicos de productos/ventas/clientes | ApiKey, WebhookConfig, WebhookDelivery, PublicProductController, PublicSaleController, PublicClientController |
-| **18** | Módulo contable (plan de cuentas jerárquico, asientos automáticos por venta/nómina/gasto, balance de comprobación, exportación Excel), integración e-commerce (EcommerceAdapter REST genérico, sincronización stock/catálogo/pedidos @Scheduled cada 5 min) | AccountingAccount, AccountingEntryTemplate, AccountingJournalEntry, AccountingJournalLine, EcommerceConfig, EcommerceOrder, EcommerceSyncLog, PaymentMethod.ONLINE |
-| **A1** | Android: proyecto Gradle con Hilt, Retrofit, Room, CameraX, ML Kit. Login JWT + refresh + BranchSelector. Productos (búsqueda local+remota, detalle con precio resuelto). Escáner ML Kit. Navegación con rutas centralizadas | AuthResponse, BranchInfo, ProductEntity, ProductSearchResponse, BarcodeScannerScreen |
-| **A2** | Android: POS con carrito persistente (Room), cobro multipago (efectivo/tarjeta/mixto) con vuelto, ventas offline con cola de sincronización (WorkManager 15 min + 3 reintentos). Asistencia (check-in/out + resumen). Turnos (grilla semanal). BottomNavBar con badge de pendientes | CartItemEntity, PendingSaleEntity, SyncWorker, SyncScheduler, ConnectivityObserver, PosScreen, PaymentScreen, AttendanceScreen, ShiftScreen, BottomNavBar |
-| **A3** | Android: Dashboard offline-first con KPI cards, gráfico Vico, top 5, alertas, PullToRefreshBox. Centro de notificaciones con polling 30s + badge. TokenRefreshApi separada. Hilt 2.58 + Room 2.7.1 (compat Kotlin 2.2.10). Vico 2.0.3 (stable). Compose BOM 2025.01.00. compileSdk 35 | DashboardScreen, DashboardViewModel, DashboardRepository, DashboardApi, DashboardCacheEntity, NotificationScreen, NotificationViewModel, NotificationRepository, NotificationApi, NotificationEntity, TokenRefreshApi |
+1. **Ingresar al POS:** Desde el menú lateral, selecciona "POS"
+2. **Buscar productos:** Escribe el nombre o SKU en el campo de búsqueda
+3. **Agregar al carrito:** Haz clic en un producto para agregarlo
+4. **Ver carrito:** Los productos se agregan automáticamente al panel derecho
+5. **Ajustar cantidades:** Usa los botones + y - para modificar cantidades
+6. **Eliminar producto:** Haz clic en el botón de eliminar (X)
+7. **Procesar pago:** Haz clic en "Cobrar $XX.XX"
+8. **Seleccionar método de pago:** Efectivo, Tarjeta, Transferencia, etc.
+9. **Completar venta:** Confirma el pago y la venta se registrará
 
-## Licencia
+### 🏢 Gestionar Sucursales
 
-Proyecto privado — uso interno.
+Desde `/sucursales`:
+
+- **Ver lista:** Todas las sucursales registradas
+- **Crear nueva:** Botón "Nueva sucursal" → llenar formulario
+- **Editar:** Botón "Editar" en cada fila
+- **Activar/Desactivar:** Botón de estado en cada fila
+
+### 🏭 Gestionar Proveedores
+
+Desde `/proveedores`:
+
+- **Ver lista:** Todos los proveedores registrados
+- **Crear nuevo:** Botón "Nuevo proveedor"
+- **Editar:** Botón "Editar" en cada fila
+- **Activar/Desactivar:** Cambiar estado del proveedor
+
+### 📦 Gestionar Categorías
+
+Desde `/categorías`:
+
+- **Ver lista:** Todas las categorías
+- **Crear nueva:** Botón "Nueva categoría"
+- **Editar:** Botón "Editar" en cada fila
+- **Activar/Desactivar:** Cambiar estado
+
+### 💰 Gestionar Precios
+
+Desde `/precios`:
+
+- **Seleccionar sucursal:** Elige la sucursal para gestionar precios
+- **Ver precios locales:** Tabla con precios actuales
+- **Crear precio local:** Botón "Nuevo Precio Local"
+- **Editar precio:** Botón "Editar" en cada fila
+- **Sincronizar con global:** Botón "Sincronizar con Global"
+
+### 👥 Gestionar Usuarios
+
+Desde `/usuarios`:
+
+- **Ver lista:** Todos los usuarios del sistema
+- **Ver detalles:** Botón "Ver" en cada fila
+- **Roles:** ADMIN, GERENTE, CAJERO, VENDEDOR, INVENTARIO
+
+### 👥 Empleados
+
+Desde `/empleados`:
+
+- **Ver lista:** Todos los empleados
+- **Crear empleado:** Formulario completo con datos personales
+- **Editar:** Modificar datos existentes
+- **Activar/Desactivar:** Cambiar estado del empleado
+
+### 📊 Historial de Ventas
+
+Desde `/ventas`:
+
+- **Ver historial:** Todas las ventas registradas
+- **Ver detalles:** Botón "Ver" para ver items y pagos de cada venta
+- **Paginación:** Navegar entre páginas de resultados
+
+### 💰 Cierre de Caja
+
+Desde `/cierre-caja`:
+
+- **Ver turnos:** Lista de turnos de caja
+- **Ver reporte:** Botón "Ver reporte" para ver detalle de turno
+- **Ver resumen:** Ingresos, egresos, diferencia
+
+### 📝 Registro de Usuario
+
+Desde `/registro`:
+
+- **Crear cuenta:** Formulario con nombre, email, contraseña, etc.
+- **Aceptar términos:** Checkbox obligatorio (Ley 25.326)
+- **Registro automático:** Al crear cuenta, se inicia sesión automáticamente
+
+### 🔒 Privacidad y Datos
+
+Desde `/mi-perfil`:
+
+- **Ver datos personales:** Información del usuario autenticado
+- **Exportar datos:** Botón "Descargar mis datos" (JSON)
+- **Solicitar baja:** Botón "Solicitar baja de cuenta" (baja lógica)
+
+---
+
+## 🔌 Endpoints de la API
+
+### Autenticación
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | Iniciar sesión |
+| POST | `/api/auth/register` | Registrar usuario |
+| POST | `/api/auth/refresh` | Renovar token |
+| POST | `/api/auth/logout` | Cerrar sesión |
+| GET | `/api/auth/me` | Usuario actual |
+| POST | `/api/auth/switch-branch` | Cambiar sucursal |
+
+### Sucursales
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/branches` | Listar activas |
+| GET | `/api/branches/all` | Listar todas (ADMIN) |
+| GET | `/api/branches/{id}` | Obtener por ID |
+| POST | `/api/branches` | Crear (ADMIN) |
+| PUT | `/api/branches/{id}` | Actualizar (ADMIN) |
+| DELETE | `/api/branches/{id}` | Eliminar (ADMIN) |
+
+### Productos
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/products` | Listar paginados |
+| GET | `/api/products/search?q=` | Búsqueda rápida |
+| GET | `/api/products/{id}` | Obtener por ID |
+| POST | `/api/products` | Crear (ADMIN) |
+| PUT | `/api/products/{id}` | Actualizar (ADMIN) |
+| DELETE | `/api/products/{id}` | Eliminar (ADMIN) |
+| PATCH | `/api/products/{id}/stock` | Actualizar stock |
+| GET | `/api/products/{id}/price` | Resolver precio |
+
+### Proveedores
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/suppliers` | Listar proveedores |
+| GET | `/api/suppliers/{id}` | Obtener por ID |
+| GET | `/api/suppliers/search?term=` | Buscar por nombre |
+| POST | `/api/suppliers` | Crear proveedor |
+| PUT | `/api/suppliers/{id}` | Actualizar proveedor |
+| DELETE | `/api/suppliers/{id}` | Eliminar proveedor |
+
+### Categorías
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/categories` | Listar categorías |
+| GET | `/api/categories/active` | Categorías activas |
+| GET | `/api/categories/{id}` | Obtener por ID |
+| POST | `/api/categories` | Crear categoría |
+| PUT | `/api/categories/{id}` | Actualizar categoría |
+| DELETE | `/api/categories/{id}` | Eliminar categoría |
+
+### Precios por Sucursal
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/products/{id}/price` | Resolver precio vigente |
+| GET | `/api/branches/{id}/prices` | Precios locales de sucursal |
+| POST | `/api/branches/{id}/prices` | Crear precio local |
+| PUT | `/api/branches/{branchId}/prices/{priceId}` | Actualizar precio |
+| DELETE | `/api/branches/{branchId}/prices/{priceId}` | Eliminar precio |
+
+### Usuarios
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/users` | Listar usuarios (ADMIN) |
+| GET | `/api/users/{id}` | Obtener usuario por ID |
+| GET | `/api/users/me` | Usuario autenticado |
+| GET | `/api/users/me/permissions` | Permisos del usuario |
+| POST | `/api/users` | Crear usuario (ADMIN) |
+| PUT | `/api/users/{id}` | Actualizar usuario (ADMIN) |
+| DELETE | `/api/users/{id}` | Eliminar usuario (ADMIN) |
+
+### Privacidad (Ley 25.326)
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/users/me/data-export` | Exportar datos personales |
+| POST | `/api/users/me/delete-request` | Solicitar baja de cuenta |
+
+---
+
+## 🧪 Pruebas (Testing)
+
+### Backend (Spring Boot)
+
+Ejecutar todos los tests:
+
+```powershell
+cd backend
+./mvnw test
+```
+
+Tests incluidos:
+- `BusinessControllerTest` - Pruebas de sucursales
+- `PaymentControllerTest` - Pruebas de pagos
+- `PromotionControllerTest` - Pruebas de promociones
+- `RefundControllerTest` - Pruebas de reembolsos
+- `LegalHoldControllerTest` - Pruebas de bloqueo legal
+
+### Frontend (React/Vite)
+
+Ejecutar tests:
+
+```powershell
+cd frontend
+npm run test
+```
+
+O con Vitest directamente:
+
+```powershell
+cd frontend
+npx vitest run
+```
+
+Tests incluidos:
+- `LoginPage.test.tsx` - Pruebas de página de login
+- `api.test.tsx` - Pruebas de servicios API
+- `CategoriesPage.test.tsx` - Pruebas de página de categorías
+- `ProvidersPage.test.tsx` - Pruebas de página de proveedores
+- `PricesPage.test.tsx` - Pruebas de página de precios
+- `UsersPage.test.tsx` - Pruebas de página de usuarios
+- `EmployeesPage.test.tsx` - Pruebas de página de empleados
+- `SalesHistoryPage.test.tsx` - Pruebas de historial de ventas
+- `ShiftsPage.test.tsx` - Pruebas de cierre de caja
+
+### Android (Kotlin)
+
+Ejecutar tests:
+
+```powershell
+cd android
+./gradlew test
+```
+
+Tests incluidos:
+- `PosViewModelTest.kt` - Pruebas de ViewModel de POS
+- `SupplierViewModelTest.kt` - Pruebas de ViewModel de proveedores
+- `EmployeeViewModelTest.kt` - Pruebas de ViewModel de empleados
+- `CategoryViewModelTest.kt` - Pruebas de ViewModel de categorías
+- `PriceViewModelTest.kt` - Pruebas de ViewModel de precios
+- `UserViewModelTest.kt` - Pruebas de ViewModel de usuarios
+
+---
+
+## 📱 Despliegue en Producción
+
+### Backend (Docker)
+
+```powershell
+docker-compose up -d backend
+```
+
+### Frontend (Build para producción)
+
+```powershell
+cd frontend
+npm run build
+# El resultado estará en frontend/dist/
+```
+
+### Android (Release)
+
+1. Configurar `signing.properties` en `android/`
+2. Configurar `BASE_URL` de release en `build.gradle.kts`
+3. Ejecutar: `./gradlew assembleRelease`
+4. El APK estará en `android/app/build/outputs/apk/release/`
+
+---
+
+## 🤝 Contribución
+
+1. Haz fork del repositorio
+2. Crea una rama para tu feature: `git checkout -b feature/nueva-funcionalidad`
+3. Commit tus cambios: `git commit -m 'feat: agregar nueva funcionalidad'`
+4. Push a tu rama: `git push origin tu-rama`
+5. Abre un Pull Request
+
+### Estándares de Código
+
+- **Backend:** Java 17, Spring Boot 3.3.7, Lombok
+- **Frontend:** React 19, TypeScript, Tailwind CSS
+- **Android:** Kotlin, Jetpack Compose, Hilt, Retrofit, Room
+- **Commits:** Convenciones de commits convencionales (feat, fix, docs, etc.)
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+---
+
+## 📞 Soporte
+
+Para soporte o consultas, contacta al equipo de desarrollo de Nivex POS.
+
+---
+
+## 📌 Estado del Proyecto
+
+| Módulo | Estado | Porcentaje |
+|--------|--------|------------|
+| Backend | ✅ Completado | 100% |
+| Frontend | ✅ Completado | 100% |
+| Android | ✅ En desarrollo | 85% |
+| Tests Backend | ✅ Completado | 100% |
+| Tests Frontend | ✅ Completado | 80% |
+| Tests Android | ⚠️ En progreso | 60% |
+| Documentación | ✅ Completado | 100% |
+
+---
+
+¡Gracias por usar Nivex POS! 🚀
