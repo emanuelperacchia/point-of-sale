@@ -1,6 +1,7 @@
 package com.pos.system.entity.supplier;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CreationTimestamp;
 import lombok.*;
 import java.time.LocalDateTime;
 

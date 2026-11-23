@@ -1,5 +1,7 @@
 package com.pos.system.dto.supplier;
 
+import java.time.LocalDateTime;
+
 public class SupplierResponse {
 
     private Long id;

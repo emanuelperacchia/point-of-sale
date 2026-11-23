@@ -4,7 +4,6 @@ import com.pos.system.dto.business.BusinessCreateRequest;
 import com.pos.system.dto.business.BusinessResponse;
 import com.pos.system.entity.business.Branch;
 import com.pos.system.entity.business.Branch.BusinessType;
-import com.pos.system.entity.business.Branch.BusinessStatus;
 import com.pos.system.entity.business.Branch.SubscriptionPlan;
 import com.pos.system.entity.business.Branch.SubscriptionStatus;
 import com.pos.system.repository.business.BranchRepository;
