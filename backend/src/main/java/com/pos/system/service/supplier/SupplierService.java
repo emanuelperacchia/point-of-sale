@@ -30,9 +30,14 @@ public class SupplierService {
                 .businessName(request.getBusinessName())
                 .tradeName(request.getTradeName())
                 .address(request.getAddress())
+                .city(request.getCity())
+                .state(request.getState())
+                .postalCode(request.getPostalCode())
                 .phone(request.getPhone())
                 .email(request.getEmail())
-                .active(request.getActive())
+                .website(request.getWebsite())
+                .notes(request.getNotes())
+                .active(true)
                 .build();
 
         Supplier saved = supplierRepository.save(supplier);
@@ -84,8 +89,13 @@ public class SupplierService {
         response.setBusinessName(supplier.getBusinessName());
         response.setTradeName(supplier.getTradeName());
         response.setAddress(supplier.getAddress());
+        response.setCity(supplier.getCity());
+        response.setState(supplier.getState());
+        response.setPostalCode(supplier.getPostalCode());
         response.setPhone(supplier.getPhone());
         response.setEmail(supplier.getEmail());
+        response.setWebsite(supplier.getWebsite());
+        response.setNotes(supplier.getNotes());
         response.setActive(supplier.isActive());
         response.setCreatedAt(supplier.getCreatedAt());
         response.setUpdatedAt(supplier.getUpdatedAt());

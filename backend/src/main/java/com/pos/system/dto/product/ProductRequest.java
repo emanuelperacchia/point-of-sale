@@ -1,9 +1,6 @@
 package com.pos.system.dto.product;
 
-import java.math.BigDecimal;
-
 public class ProductRequest {
-
     private String sku;
     private String name;
     private String description;

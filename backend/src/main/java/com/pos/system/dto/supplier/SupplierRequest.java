@@ -1,19 +1,13 @@
 package com.pos.system.dto.supplier;
 
 public class SupplierRequest {
-
     private String code;
     private String taxId;
     private String businessName;
     private String tradeName;
     private String address;
-    private String city;
-    private String state;
-    private String postalCode;
     private String phone;
     private String email;
-    private String website;
-    private String notes;
     private Boolean active;
 
     // Getters y Setters

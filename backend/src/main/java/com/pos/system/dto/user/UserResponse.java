@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class UserResponse {
-
     private Long id;
     private String email;
     private String firstName;

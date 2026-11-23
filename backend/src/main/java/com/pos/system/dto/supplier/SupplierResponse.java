@@ -3,7 +3,6 @@ package com.pos.system.dto.supplier;
 import java.time.LocalDateTime;
 
 public class SupplierResponse {
-
     private Long id;
     private String code;
     private String taxId;
@@ -18,10 +17,11 @@ public class SupplierResponse {
     private String website;
     private String notes;
     private Boolean active;
-    private java.time.LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Getters y Setters
+    public SupplierResponse() {}
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getCode() { return code; }
@@ -50,8 +50,8 @@ public class SupplierResponse {
     public void setNotes(String notes) { this.notes = notes; }
     public Boolean isActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
-    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public java.time.LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(java.time.LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ProductResponse {
-
     private Long id;
     private String sku;
     private String name;
@@ -18,8 +17,6 @@ public class ProductResponse {
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public ProductResponse() {}
 
     // Getters y Setters
     public Long getId() { return id; }

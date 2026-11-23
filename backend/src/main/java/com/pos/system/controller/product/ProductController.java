@@ -23,6 +23,10 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@RequestBody ProductRequest request) {
+        if (productRepository.existsBySku(request.getSku())) {
+            throw new ResourceNotFoundException("Ya existe un producto con este SKU");
+        }
+
         Product product = Product.builder()
                 .sku(request.getSku())
                 .name(request.getName())
@@ -67,7 +71,7 @@ public class ProductController {
         product.setTipo(Product.ProductTipo.valueOf(request.getTipo()));
         product.setCostoProduccion(request.getCostoProduccion());
         product.setCategoryId(request.getCategoryId());
-        product.setActive(true);
+        product.setActive(request.getActive());
 
         Product saved = productRepository.save(product);
         return ResponseEntity.ok(mapToResponse(saved));
@@ -75,16 +79,11 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/{id}/stock")
-    public ResponseEntity<Void> updateStock(@PathVariable Long id, @RequestParam Integer quantity) {
-        productRepository.findById(id)
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
-        productRepository.updateStock(id, quantity);
-        return ResponseEntity.ok().build();
+        product.setActive(false);
+        productRepository.save(product);
+        return ResponseEntity.noContent().build();
     }
 
     private ProductResponse mapToResponse(Product product) {
