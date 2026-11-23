@@ -6,7 +6,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "categories")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Category {
 
     @Id

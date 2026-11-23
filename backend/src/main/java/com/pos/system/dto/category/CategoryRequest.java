@@ -1,6 +1,7 @@
 package com.pos.system.dto.category;
 
 public class CategoryRequest {
+
     private String name;
     private String description;
     private Boolean active;

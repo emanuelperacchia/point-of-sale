@@ -33,7 +33,7 @@ public class ProductService {
                 .tipo(Product.ProductTipo.valueOf(request.getTipo()))
                 .costoProduccion(request.getCostoProduccion())
                 .categoryId(request.getCategoryId())
-                .active(true)
+                .active(request.getActive())
                 .build();
 
         Product saved = productRepository.save(product);

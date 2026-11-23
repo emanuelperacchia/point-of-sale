@@ -22,6 +22,10 @@ public class SupplierController {
 
     @PostMapping
     public ResponseEntity<SupplierResponse> createSupplier(@RequestBody SupplierRequest request) {
+        if (supplierRepository.existsByCode(request.getCode())) {
+            throw new ResourceNotFoundException("Ya existe un proveedor con este código");
+        }
+
         Supplier supplier = Supplier.builder()
                 .code(request.getCode())
                 .taxId(request.getTaxId())
@@ -30,7 +34,7 @@ public class SupplierController {
                 .address(request.getAddress())
                 .phone(request.getPhone())
                 .email(request.getEmail())
-                .active(true)
+                .active(request.getActive())
                 .build();
 
         Supplier saved = supplierRepository.save(supplier);
@@ -64,7 +68,7 @@ public class SupplierController {
         supplier.setAddress(request.getAddress());
         supplier.setPhone(request.getPhone());
         supplier.setEmail(request.getEmail());
-        supplier.setActive(true);
+        supplier.setActive(request.getActive());
 
         Supplier saved = supplierRepository.save(supplier);
         return ResponseEntity.ok(mapToResponse(saved));
@@ -72,8 +76,11 @@ public class SupplierController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSupplier(@PathVariable Long id) {
-        supplierRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        Supplier supplier = supplierRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con ID: " + id));
+        supplier.setActive(false);
+        Supplier saved = supplierRepository.save(supplier);
+        return ResponseEntity.ok(mapToResponse(supplier));
     }
 
     private SupplierResponse mapToResponse(Supplier supplier) {

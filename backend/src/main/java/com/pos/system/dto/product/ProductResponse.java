@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ProductResponse {
+
     private Long id;
     private String sku;
     private String name;

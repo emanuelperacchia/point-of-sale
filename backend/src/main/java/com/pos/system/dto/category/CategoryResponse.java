@@ -3,6 +3,7 @@ package com.pos.system.dto.category;
 import java.time.LocalDateTime;
 
 public class CategoryResponse {
+
     private Long id;
     private String name;
     private String description;

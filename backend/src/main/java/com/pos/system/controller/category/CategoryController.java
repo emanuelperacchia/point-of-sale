@@ -22,6 +22,10 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
+        if (categoryRepository.existsByName(request.getName())) {
+            throw new RuntimeException("Ya existe una categoría con este nombre");
+        }
+
         Category category = Category.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -54,7 +58,7 @@ public class CategoryController {
 
         category.setName(request.getName());
         category.setDescription(request.getDescription());
-        category.setActive(true);
+        category.setActive(request.getActive());
 
         Category saved = categoryRepository.save(category);
         return ResponseEntity.ok(mapToResponse(saved));
@@ -62,8 +66,11 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        categoryRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));
+        category.setActive(false);
+        Category saved = categoryRepository.save(category);
+        return ResponseEntity.ok(mapToResponse(category));
     }
 
     private CategoryResponse mapToResponse(Category category) {
