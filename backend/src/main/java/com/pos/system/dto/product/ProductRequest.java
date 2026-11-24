@@ -3,7 +3,6 @@ package com.pos.system.dto.product;
 import java.math.BigDecimal;
 
 public class ProductRequest {
-
     private String sku;
     private String name;
     private String description;
@@ -14,7 +13,6 @@ public class ProductRequest {
     private Integer categoryId;
     private Boolean active;
 
-    // Getters y Setters
     public String getSku() { return sku; }
     public void setSku(String sku) { this.sku = sku; }
     public String getName() { return name; }

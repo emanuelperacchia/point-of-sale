@@ -3,15 +3,12 @@ package com.pos.system.dto.category;
 import java.time.LocalDateTime;
 
 public class CategoryResponse {
-
     private Long id;
     private String name;
     private String description;
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public CategoryResponse() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

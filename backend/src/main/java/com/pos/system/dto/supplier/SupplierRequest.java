@@ -1,17 +1,20 @@
 package com.pos.system.dto.supplier;
 
 public class SupplierRequest {
-
     private String code;
     private String taxId;
     private String businessName;
     private String tradeName;
     private String address;
+    private String city;
+    private String state;
+    private String postalCode;
     private String phone;
     private String email;
+    private String website;
+    private String notes;
     private Boolean active;
 
-    // Getters y Setters
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
     public String getTaxId() { return taxId; }
@@ -22,6 +25,12 @@ public class SupplierRequest {
     public void setTradeName(String tradeName) { this.tradeName = tradeName; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
+    public String getPostalCode() { return postalCode; }
+    public void setPostalCode(String postalCode) { this.postalCode = postalCode; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
     public String getEmail() { return email; }

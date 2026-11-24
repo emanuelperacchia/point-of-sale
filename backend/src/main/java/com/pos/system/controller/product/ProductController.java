@@ -36,7 +36,7 @@ public class ProductController {
                 .tipo(Product.ProductTipo.valueOf(request.getTipo()))
                 .costoProduccion(request.getCostoProduccion())
                 .categoryId(request.getCategoryId())
-                .active(true)
+                .active(request.getActive())
                 .build();
 
         Product saved = productRepository.save(product);
@@ -83,7 +83,7 @@ public class ProductController {
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
         product.setActive(false);
         productRepository.save(product);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(mapToResponse(product));
     }
 
     public List<ProductResponse> getProductsByCategory(Long categoryId) {

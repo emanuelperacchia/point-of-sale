@@ -78,12 +78,6 @@ public class ProductService {
         return mapToResponse(saved);
     }
 
-    public List<ProductResponse> getProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-    }
-
     private ProductResponse mapToResponse(Product product) {
         ProductResponse response = new ProductResponse();
         response.setId(product.getId());

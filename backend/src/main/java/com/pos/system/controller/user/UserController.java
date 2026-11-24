@@ -37,14 +37,19 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setPhone(request.getPhone());
-        user.setRoles(request.getRoles() != null ? request.getRoles() : java.util.Collections.emptySet());
-        user.setActive(true);
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ResourceNotFoundException("Ya existe un usuario con este email");
+        }
+
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .phone(request.getPhone())
+                .roles(request.getRoles())
+                .active(true)
+                .build();
 
         User saved = userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapToResponse(saved));
@@ -55,10 +60,12 @@ public class UserController {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
 
+        user.setEmail(request.getEmail());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
-        user.setRoles(request.getRoles() != null ? request.getRoles() : java.util.Collections.emptySet());
+        user.setActive(request.getActive());
+        user.setRoles(request.getRoles());
 
         User saved = userRepository.save(user);
         return ResponseEntity.ok(mapToResponse(saved));
@@ -66,20 +73,19 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
+        user.setActive(false);
+        User saved = userRepository.save(user);
+        return ResponseEntity.ok(mapToResponse(saved));
     }
 
     private UserResponse mapToResponse(User user) {
         UserResponse response = new UserResponse();
         response.setId(user.getId());
         response.setEmail(user.getEmail());
-        response.setFirstName(user.getFirstName());
-        response.setLastName(user.getLastName());
         response.setFullName(user.getFullName());
-        response.setPhone(user.getPhone());
-        response.setActive(user.isActive());
-        response.setRoles(user.getRoles().stream().map(r -> r.getName().name()).collect(java.util.stream.Collectors.toList()));
+        response.setRoles(user.getRoles());
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
         return response;

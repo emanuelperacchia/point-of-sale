@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long>, JpaSpecificationExecutor<Role> {
+
     Optional<Role> findByName(Role.RoleName name);
+
     List<Role> findByNameIn(List<Role.RoleName> names);
 }

@@ -23,13 +23,13 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
         if (categoryRepository.existsByName(request.getName())) {
-            throw new RuntimeException("Ya existe una categoría con este nombre");
+            throw new ResourceNotFoundException("Ya existe una categoría con este nombre");
         }
 
         Category category = Category.builder()
                 .name(request.getName())
                 .description(request.getDescription())
-                .active(true)
+                .active(request.getActive())
                 .build();
 
         Category saved = categoryRepository.save(category);

@@ -7,11 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "products")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Product {
 
     @Id
@@ -24,7 +20,7 @@ public class Product {
     @Column(nullable = false, length = 150)
     private String name;
 
-    @Column(length = 1000)
+    @Column(length = 255)
     private String description;
 
     @Column(nullable = false, precision = 10, scale = 2)

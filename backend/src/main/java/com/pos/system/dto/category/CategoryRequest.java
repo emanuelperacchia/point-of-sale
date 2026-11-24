@@ -1,12 +1,9 @@
 package com.pos.system.dto.category;
 
 public class CategoryRequest {
-
     private String name;
     private String description;
     private Boolean active;
-
-    public CategoryRequest() {}
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

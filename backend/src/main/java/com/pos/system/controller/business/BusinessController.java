@@ -2,13 +2,20 @@ package com.pos.system.controller.business;
 
 import com.pos.system.dto.business.BusinessCreateRequest;
 import com.pos.system.dto.business.BusinessResponse;
-import com.pos.system.service.business.BusinessService;
+import com.pos.system.entity.business.Branch;
+import com.pos.system.entity.business.Branch.BusinessType;
+import com.pos.system.entity.business.Branch.SubscriptionPlan;
+import com.pos.system.entity.business.Branch.SubscriptionStatus;
+import com.pos.system.repository.business.BranchRepository;
+import com.pos.system.exception.ResourceNotFoundException;
+import com.pos.system.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/businesses")
@@ -66,8 +73,8 @@ public class BusinessController {
             @RequestParam String status) {
         BusinessResponse business = businessService.updateSubscription(
                 id,
-                com.pos.system.entity.business.Branch.SubscriptionPlan.valueOf(plan),
-                com.pos.system.entity.business.Branch.SubscriptionStatus.valueOf(status)
+                SubscriptionPlan.valueOf(plan),
+                SubscriptionStatus.valueOf(status)
         );
         return ResponseEntity.ok(business);
     }

@@ -1,74 +1,87 @@
 package com.pos.system.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "api_keys")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApiKey {
+public class AfipCodeMapper {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150)
-    private String nombre;
+    @Column(nullable = false, unique = true, length = 100)
+    private String code;
 
-    @Column(name = "key_hash", nullable = false, length = 64, unique = true)
-    private String keyHash;
+    @Column(length = 20)
+    private String taxId;
 
-    @Column(name = "key_prefix", nullable = false, length = 20)
-    private String keyPrefix;
+    @Column(length = 100)
+    private String businessName;
 
-    @Column(nullable = false, length = 500)
-    @Builder.Default
-    private String permisos = "";
+    @Column(length = 100)
+    private String tradeName;
 
-    @Column(name = "rate_limit", nullable = false)
-    @Builder.Default
-    private Integer rateLimit = 60;
+    @Column(length = 255)
+    private String address;
 
-    @Column(name = "expiracion")
-    private LocalDateTime expiracion;
+    @Column(length = 50)
+    private String city;
+
+    @Column(length = 50)
+    private String state;
+
+    @Column(length = 20)
+    private String postalCode;
+
+    @Column(length = 50)
+    private String phone;
+
+    @Column(length = 100)
+    private String email;
+
+    @Column(length = 100)
+    private String website;
+
+    @Column(length = 500)
+    private String notes;
 
     @Column(nullable = false)
     @Builder.Default
-    private Boolean activo = true;
+    private Boolean active = true;
 
-    @Column(name = "creado_por")
-    private Long creadoPor;
-
-    @Column(name = "ultimo_uso")
-    private LocalDateTime ultimoUso;
-
-    @Column(name = "total_requests", nullable = false)
+    @Column(nullable = false)
     @Builder.Default
-    private Long totalRequests = 0L;
+    private Boolean termsAccepted = false;
 
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(length = 50)
+    private String rateLimit;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(length = 50)
+    private String expirationInterval;
 
-    public boolean hasPermission(String permission) {
-        if (permisos == null || permisos.isBlank()) return false;
-        return permisos.contains(permission);
-    }
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    public boolean isExpirada() {
-        return expiracion != null && LocalDateTime.now().isAfter(expiracion);
+    @Column(name = "updated_at")
+    @Builder.Default
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    public enum PermissionName {
+        ADMIN_ALL,
+        VENTAS_READ, VENTAS_CREATE, VENTAS_UPDATE, VENTAS_DELETE, VENTAS_REFUND,
+        COMPRAS_READ, COMPRAS_CREATE, COMPRAS_UPDATE, COMPRAS_DELETE,
+        INVENTARIO_READ, INVENTARIO_CREATE, INVENTARIO_UPDATE, INVENTARIO_DELETE, INVENTARIO_AJUSTE,
+        USUARIOS_READ, USUARIOS_CREATE, USUARIOS_UPDATE, USUARIOS_DELETE,
+        REPORTES_READ, REPORTES_EXPORT,
+        FINANZAS_READ, FINANZAS_CREATE, FINANZAS_UPDATE
     }
 }

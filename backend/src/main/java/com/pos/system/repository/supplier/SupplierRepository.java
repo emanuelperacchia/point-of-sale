@@ -12,7 +12,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 
     Optional<Supplier> findByCode(String code);
 
-    List<Supplier> findByBusinessNameContainingIgnoreCase(String businessName);
+    List<Supplier> findByBusinessNameContaining(String businessName);
 
     List<Supplier> findByActiveTrue();
 

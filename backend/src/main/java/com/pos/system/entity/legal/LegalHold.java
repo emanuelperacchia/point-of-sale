@@ -1,11 +1,7 @@
 package com.pos.system.entity.legal;
 
-import com.pos.system.entity.business.Branch;
-import com.pos.system.entity.system.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,14 +16,6 @@ public class LegalHold {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "business_id", nullable = false)
-    private Branch business;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     @Column(nullable = false, length = 100)
     private String holdType;

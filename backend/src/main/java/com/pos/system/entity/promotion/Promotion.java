@@ -1,10 +1,7 @@
 package com.pos.system.entity.promotion;
 
-import com.pos.system.entity.business.Branch;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -21,23 +18,18 @@ public class Promotion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "business_id", nullable = false)
-    private Branch business;
-
     @Column(nullable = false, length = 100)
     private String name;
 
     @Column(length = 500)
     private String description;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
+    @Enumerated(EnumType.STRING)
     private PromotionType type;
 
-    @Column(precision = 10, scale = 2)
-    @Builder.Default
-    private BigDecimal value = BigDecimal.ZERO;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal value;
 
     @Column(nullable = false)
     @Builder.Default
@@ -63,7 +55,11 @@ public class Promotion {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    @Builder.Default
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
     public enum PromotionType {
-        PERCENTAGE, FIXED_AMOUNT, BUY_ONE_GET_ONE, FREE_SHIPPING
+        PORCENTAJE, MONTO_FIJO, BUY_ONE_GET_ONE, FREE_SHIPPING
     }
 }

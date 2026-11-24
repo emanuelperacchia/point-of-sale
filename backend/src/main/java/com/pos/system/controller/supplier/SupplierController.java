@@ -71,7 +71,7 @@ public class SupplierController {
         supplier.setActive(request.getActive());
 
         Supplier saved = supplierRepository.save(supplier);
-        return ResponseEntity.ok(mapToResponse(saved));
+        return ResponseEntity.ok(mapToResponse(supplier));
     }
 
     @DeleteMapping("/{id}")

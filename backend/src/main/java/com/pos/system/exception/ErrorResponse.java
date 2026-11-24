@@ -1,7 +1,6 @@
 package com.pos.system.exception;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 public class ErrorResponse {
 
@@ -9,7 +8,6 @@ public class ErrorResponse {
     private String error;
     private String message;
     private LocalDateTime timestamp;
-    private Map<String, String> errors;
 
     public ErrorResponse() {}
 
@@ -20,14 +18,6 @@ public class ErrorResponse {
         this.timestamp = timestamp;
     }
 
-    public ErrorResponse(int status, String error, String message, LocalDateTime timestamp, Map<String, String> errors) {
-        this.status = status;
-        this.error = error;
-        this.message = message;
-        this.timestamp = timestamp;
-        this.errors = errors;
-    }
-
     public int getStatus() { return status; }
     public void setStatus(int status) { this.status = status; }
     public String getError() { return error; }
@@ -36,6 +26,4 @@ public class ErrorResponse {
     public void setMessage(String message) { this.message = message; }
     public LocalDateTime getTimestamp() { return timestamp; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
-    public Map<String, String> getErrors() { return errors; }
-    public void setErrors(Map<String, String> errors) { this.errors = errors; }
 }

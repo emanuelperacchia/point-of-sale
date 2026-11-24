@@ -65,7 +65,7 @@ public class SupplierService {
         supplier.setActive(request.getActive());
 
         Supplier saved = supplierRepository.save(supplier);
-        return mapToResponse(saved);
+        return mapToResponse(supplier);
     }
 
     public SupplierResponse deleteSupplier(Long id) {
