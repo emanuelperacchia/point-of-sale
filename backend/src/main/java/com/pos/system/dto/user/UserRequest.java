@@ -1,5 +1,7 @@
 package com.pos.system.dto.user;
 
+import java.util.List;
+
 public class UserRequest {
     private String email;
     private String password;

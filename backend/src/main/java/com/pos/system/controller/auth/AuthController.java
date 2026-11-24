@@ -21,14 +21,14 @@ public class AuthController {
     private UserRepository userRepository;
 
     @Autowired
-    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        if (!request.getPassword().equals(user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Contraseña incorrecta");
         }
 
@@ -46,18 +46,18 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody com.pos.system.dto.auth.RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("El email ya está registrado");
+            throw new ResourceNotFoundException("El email ya está registrado");
         }
 
         User user = new User();
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
-        user.setRoles(request.getRoles() != null ? request.getRoles() : java.util.Collections.emptySet());
+        user.setRoles(request.getRoles());
         user.setActive(true);
         user.setEmailVerified(true);
         user.setTermsAccepted(true);
@@ -78,7 +78,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestBody com.pos.system.dto.auth.RefreshTokenRequest request) {
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
         AuthResponse response = new AuthResponse();
         response.setAccessToken("new-jwt-token");
         response.setRefreshToken("new-refresh-token");
@@ -93,7 +93,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestBody com.pos.system.dto.auth.RefreshTokenRequest request) {
+    public ResponseEntity<Void> logout(@RequestBody RefreshTokenRequest request) {
         return ResponseEntity.noContent().build();
     }
 
@@ -112,7 +112,7 @@ public class AuthController {
     }
 
     @PostMapping("/switch-branch")
-    public ResponseEntity<AuthResponse> switchBranch(@RequestBody com.pos.system.dto.auth.SwitchBranchRequest request) {
+    public ResponseEntity<AuthResponse> switchBranch(@RequestBody SwitchBranchRequest request) {
         AuthResponse response = new AuthResponse();
         response.setAccessToken("new-jwt-token");
         response.setRefreshToken("new-refresh-token");

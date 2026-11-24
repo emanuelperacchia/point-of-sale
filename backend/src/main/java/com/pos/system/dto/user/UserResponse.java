@@ -1,7 +1,6 @@
 package com.pos.system.dto.user;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class UserResponse {
     private Long id;

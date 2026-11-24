@@ -33,7 +33,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(secretKey.getBytes())
                 .build()
                 .parseClaimsJws(token)
@@ -42,7 +42,7 @@ public class JwtService {
 
     public String generateToken(UserDetailsImpl userDetails) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .subject(userDetails.getUsername())
                 .claim("roles", userDetails.getuser().getRoles().stream()
                         .map(role -> role.getName().name())
                         .collect(java.util.stream.Collectors.joining(",")))

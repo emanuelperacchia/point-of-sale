@@ -20,7 +20,7 @@ public class Supplier {
     @Column(nullable = false, unique = true, length = 50)
     private String code;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, length = 20)
     private String taxId;
 
     @Column(nullable = false, length = 200)

@@ -6,14 +6,9 @@ public class RegisterRequest {
     private String firstName;
     private String lastName;
     private String phone;
-    private List<String> roles;
+    private java.util.List<String> roles;
 
     public RegisterRequest() {}
-
-    public LoginRequest(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
@@ -25,6 +20,6 @@ public class RegisterRequest {
     public void setLastName(String lastName) { this.lastName = lastName; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-    public List<String> getRoles() { return roles; }
-    public void setRoles(List<String> roles) { this.roles = roles; }
+    public java.util.List<String> getRoles() { return roles; }
+    public void setRoles(java.util.List<String> roles) { this.roles = roles; }
 }
