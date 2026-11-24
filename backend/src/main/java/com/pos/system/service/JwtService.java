@@ -1,5 +1,6 @@
 package com.pos.system.service;
 
+import com.pos.system.entity.system.User;
 import com.pos.system.security.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +33,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(secretKey.getBytes())
                 .build()
                 .parseClaimsJws(token)
@@ -41,7 +42,7 @@ public class JwtService {
 
     public String generateToken(UserDetailsImpl userDetails) {
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .setSubject(userDetails.getUsername())
                 .claim("roles", userDetails.getuser().getRoles().stream()
                         .map(role -> role.getName().name())
                         .collect(java.util.stream.Collectors.joining(",")))
@@ -60,8 +61,8 @@ public class JwtService {
         return extractUsername(token);
     }
 
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
+    public Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(secretKey.getBytes())
                 .build()
                 .parseClaimsJws(token)
@@ -71,10 +72,6 @@ public class JwtService {
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
-    }
-
-    public boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
     }
 
     public Date extractExpiration(String token) {

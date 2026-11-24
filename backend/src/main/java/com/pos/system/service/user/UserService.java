@@ -6,7 +6,6 @@ import com.pos.system.entity.system.User;
 import com.pos.system.repository.system.UserRepository;
 import com.pos.system.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,23 +19,19 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
-
     public UserResponse createUser(UserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ResourceNotFoundException("El usuario ya existe");
+            throw new ResourceNotFoundException("El email ya está registrado");
         }
 
         User user = User.builder()
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(request.getPassword())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phone(request.getPhone())
-                .active(request.getActive())
-                .termsAccepted(request.getTermsAccepted())
                 .roles(request.getRoles())
+                .active(true)
                 .build();
 
         User saved = userRepository.save(user);
@@ -63,7 +58,6 @@ public class UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
-        user.setActive(request.getActive());
         user.setRoles(request.getRoles());
 
         User saved = userRepository.save(user);

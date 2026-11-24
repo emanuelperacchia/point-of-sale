@@ -1,40 +1,24 @@
 package com.pos.system.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class JournalEntryResponse {
-
     private Long id;
-    private LocalDate fecha;
     private String descripcion;
-    private Long referenciaId;
-    private String referenciaType;
-    private String estado;
-    private LocalDateTime createdAt;
-    private List<JournalLineResponse> lineas;
+    private LocalDateTime fecha;
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class JournalLineResponse {
-        private Long id;
-        private Long cuentaId;
-        private String cuentaCodigo;
-        private String cuentaNombre;
-        private String tipo;
-        private BigDecimal monto;
+    public JournalEntryResponse() {}
+
+    public JournalEntryResponse(Long id, String descripcion, LocalDateTime fecha) {
+        this.id = id;
+        this.descripcion = descripcion;
+        this.fecha = fecha;
     }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public LocalDateTime getFecha() { return fecha; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
 }
