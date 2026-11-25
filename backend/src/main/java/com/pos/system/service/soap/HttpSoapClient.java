@@ -17,16 +17,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class HttpSoapClient implements SoapClient {
 
-    private static final int CONNECT_TIMEOUT_SECONDS = 10;
     private static final int RESPONSE_TIMEOUT_SECONDS = 30;
 
     private final HttpClient httpClient;
-
-    public HttpSoapClient() {
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
-                .build();
-    }
 
     @Override
     public String post(String endpoint, String soapAction, String envelope) {
