@@ -38,7 +38,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ResourceNotFoundException("Ya existe un usuario con este email");
+            throw new ResourceNotFoundException("El email ya está registrado");
         }
 
         User user = User.builder()

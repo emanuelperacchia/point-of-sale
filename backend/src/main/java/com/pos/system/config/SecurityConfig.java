@@ -42,11 +42,6 @@ public class SecurityConfig {
         config.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-Requested-With", "X-API-Key"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
-        return new org.springframework.web.cors.CorsConfigurationSource() {
-            @Override
-            public org.springframework.web.cors.CorsConfiguration getCorsConfiguration(org.springframework.web.server.ServerWebExchange request) {
-                return config;
-            }
-        };
+        return config;
     }
 }
